@@ -12,6 +12,11 @@
 // - correct extern (type) { } blocks, "extern (type):" and "extern (type) decl" work.
 // - complete access modifiers on functions
 
+// WARNING:  This version is broken and incompatible with the latest version of
+// the dlexer module.  I have discontinued support for this module in favor of
+// the new dparse module, which does not work yet either.  It is in the
+// process of being converted from C++.
+
 module	dtags;
 
 import	std.stream;

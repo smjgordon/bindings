@@ -277,23 +277,41 @@ char[]	toktostr[TOKmax] = [
 	TOKunittest : "unittest",
 ];
 
+class Identifier {
+    int		value;
+    char[]	string;
+
+    this(char[] string, int value) {
+		this.value = value;
+		this.string = string;
+	};
+};
+
 // A language token:
 struct Token {
 	// The kind of token:
-	uint	token;
+	uint	value;
+
+	// The value for the token:
 	union {
 		// The identifier or value of the token:
-		char[]	ident;
+		Identifier*	ident;
+
+		char[]		ustring;
 
 		// Integers
-		int 	int32value;
-		uint	uns32value;
-		long	int64value;
-		ulong	uns64value;
+		int 		int32value;
+		uint		uns32value;
+		long		int64value;
+		ulong		uns64value;
 
 		// Floats
-		real	float80value;
-	}
+		real		float80value;
+	};
+
+	char[] toString() {
+		return toktostr[token];
+	};
 }
 
 // Exception thrown during parsing of D language:
@@ -422,11 +440,14 @@ class DLexer {
 			keywords["version"] = TOKversion;
 		}
 
+	protected:
+		Token				token;
+		Identifier*[char[]]	identifiers;
+
 	private:
 		char[]	file;		// The input file
 		uint	p;			// Current character
 
-		// Test this!
 		char[]	wysiwygString(char tc) {
 			char	c;
 			char[]	s;
@@ -450,7 +471,7 @@ class DLexer {
 						break;
 
 					case 0x1A:
-						throw new DLexerException(this, format("unterminated string constant starting at %s", s));
+						error(format("unterminated string constant starting at %s", s));
 						return null;
 
 					case '"', '`':
@@ -495,12 +516,12 @@ class DLexer {
 						continue;
 
 					case 0x1A:
-						throw new DLexerException(this, format("unterminated string constant starting at %s", s));
+						error(format("unterminated string constant starting at %s", s));
 						return null;
 
 					case '"':
 						if (n & 1) {
-							throw new DLexerException(this, format("odd number (%d) of hex characters in hex string", n));
+							error(format("odd number (%d) of hex characters in hex string", n));
 							return null;
 						}
 						s.length = i;
@@ -514,7 +535,7 @@ class DLexer {
 						else if (c >= 'A' && c <= 'F')
 							c -= 'A' - 10;
 						else
-							throw new DLexerException(this, format("non-hex character '%c'", c));
+							error(format("non-hex character '%c'", c));
 						if (n & 1) {
 							v = (v << 4) | c;
 							if (i == s.length) s.length = s.length * 2;
@@ -536,21 +557,28 @@ class DLexer {
 		this(char[] filename, char[] src) {
 			file = src;
 			this.filename = filename;
-			line = 1;
-			p = 0;
+			restart();
+		}
+
+		// Possible to buffer up errors until some limit n.
+		void error(char[] msg) {
+			throw new DLexerException(this, msg);
 		}
 
 		// This function consumes a full D language token and returns it in the structure Token:
 		// null is returned if the end of the file is reached.
-		Token*	nextToken() {
-			Token*	rettok = new Token;
+		uint	nextToken() {
 			uint	start;
 
-			rettok.ident = null;
-			rettok.token = TOKidentifier;
+			token.ident = null;
+			token.uns64value = 0;
+			token.value = TOKidentifier;
 
-			// Past the end of file? Return a null token:
-			if (p >= file.length) return null;
+			// Past the end of file? Return an EOF token:
+			if (p >= file.length) {
+				token.value = TOKeof;
+				return token.value;
+			}
 
 			// Read up to the next white-space char:
 			while (p < file.length) {
@@ -566,60 +594,60 @@ class DLexer {
 							++p;
 							if (file[p] == '.') {
 								++p;
-								rettok.token = TOKdotdotdot;
+								token.value = TOKdotdotdot;
 							} else
-								rettok.token = TOKslice;
+								token.value = TOKslice;
 						} else
-							rettok.token = TOKdot;
-						return rettok;
+							token.value = TOKdot;
+						return token.value;
 
 					case '&':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							rettok.token = TOKandass;
+							token.value = TOKandass;
 						} else if (file[p] == '&') {
 							++p;
-							rettok.token = TOKandand;
+							token.value = TOKandand;
 						} else
-							rettok.token = TOKand;
-						return rettok;
+							token.value = TOKand;
+						return token.value;
 
 					case '|':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							rettok.token = TOKorass;
+							token.value = TOKorass;
 						} else if (file[p] == '|') {
 							++p;
-							rettok.token = TOKoror;
+							token.value = TOKoror;
 						} else
-							rettok.token = TOKor;
-						return rettok;
+							token.value = TOKor;
+						return token.value;
 
 					case '-':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							rettok.token = TOKminass;
+							token.value = TOKminass;
 						} else if (file[p] == '-') {
 							++p;
-							rettok.token = TOKminusminus;
+							token.value = TOKminusminus;
 						} else
-							rettok.token = TOKmin;
-						return rettok;
+							token.value = TOKmin;
+						return token.value;
 
 					case '+':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							rettok.token = TOKaddass;
+							token.value = TOKaddass;
 						} else if (file[p] == '+') {
 							++p;
-							rettok.token = TOKplusplus;
+							token.value = TOKplusplus;
 						} else
-							rettok.token = TOKadd;
-						return rettok;
+							token.value = TOKadd;
+						return token.value;
 
 					case '=':
 						++p;
@@ -627,58 +655,58 @@ class DLexer {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								rettok.token = TOKidentity;
+								token.value = TOKidentity;
 							} else
-								rettok.token = TOKequal;
+								token.value = TOKequal;
 						} else
-							rettok.token = TOKassign;
-						return rettok;
+							token.value = TOKassign;
+						return token.value;
 
 					case '<':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							rettok.token = TOKle;			// <=
+							token.value = TOKle;			// <=
 						} else if (file[p] == '<') {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								rettok.token = TOKshlass;		// <<=
+								token.value = TOKshlass;		// <<=
 							} else
-								rettok.token = TOKshl;		// <<
+								token.value = TOKshl;		// <<
 						} else if (file[p] == '>') {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								rettok.token = TOKleg;		// <>=
+								token.value = TOKleg;		// <>=
 							} else
-								rettok.token = TOKlg;		// <>
+								token.value = TOKlg;		// <>
 						} else
-							rettok.token = TOKlt;			// <
-						return rettok;
+							token.value = TOKlt;			// <
+						return token.value;
 
 					case '>':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							rettok.token = TOKge;			// >=
+							token.value = TOKge;			// >=
 						} else if (file[p] == '>') {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								rettok.token = TOKshrass;		// >>=
+								token.value = TOKshrass;		// >>=
 							} else if (file[p] == '>') {
 								++p;
 								if (file[p] == '=') {
 									++p;
-									rettok.token = TOKushrass;	// >>>=
+									token.value = TOKushrass;	// >>>=
 								} else
-									rettok.token = TOKushr;		// >>>
+									token.value = TOKushr;		// >>>
 							} else
-								rettok.token = TOKshr;		// >>
+								token.value = TOKshr;		// >>
 						} else
-							rettok.token = TOKgt;			// >
-						return rettok;
+							token.value = TOKgt;			// >
+						return token.value;
 
 					case '!':
 						++p;
@@ -686,91 +714,91 @@ class DLexer {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								rettok.token = TOKnotidentity;	// !==
+								token.value = TOKnotidentity;	// !==
 							} else
-								rettok.token = TOKnotequal;		// !=
+								token.value = TOKnotequal;		// !=
 						} else if (file[p] == '<') {
 							++p;
 							if (file[p] == '>') {
 								++p;
 								if (file[p] == '=') {
 									++p;
-									rettok.token = TOKunord; // !<>=
+									token.value = TOKunord; // !<>=
 								} else
-									rettok.token = TOKue;	// !<>
+									token.value = TOKue;	// !<>
 							} else if (file[p] == '=') {
 								++p;
-								rettok.token = TOKug;	// !<=
+								token.value = TOKug;	// !<=
 							} else
-								rettok.token = TOKuge;	// !<
+								token.value = TOKuge;	// !<
 						} else if (file[p] == '>') {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								rettok.token = TOKul;	// !>=
+								token.value = TOKul;	// !>=
 							} else
-								rettok.token = TOKule;	// !>
+								token.value = TOKule;	// !>
 						} else
-							rettok.token = TOKnot;		// !
-						return rettok;
+							token.value = TOKnot;		// !
+						return token.value;
 
 					case '*':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							rettok.token = TOKmulass;
+							token.value = TOKmulass;
 						} else
-							rettok.token = TOKmul;
-						return rettok;
+							token.value = TOKmul;
+						return token.value;
 					case '%':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							rettok.token = TOKmodass;
+							token.value = TOKmodass;
 						} else
-							rettok.token = TOKmod;
-						return rettok;
+							token.value = TOKmod;
+						return token.value;
 					case '^':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							rettok.token = TOKxorass;
+							token.value = TOKxorass;
 						} else
-							rettok.token = TOKxor;
-						return rettok;
+							token.value = TOKxor;
+						return token.value;
 					case '~':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							rettok.token = TOKcatass;
+							token.value = TOKcatass;
 						} else
-							rettok.token = TOKtilde;
-						return rettok;
+							token.value = TOKtilde;
+						return token.value;
 
-					case '(': ++p; rettok.token = TOKlparen; return rettok;
-					case ')': ++p; rettok.token = TOKrparen; return rettok;
+					case '(': ++p; token.value = TOKlparen; return token.value;
+					case ')': ++p; token.value = TOKrparen; return token.value;
 					case '[':
 						++p;
 						if (file[p] == ']') {
 							++p;
-							rettok.token = TOKarray;
+							token.value = TOKarray;
 						} else
-							rettok.token = TOKlbracket;
-						return rettok;
-					case ']': ++p; rettok.token = TOKrbracket; return rettok;
-					case '{': ++p; rettok.token = TOKlcurly; return rettok;
-					case '}': ++p; rettok.token = TOKrcurly; return rettok;
-					case ':': ++p; rettok.token = TOKcolon; return rettok;
-					case ';': ++p; rettok.token = TOKsemicolon; return rettok;
-					case '?': ++p; rettok.token = TOKquestion; return rettok;
-					case ',': ++p; rettok.token = TOKcomma; return rettok;
+							token.value = TOKlbracket;
+						return token.value;
+					case ']': ++p; token.value = TOKrbracket; return token.value;
+					case '{': ++p; token.value = TOKlcurly; return token.value;
+					case '}': ++p; token.value = TOKrcurly; return token.value;
+					case ':': ++p; token.value = TOKcolon; return token.value;
+					case ';': ++p; token.value = TOKsemicolon; return token.value;
+					case '?': ++p; token.value = TOKquestion; return token.value;
+					case ',': ++p; token.value = TOKcomma; return token.value;
 
 					case '/':
 						++p;
 						switch (file[p]) {
 							case '=':
-								rettok.token = TOKdivass;
-								return rettok;
+								token.value = TOKdivass;
+								return token.value;
 
 							case '/':
 								// single-line // comment:
@@ -827,8 +855,8 @@ class DLexer {
 								break;
 
 							default:
-								rettok.token = TOKdiv;
-								return rettok;
+								token.value = TOKdiv;
+								return token.value;
 						}
 						break;
 
@@ -853,17 +881,17 @@ class DLexer {
 								}
 								++p;
 								++p;
-								rettok.token = TOKcharv;
-								rettok.ident = tok;
-								return rettok;
+								token.value = TOKcharv;
+								token.ustring = tok;
+								return token.value;
 							} else {
 								tok.length = 1;
 								tok[0] = file[p];
 								++p;
 								++p;
-								rettok.token = TOKcharv;
-								rettok.ident = tok;
-								return rettok;
+								token.value = TOKcharv;
+								token.ustring = tok;
+								return token.value;
 							}
 						} else {
 							// Just copy over the escape strings:
@@ -877,10 +905,10 @@ class DLexer {
 								}
 								++p;
 							}
-							rettok.ident = file[start .. p];
-							rettok.token = TOKcharv;
+							token.ustring = file[start .. p];
+							token.value = TOKcharv;
 							++p;
-							return rettok;
+							return token.value;
 						}
 					}
 
@@ -918,11 +946,11 @@ class DLexer {
 									++p;
 								}
 							}
-							rettok.token = TOKstring;
+							token.value = TOKstring;
 							tok.length = l;
-							rettok.ident = tok;
+							token.ustring = tok;
 							++p;
-							return rettok;
+							return token.value;
 						} else {
 							// Just copy over the escape strings:
 							++p;
@@ -935,10 +963,10 @@ class DLexer {
 								}
 								++p;
 							}
-							rettok.token = TOKstring;
-							rettok.ident = file[start .. p];
+							token.value = TOKstring;
+							token.ustring = file[start .. p];
 							++p;
-							return rettok;
+							return token.value;
 						}
 					}
 
@@ -951,9 +979,9 @@ class DLexer {
 							goto case_ident;
 						}
 					case '`':
-						rettok.token = TOKstring;
-						rettok.ident = wysiwygString(file[p]);
-						return rettok;
+						token.value = TOKstring;
+						token.ustring = wysiwygString(file[p]);
+						return token.value;
 
 					case 'x':
 						// HEX string?
@@ -962,9 +990,9 @@ class DLexer {
 							start = p - 1;
 							goto case_ident;
 						}
-						rettok.token = TOKstring;
-						rettok.ident = hexString();
-						return rettok;
+						token.value = TOKstring;
+						token.ustring = hexString();
+						return token.value;
 
 					// Identifier start with _ or a-z,A-Z:
 					case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
@@ -986,17 +1014,25 @@ class DLexer {
 						// Checks for the identifier in the keyword list, returns null if not there:
 						char[] tok = file[start .. p];
 						if (tok in keywords) {
-							rettok.token = keywords[tok];
+							token.value = keywords[tok];
 						} else {
-							rettok.token = TOKidentifier;
-							rettok.ident = file[start .. p];
+							token.value = TOKidentifier;
+							// Check for the identifier in the list:
+							if (tok in identifiers) {
+								// Use that.
+								token.ident = identifiers[tok];
+							} else {
+								// Make a new one.
+								token.ident = new Identifier(tok, 0);
+								identifiers[tok] = token.ident;
+							}
 						}
-						return rettok;
+						return token.value;
 
 					// Numeric literal:
 					case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9': {
-						rettok = number();
-						return rettok;
+						number();
+						return token.value;
 					}
 
 					default:
@@ -1004,18 +1040,17 @@ class DLexer {
 				}
 			}
 
-			return null;
+			return 0;
 		}
 
-		Token*	inreal() {
+		// Parse a real number:
+		uint	inreal() {
 			printf("inreal\n");
-			return new Token;
+			return TOKfloat80v;
 		}
 
 		// Parse a number and return the associated value:
-		Token*	number() {
-			Token*	rettok = null;
-
+		uint	number() {
 			// We use a state machine to collect numbers
 			enum : uint { STATE_initial, STATE_0, STATE_decimal, STATE_octal, STATE_octale,
 			STATE_hex, STATE_binary, STATE_hex0, STATE_binary0,
@@ -1118,7 +1153,7 @@ class DLexer {
 							if (c == 'P' || c == 'p' || c == 'i')
 								goto realnum;
 							if (state == STATE_hex0)
-								throw new DLexerException(this, format("Hex digit expected, not '%c'", c));
+								error(format("Hex digit expected, not '%c'", c));
 							goto done;
 						}
 						state = STATE_hex;
@@ -1150,7 +1185,7 @@ class DLexer {
 								continue;
 							}
 							if (state == STATE_binary0) {
-								throw new DLexerException(this, "binary digit expected");
+								error("binary digit expected");
 								state = STATE_error;
 								break;
 							} else
@@ -1176,7 +1211,7 @@ class DLexer {
 done:
 			s.length = i;
 			if (state == STATE_octale)
-				throw new DLexerException(this, "Octal digit expected");
+				error("Octal digit expected");
 
 			if ((i == 1) && (state == STATE_decimal || state == STATE_0))
 				n = s[0] - '0';
@@ -1208,7 +1243,7 @@ done:
 					if (d >= r)
 						break;
 					if (n * r + d < n) {
-						throw new DLexerException(this, "integer overflow");
+						error("integer overflow");
 						break;
 					}
 
@@ -1218,7 +1253,7 @@ done:
 			}
 
 			// Parse trailing 'u', 'U', 'l' or 'L' in any combination
-			while (1) {
+			while (p < file.length) {
 				uint	f;
 
 				switch (file[p]) {
@@ -1232,7 +1267,7 @@ done:
 				L1:
 						++p;
 						if (flags & f)
-							throw new DLexerException(this, "unrecognized token");
+							error("unrecognized token");
 						flags = (flags | f);
 						continue;
 
@@ -1242,70 +1277,69 @@ done:
 				break;
 			}
 
-			rettok = new Token;
 			switch (flags) {
 				case 0:
 					if (n & 0x8000000000000000L)
-						rettok.token = TOKuns64v;
+						token.value = TOKuns64v;
 					else if (n & 0xFFFFFFFF00000000L)
-						rettok.token = TOKint64v;
+						token.value = TOKint64v;
 					else if (n & 0x80000000)
-						rettok.token = TOKuns32v;
+						token.value = TOKuns32v;
 					else
-						rettok.token = TOKint32v;
+						token.value = TOKint32v;
 					break;
 
 				case FLAGS_decimal:
 					if (n & 0x8000000000000000L) {
-						throw new DLexerException(this, "signed integer overflow");
-						rettok.token = TOKuns64v;
+						error("signed integer overflow");
+						token.value = TOKuns64v;
 					}
 					else if (n & 0xFFFFFFFF80000000L)
-						rettok.token = TOKint64v;
+						token.value = TOKint64v;
 					else
-						rettok.token = TOKint32v;
+						token.value = TOKint32v;
 					break;
 
 				case FLAGS_unsigned:
 				case FLAGS_decimal | FLAGS_unsigned:
 					if (n & 0xFFFFFFFF00000000L)
-						rettok.token = TOKuns64v;
+						token.value = TOKuns64v;
 					else
-						rettok.token = TOKuns32v;
+						token.value = TOKuns32v;
 					break;
 
 				case FLAGS_decimal | FLAGS_long:
 					if (n & 0x8000000000000000L) {
-						throw new DLexerException(this, "signed integer overflow");
-						rettok.token = TOKuns64v;
+						error("signed integer overflow");
+						token.value = TOKuns64v;
 					} else
-						rettok.token = TOKint64v;
+						token.value = TOKint64v;
 					break;
 
 				case FLAGS_long:
 					if (n & 0x8000000000000000L)
-						rettok.token = TOKuns64v;
+						token.value = TOKuns64v;
 					else
-						rettok.token = TOKint64v;
+						token.value = TOKint64v;
 					break;
 
 				case FLAGS_unsigned | FLAGS_long:
 				case FLAGS_decimal | FLAGS_unsigned | FLAGS_long:
-					rettok.token = TOKuns64v;
+					token.value = TOKuns64v;
 					break;
 
 				default:
 					assert(0);
 			}
 
-			rettok.uns64value = n;
-			return rettok;
+			token.uns64value = n;
+			return token.value;
 		}
 
 		// Only peek at the next token, don't consume it:
-		Token*	peekToken() {
+		uint	peekToken() {
 			uint	savep = p, saveline = line;
-			Token*	tok = nextToken();
+			uint	tok = nextToken();
 			p = savep;
 			line = saveline;
 
