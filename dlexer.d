@@ -11,6 +11,8 @@ import	std.stream;
 import	std.string;
 import	std.ctype;
 
+alias std.ctype.isdigit isdigit;
+
 // Set this version identifier to enable interpretation of escaped characters within parsed strings
 // If this is disabled, the strings are copied directly, escape sequences and all.
 
@@ -114,7 +116,7 @@ enum : uint {
 
 	// Testing
 	TOKunittest,
-	
+
 	TOKmax
 }
 
@@ -181,7 +183,7 @@ char[]	toktostr[TOKmax] = [
 
 	// NCEG floating point compares
 	// !<>=     <>    <>=    !>     !>=   !<     !<=   !<>
-	
+
 	// NOTE:  These could be horribly wrong
 	TOKunord : "!<>=",
 	TOKue : "!<>",
@@ -277,10 +279,21 @@ char[]	toktostr[TOKmax] = [
 
 // A language token:
 struct Token {
-	// The identifier or value of the token:
-	char[]	ident;
 	// The kind of token:
 	uint	token;
+	union {
+		// The identifier or value of the token:
+		char[]	ident;
+
+		// Integers
+		int 	int32value;
+		uint	uns32value;
+		long	int64value;
+		ulong	uns64value;
+
+		// Floats
+		real	float80value;
+	}
 }
 
 // Exception thrown during parsing of D language:
@@ -290,6 +303,12 @@ class DLexerException : Error {
 			// Construct an error message with the filename and line number:
 			super(dlx.filename ~ "(" ~ format("%d", dlx.line) ~ ")" ~ ": " ~ msg);
 		}
+}
+
+// Check for octal digit:
+int isodigit(dchar x) {
+	if (!isdigit(x) || (x == '8') || (x == '9')) return 0;
+	return -1;
 }
 
 // The D language lexer (tokenizer):
@@ -407,13 +426,105 @@ class DLexer {
 		char[]	file;		// The input file
 		uint	p;			// Current character
 
-		// TODO:
-		char[]	wysiwygString() {
-			return null;
+		// Test this!
+		char[]	wysiwygString(char tc) {
+			char	c;
+			char[]	s;
+			uint	i;
+
+			i = 0;
+			++p;
+			s.length = 16;
+			while (p < file.length) {
+				c = file[p++];
+				switch (c) {
+					case '\n':
+						++line;
+						break;
+
+					case '\r':
+						if (file[p] == '\n')
+							continue;	// ignore
+						c = '\n';	// treat EndOfLine as \n character
+						++line;
+						break;
+
+					case 0x1A:
+						throw new DLexerException(this, format("unterminated string constant starting at %s", s));
+						return null;
+
+					case '"', '`':
+						if (c == tc) {
+							s.length = i;
+							return s;
+						}
+						break;
+
+					default:
+						break;
+				}
+
+				if (i == s.length) s.length = s.length * 2;
+				s[i++] = c;
+			}
+			s.length = i;
+			return s;
 		}
 
-		// TODO:
+		// Test this!
 		char[]	hexString() {
+			char	c;
+			uint	n = 0, i = 0;
+			char[]	s;
+			ubyte	v;
+
+			p++;
+			s.length = 16;
+			while (p < file.length) {
+				c = file[p++];
+				switch (c) {
+					case ' ', '\t', '\v', '\f':
+						continue;			// skip white space
+
+					case '\r':
+						if (file[p] == '\n')
+							continue;			// ignore
+						// Treat isolated '\r' as if it were a '\n'
+					case '\n':
+						++line;
+						continue;
+
+					case 0x1A:
+						throw new DLexerException(this, format("unterminated string constant starting at %s", s));
+						return null;
+
+					case '"':
+						if (n & 1) {
+							throw new DLexerException(this, format("odd number (%d) of hex characters in hex string", n));
+							return null;
+						}
+						s.length = i;
+						return s;
+
+					default:
+						if (c >= '0' && c <= '9')
+							c -= '0';
+						else if (c >= 'a' && c <= 'f')
+							c -= 'a' - 10;
+						else if (c >= 'A' && c <= 'F')
+							c -= 'A' - 10;
+						else
+							throw new DLexerException(this, format("non-hex character '%c'", c));
+						if (n & 1) {
+							v = (v << 4) | c;
+							if (i == s.length) s.length = s.length * 2;
+							s[i++] = v;
+						} else
+							v = c;
+						++n;
+						break;
+				}
+			}
 			return null;
 		}
 
@@ -461,7 +572,6 @@ class DLexer {
 						} else
 							rettok.token = TOKdot;
 						return rettok;
-						break;
 
 					case '&':
 						++p;
@@ -840,11 +950,12 @@ class DLexer {
 							start = p - 1;
 							goto case_ident;
 						}
+					case '`':
 						rettok.token = TOKstring;
-						rettok.ident = wysiwygString();
+						rettok.ident = wysiwygString(file[p]);
 						return rettok;
 
-					case 'h':
+					case 'x':
 						// HEX string?
 						++p;
 						if (file[p] != '\"') {
@@ -856,8 +967,8 @@ class DLexer {
 						return rettok;
 
 					// Identifier start with _ or a-z,A-Z:
-					case 'a', 'b', 'c', 'd', 'e', 'f', 'g',      'i', 'j', 'k', 'l',
-						 'm', 'n', 'o', 'p', 'q',      's', 't', 'u', 'v', 'w', 'x',
+					case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+						 'm', 'n', 'o', 'p', 'q',      's', 't', 'u', 'v', 'w',
 						 'y', 'z':
 					case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
 						 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
@@ -883,19 +994,10 @@ class DLexer {
 						return rettok;
 
 					// Numeric literal:
-					case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-						// FIXME!!
-						// TODO: Handle binary, hex, octal, decimal, float, etc.
-						start = p;
-						while (p < file.length) {
-							if (!isalnum(file[p])) break;
-							++p;
-						}
-
-						// Default to an int32v token for any number:
-						rettok.token = TOKint32v;
-						rettok.ident = file[start .. p];
+					case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9': {
+						rettok = number();
 						return rettok;
+					}
 
 					default:
 						++p;
@@ -903,6 +1005,301 @@ class DLexer {
 			}
 
 			return null;
+		}
+
+		Token*	inreal() {
+			printf("inreal\n");
+			return new Token;
+		}
+
+		// Parse a number and return the associated value:
+		Token*	number() {
+			Token*	rettok = null;
+
+			// We use a state machine to collect numbers
+			enum : uint { STATE_initial, STATE_0, STATE_decimal, STATE_octal, STATE_octale,
+			STATE_hex, STATE_binary, STATE_hex0, STATE_binary0,
+			STATE_hexh, STATE_error };
+			uint	state;
+
+			enum : uint {
+				FLAGS_decimal  = 1,		// decimal
+				FLAGS_unsigned = 2,		// u or U suffix
+				FLAGS_long     = 4,		// l or L suffix
+			};
+			uint	flags = FLAGS_decimal;
+
+			uint 	i;
+			int 	base;
+			char	c;
+			char[]	s;
+
+			uint	start;
+			ulong	n;
+
+			state = STATE_initial;
+			base = 0;
+
+			s.length = 8;
+
+			start = p;
+			i = 0;
+			while (p < file.length) {
+				c = file[p];
+				switch (state) {
+					case STATE_initial:		// opening state
+						if (c == '0')
+							state = STATE_0;
+						else
+							state = STATE_decimal;
+						break;
+
+					case STATE_0:
+						flags = (flags & ~FLAGS_decimal);
+						switch (c) {
+							case 'X':
+							case 'x':
+								state = STATE_hex0;
+								break;
+							case '.':
+								if (file[p+1] == '.')	// .. is a separate token
+									goto done;
+							case 'i':
+							case 'f':
+							case 'F':
+								goto realnum;
+							case 'B':
+							case 'b':
+								state = STATE_binary0;
+								break;
+
+							case '0': case '1': case '2': case '3':
+							case '4': case '5': case '6': case '7':
+								state = STATE_octal;
+								break;
+
+							case '_':
+								state = STATE_octal;
+								++p;
+								continue;
+
+							default:
+								goto done;
+						}
+						break;
+
+					case STATE_decimal:		// reading decimal number
+						if (!isdigit(c)) {
+							if (c == '_') {	// ignore embedded _
+								++p;
+								continue;
+							}
+							if (c == '.' && file[p+1] != '.')
+								goto realnum;
+							else if (c == 'i' || c == 'f' || c == 'F' ||
+								 c == 'e' || c == 'E') {
+						realnum:	// It's a real number. Back up and rescan as a real
+								p = start;
+								return inreal();
+							}
+							goto done;
+						}
+						break;
+
+					case STATE_hex0:		// reading hex number
+					case STATE_hex:
+						if (!isxdigit(c)) {
+							if (c == '_') {	// ignore embedded _
+								++p;
+								continue;
+							}
+							if (c == '.' && file[p+1] != '.')
+								goto realnum;
+							if (c == 'P' || c == 'p' || c == 'i')
+								goto realnum;
+							if (state == STATE_hex0)
+								throw new DLexerException(this, format("Hex digit expected, not '%c'", c));
+							goto done;
+						}
+						state = STATE_hex;
+						break;
+
+					case STATE_octal:		// reading octal number
+					case STATE_octale:		// reading octal number with non-octal digits
+						if (!isodigit(c)) {
+							if (c == '_') {	// ignore embedded _
+								++p;
+								continue;
+							}
+							if (c == '.' && file[p+1] != '.')
+								goto realnum;
+							if (c == 'i')
+								goto realnum;
+							if (isdigit(c))
+								state = STATE_octale;
+							else
+								goto done;
+						}
+						break;
+
+					case STATE_binary0:		// starting binary number
+					case STATE_binary:		// reading binary number
+						if (c != '0' && c != '1') {
+							if (c == '_') {	// ignore embedded _
+								++p;
+								continue;
+							}
+							if (state == STATE_binary0) {
+								throw new DLexerException(this, "binary digit expected");
+								state = STATE_error;
+								break;
+							} else
+								goto done;
+						}
+						state = STATE_binary;
+						break;
+
+					case STATE_error:		// for error recovery
+						if (!isdigit(c))	// scan until non-digit
+							goto done;
+						break;
+
+					default:
+						assert(0);
+				}
+
+				if (i == s.length) s.length = s.length * 2;
+				s[i++] = c;
+				++p;
+			}
+
+done:
+			s.length = i;
+			if (state == STATE_octale)
+				throw new DLexerException(this, "Octal digit expected");
+
+			if ((i == 1) && (state == STATE_decimal || state == STATE_0))
+				n = s[0] - '0';
+			else {
+				// Convert string to integer
+				int	q = 0;
+				int r = 10, d;
+
+				if (s[q] == '0') {
+					if (s[q+1] == 'x' || s[q+1] == 'X') {
+						q += 2, r = 16;
+					} else if (s[q+1] == 'b' || s[q+1] == 'B') {
+						q += 2, r = 2;
+					} else if (isdigit(s[q+1])) {
+						q += 1, r = 8;
+					}
+				}
+
+				n = 0;
+				while (q < s.length) {
+					if (s[q] >= '0' && s[q] <= '9')
+						d = s[q] - '0';
+					else if (s[q] >= 'a' && s[q] <= 'z')
+						d = s[q] - 'a' + 10;
+					else if (s[q] >= 'A' && s[q] <= 'Z')
+						d = s[q] - 'A' + 10;
+					else
+						break;
+					if (d >= r)
+						break;
+					if (n * r + d < n) {
+						throw new DLexerException(this, "integer overflow");
+						break;
+					}
+
+					n = n * r + d;
+					++q;
+				}
+			}
+
+			// Parse trailing 'u', 'U', 'l' or 'L' in any combination
+			while (1) {
+				uint	f;
+
+				switch (file[p]) {
+					case 'U':
+					case 'u':
+						f = FLAGS_unsigned;
+						goto L1;
+					case 'L':
+					case 'l':
+						f = FLAGS_long;
+				L1:
+						++p;
+						if (flags & f)
+							throw new DLexerException(this, "unrecognized token");
+						flags = (flags | f);
+						continue;
+
+					default:
+						break;
+				}
+				break;
+			}
+
+			rettok = new Token;
+			switch (flags) {
+				case 0:
+					if (n & 0x8000000000000000L)
+						rettok.token = TOKuns64v;
+					else if (n & 0xFFFFFFFF00000000L)
+						rettok.token = TOKint64v;
+					else if (n & 0x80000000)
+						rettok.token = TOKuns32v;
+					else
+						rettok.token = TOKint32v;
+					break;
+
+				case FLAGS_decimal:
+					if (n & 0x8000000000000000L) {
+						throw new DLexerException(this, "signed integer overflow");
+						rettok.token = TOKuns64v;
+					}
+					else if (n & 0xFFFFFFFF80000000L)
+						rettok.token = TOKint64v;
+					else
+						rettok.token = TOKint32v;
+					break;
+
+				case FLAGS_unsigned:
+				case FLAGS_decimal | FLAGS_unsigned:
+					if (n & 0xFFFFFFFF00000000L)
+						rettok.token = TOKuns64v;
+					else
+						rettok.token = TOKuns32v;
+					break;
+
+				case FLAGS_decimal | FLAGS_long:
+					if (n & 0x8000000000000000L) {
+						throw new DLexerException(this, "signed integer overflow");
+						rettok.token = TOKuns64v;
+					} else
+						rettok.token = TOKint64v;
+					break;
+
+				case FLAGS_long:
+					if (n & 0x8000000000000000L)
+						rettok.token = TOKuns64v;
+					else
+						rettok.token = TOKint64v;
+					break;
+
+				case FLAGS_unsigned | FLAGS_long:
+				case FLAGS_decimal | FLAGS_unsigned | FLAGS_long:
+					rettok.token = TOKuns64v;
+					break;
+
+				default:
+					assert(0);
+			}
+
+			rettok.uns64value = n;
+			return rettok;
 		}
 
 		// Only peek at the next token, don't consume it:

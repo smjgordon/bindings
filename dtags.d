@@ -58,12 +58,17 @@ struct DVar {
 // An enumeration:
 struct DEnum {
 	char[]		name;
-	uint		type;			// type of values in enumeration
+	uint		type;			// type of values in enumeration (TOKint32, TOKuns32, ...)
 
 	struct enumValue {
 		char[]	name;
-		char[]	value;
-	}
+		union {
+			int		int32value;
+			uint	uns32value;
+			long	int64value;
+			ulong	uns64value;
+		};
+	};
 	enumValue[]	values;
 };
 
@@ -671,6 +676,15 @@ class DTags : DLexer {
 			Token*		tok;
 			DEnum*		en = new DEnum;
 			int			i;
+			bool		negative;
+			// Keep track of the enumeration value:
+			union integraltype {
+				int		int32value;
+				uint	uns32value;
+				long	int64value;
+				ulong	uns64value;
+			};
+			integraltype	m;
 
 			tok = nextToken();
 			// Anonymous enums allowed:
@@ -687,11 +701,13 @@ class DTags : DLexer {
 					} else throw new DLexerException(this, "expected type after ':'");
 					tok = nextToken();
 				}
-			} else if (isType(tok.token)) {
-				// enum type :
-				en.type = tok.token;
-				expect(TOKcolon, "':'");
+			} else if (tok.token == TOKcolon) {
 				tok = nextToken();
+				if (isType(tok.token)) {
+					// enum : type
+					en.type = tok.token;
+					tok = nextToken();
+				} else throw new DLexerException(this, "expected type after ':'");
 			}
 
 			// We should be at a curly:
@@ -712,14 +728,59 @@ class DTags : DLexer {
 				// An assignment or comma
 				tok = nextToken();
 				if (tok.token == TOKassign) {
+					negative = false;
+
 					for (;;) {
 						tok = nextToken();
-						if (tok.token == TOKcomma) break;
-						else if (tok.token == TOKrcurly) break;
+						if ((tok.token == TOKcomma) || (tok.token == TOKrcurly)) break;
 
-						if (tok.token == TOKidentifier) ev.value ~= tok.ident;
-						else if (tok.token == TOKint32v) ev.value ~= tok.ident;
-						else ev.value ~= toktostr[tok.token];
+						if (tok.token == TOKmin) {
+							// Negative number:
+							negative = true;
+						} else {
+							// Specified enumeration value:
+							switch (en.type) {
+								case TOKint8, TOKint16, TOKint32:
+									m.int32value = (ev.int32value = tok.int32value) + 1;
+									break;
+								case TOKuns8, TOKuns16, TOKuns32:
+									m.uns32value = (ev.uns32value = tok.uns32value) + 1;
+									break;
+								case TOKint64:
+									m.int64value = (ev.int64value = tok.int64value) + 1;
+									break;
+								case TOKuns64:
+									m.uns64value = (ev.uns64value = tok.uns64value) + 1;
+									break;
+							}
+						}
+					}
+					// Set negative?
+					if (negative) {
+						switch (en.type) {
+							case TOKint8, TOKint16, TOKint32:
+								m.int32value = (ev.int32value = -ev.int32value) + 1;
+								break;
+							case TOKint64:
+								m.int64value = (ev.int64value = -ev.int64value) + 1;
+								break;
+						}
+					}
+				} else {
+					// Not given a value, make it default 1 + the last value:
+					switch (en.type) {
+						case TOKint8, TOKint16, TOKint32:
+							m.int32value = (ev.int32value = m.int32value) + 1;
+							break;
+						case TOKuns8, TOKuns16, TOKuns32:
+							m.uns32value = (ev.uns32value = m.uns32value) + 1;
+							break;
+						case TOKint64:
+							m.int64value = (ev.int64value = m.int64value) + 1;
+							break;
+						case TOKuns64:
+							m.uns64value = (ev.uns64value = m.uns64value) + 1;
+							break;
 					}
 				}
 
@@ -756,8 +817,16 @@ class DTags : DLexer {
 						printf(`'%.*s' `, tok.ident);
 					else if (tok.token == TOKstring)
 						printf(`"%.*s" `, tok.ident);
+					// Numbers:
 					else if (tok.token == TOKint32v)
-						printf(`%.*s `, tok.ident);
+						printf(`%ld `, tok.int32value);
+					else if (tok.token == TOKuns32v)
+						printf(`%ud `, tok.uns32value);
+					else if (tok.token == TOKint64v)
+						printf(`%ld `, tok.int64value);
+					else if (tok.token == TOKuns64v)
+						printf(`%lud `, tok.uns64value);
+					// Just a regular token:
 					else
 						printf(`%.*s `, toktostr[tok.token]);
 
@@ -765,7 +834,7 @@ class DTags : DLexer {
 
 					// Indentation:
 					if (!(ntok is null))
-						if (peekToken().token == TOKrcurly)
+						if (ntok.token == TOKrcurly)
 							--indent;
 
 					if (tok.token == TOKlcurly) {
@@ -969,6 +1038,11 @@ class DTags : DLexer {
 							dmodule.enums[length - 1] = st;
 							break;
 						}
+						
+						case TOKalias: {
+							while (nextToken().token != TOKsemicolon) { }
+							break;
+						}
 
 						default:
 					}
@@ -1098,11 +1172,27 @@ int main(char[][] args) {
 	// Enums:
 	foreach (DEnum* en; lex.dmodule.enums) {
 		printf("\tenum %.*s {\n", en.name);
-		foreach (DEnum.enumValue ev; en.values) {
-			if (ev.value is null)
-				printf("\t\t%.*s,\n", ev.name);
-			else
-				printf("\t\t%.*s = %.*s,\n", ev.name, ev.value);
+		switch (en.type) {
+			case TOKint8, TOKint16, TOKint32:
+				foreach (DEnum.enumValue ev; en.values) {
+					printf("\t\t%.*s = %d,\n", ev.name, ev.int32value);
+				}
+				break;
+			case TOKuns8, TOKuns16, TOKuns32:
+				foreach (DEnum.enumValue ev; en.values) {
+					printf("\t\t%.*s = %u,\n", ev.name, ev.uns32value);
+				}
+				break;
+			case TOKint64:
+				foreach (DEnum.enumValue ev; en.values) {
+					printf("\t\t%.*s = %ld,\n", ev.name, ev.int64value);
+				}
+				break;
+			case TOKuns64:
+				foreach (DEnum.enumValue ev; en.values) {
+					printf("\t\t%.*s = %lu,\n", ev.name, ev.uns64value);
+				}
+				break;
 		}
 		printf("\t}\n\n");
 	}
