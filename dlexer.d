@@ -11,6 +11,8 @@ import	std.stream;
 import	std.string;
 import	std.ctype;
 
+private import std.c.stdlib;	// for strtod and strtold
+
 alias std.ctype.isdigit isdigit;
 
 // Set this version identifier to enable interpretation of escaped characters within parsed strings
@@ -288,14 +290,15 @@ class Identifier {
 };
 
 // A language token:
-struct Token {
+class Token {
 	// The kind of token:
 	uint	value;
+	Token	next;
 
 	// The value for the token:
 	union {
 		// The identifier or value of the token:
-		Identifier*	ident;
+		Identifier	ident;
 
 		char[]		ustring;
 
@@ -310,7 +313,11 @@ struct Token {
 	};
 
 	char[] toString() {
-		return toktostr[token];
+		return toktostr[value];
+	};
+
+	static char[] toChars(uint value) {
+		return toktostr[value];
 	};
 }
 
@@ -327,6 +334,14 @@ class DLexerException : Error {
 int isodigit(dchar x) {
 	if (!isdigit(x) || (x == '8') || (x == '9')) return 0;
 	return -1;
+}
+
+class Loc {
+	public:
+		int	linnum;
+
+		this() {
+		}
 }
 
 // The D language lexer (tokenizer):
@@ -442,7 +457,8 @@ class DLexer {
 
 	protected:
 		Token				token;
-		Identifier*[char[]]	identifiers;
+		Identifier[char[]]	identifiers;
+		Loc					loc;
 
 	private:
 		char[]	file;		// The input file
@@ -471,7 +487,7 @@ class DLexer {
 						break;
 
 					case 0x1A:
-						error(format("unterminated string constant starting at %s", s));
+						error("unterminated string constant starting at %s", s);
 						return null;
 
 					case '"', '`':
@@ -516,12 +532,12 @@ class DLexer {
 						continue;
 
 					case 0x1A:
-						error(format("unterminated string constant starting at %s", s));
+						error("unterminated string constant starting at %s", s);
 						return null;
 
 					case '"':
 						if (n & 1) {
-							error(format("odd number (%d) of hex characters in hex string", n));
+							error("odd number (%d) of hex characters in hex string", n);
 							return null;
 						}
 						s.length = i;
@@ -535,7 +551,7 @@ class DLexer {
 						else if (c >= 'A' && c <= 'F')
 							c -= 'A' - 10;
 						else
-							error(format("non-hex character '%c'", c));
+							error("non-hex character '%c'", c);
 						if (n & 1) {
 							v = (v << 4) | c;
 							if (i == s.length) s.length = s.length * 2;
@@ -561,23 +577,23 @@ class DLexer {
 		}
 
 		// Possible to buffer up errors until some limit n.
-		void error(char[] msg) {
-			throw new DLexerException(this, msg);
+		void error(char[] msg, ...) {
+			throw new DLexerException(this, format(msg, _arguments));
 		}
 
 		// This function consumes a full D language token and returns it in the structure Token:
 		// null is returned if the end of the file is reached.
-		uint	nextToken() {
+		uint	scan(Token t) {
 			uint	start;
 
-			token.ident = null;
-			token.uns64value = 0;
-			token.value = TOKidentifier;
+			t.ident = null;
+			t.uns64value = 0;
+			t.value = TOKidentifier;
 
 			// Past the end of file? Return an EOF token:
 			if (p >= file.length) {
-				token.value = TOKeof;
-				return token.value;
+				t.value = TOKeof;
+				return t.value;
 			}
 
 			// Read up to the next white-space char:
@@ -594,60 +610,60 @@ class DLexer {
 							++p;
 							if (file[p] == '.') {
 								++p;
-								token.value = TOKdotdotdot;
+								t.value = TOKdotdotdot;
 							} else
-								token.value = TOKslice;
+								t.value = TOKslice;
 						} else
-							token.value = TOKdot;
-						return token.value;
+							t.value = TOKdot;
+						return t.value;
 
 					case '&':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							token.value = TOKandass;
+							t.value = TOKandass;
 						} else if (file[p] == '&') {
 							++p;
-							token.value = TOKandand;
+							t.value = TOKandand;
 						} else
-							token.value = TOKand;
-						return token.value;
+							t.value = TOKand;
+						return t.value;
 
 					case '|':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							token.value = TOKorass;
+							t.value = TOKorass;
 						} else if (file[p] == '|') {
 							++p;
-							token.value = TOKoror;
+							t.value = TOKoror;
 						} else
-							token.value = TOKor;
-						return token.value;
+							t.value = TOKor;
+						return t.value;
 
 					case '-':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							token.value = TOKminass;
+							t.value = TOKminass;
 						} else if (file[p] == '-') {
 							++p;
-							token.value = TOKminusminus;
+							t.value = TOKminusminus;
 						} else
-							token.value = TOKmin;
-						return token.value;
+							t.value = TOKmin;
+						return t.value;
 
 					case '+':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							token.value = TOKaddass;
+							t.value = TOKaddass;
 						} else if (file[p] == '+') {
 							++p;
-							token.value = TOKplusplus;
+							t.value = TOKplusplus;
 						} else
-							token.value = TOKadd;
-						return token.value;
+							t.value = TOKadd;
+						return t.value;
 
 					case '=':
 						++p;
@@ -655,58 +671,58 @@ class DLexer {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								token.value = TOKidentity;
+								t.value = TOKidentity;
 							} else
-								token.value = TOKequal;
+								t.value = TOKequal;
 						} else
-							token.value = TOKassign;
-						return token.value;
+							t.value = TOKassign;
+						return t.value;
 
 					case '<':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							token.value = TOKle;			// <=
+							t.value = TOKle;			// <=
 						} else if (file[p] == '<') {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								token.value = TOKshlass;		// <<=
+								t.value = TOKshlass;		// <<=
 							} else
-								token.value = TOKshl;		// <<
+								t.value = TOKshl;		// <<
 						} else if (file[p] == '>') {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								token.value = TOKleg;		// <>=
+								t.value = TOKleg;		// <>=
 							} else
-								token.value = TOKlg;		// <>
+								t.value = TOKlg;		// <>
 						} else
-							token.value = TOKlt;			// <
-						return token.value;
+							t.value = TOKlt;			// <
+						return t.value;
 
 					case '>':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							token.value = TOKge;			// >=
+							t.value = TOKge;			// >=
 						} else if (file[p] == '>') {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								token.value = TOKshrass;		// >>=
+								t.value = TOKshrass;		// >>=
 							} else if (file[p] == '>') {
 								++p;
 								if (file[p] == '=') {
 									++p;
-									token.value = TOKushrass;	// >>>=
+									t.value = TOKushrass;	// >>>=
 								} else
-									token.value = TOKushr;		// >>>
+									t.value = TOKushr;		// >>>
 							} else
-								token.value = TOKshr;		// >>
+								t.value = TOKshr;		// >>
 						} else
-							token.value = TOKgt;			// >
-						return token.value;
+							t.value = TOKgt;			// >
+						return t.value;
 
 					case '!':
 						++p;
@@ -714,91 +730,91 @@ class DLexer {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								token.value = TOKnotidentity;	// !==
+								t.value = TOKnotidentity;	// !==
 							} else
-								token.value = TOKnotequal;		// !=
+								t.value = TOKnotequal;		// !=
 						} else if (file[p] == '<') {
 							++p;
 							if (file[p] == '>') {
 								++p;
 								if (file[p] == '=') {
 									++p;
-									token.value = TOKunord; // !<>=
+									t.value = TOKunord; // !<>=
 								} else
-									token.value = TOKue;	// !<>
+									t.value = TOKue;	// !<>
 							} else if (file[p] == '=') {
 								++p;
-								token.value = TOKug;	// !<=
+								t.value = TOKug;	// !<=
 							} else
-								token.value = TOKuge;	// !<
+								t.value = TOKuge;	// !<
 						} else if (file[p] == '>') {
 							++p;
 							if (file[p] == '=') {
 								++p;
-								token.value = TOKul;	// !>=
+								t.value = TOKul;	// !>=
 							} else
-								token.value = TOKule;	// !>
+								t.value = TOKule;	// !>
 						} else
-							token.value = TOKnot;		// !
-						return token.value;
+							t.value = TOKnot;		// !
+						return t.value;
 
 					case '*':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							token.value = TOKmulass;
+							t.value = TOKmulass;
 						} else
-							token.value = TOKmul;
-						return token.value;
+							t.value = TOKmul;
+						return t.value;
 					case '%':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							token.value = TOKmodass;
+							t.value = TOKmodass;
 						} else
-							token.value = TOKmod;
-						return token.value;
+							t.value = TOKmod;
+						return t.value;
 					case '^':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							token.value = TOKxorass;
+							t.value = TOKxorass;
 						} else
-							token.value = TOKxor;
-						return token.value;
+							t.value = TOKxor;
+						return t.value;
 					case '~':
 						++p;
 						if (file[p] == '=') {
 							++p;
-							token.value = TOKcatass;
+							t.value = TOKcatass;
 						} else
-							token.value = TOKtilde;
-						return token.value;
+							t.value = TOKtilde;
+						return t.value;
 
-					case '(': ++p; token.value = TOKlparen; return token.value;
-					case ')': ++p; token.value = TOKrparen; return token.value;
+					case '(': ++p; t.value = TOKlparen; return t.value;
+					case ')': ++p; t.value = TOKrparen; return t.value;
 					case '[':
 						++p;
 						if (file[p] == ']') {
 							++p;
-							token.value = TOKarray;
+							t.value = TOKarray;
 						} else
-							token.value = TOKlbracket;
-						return token.value;
-					case ']': ++p; token.value = TOKrbracket; return token.value;
-					case '{': ++p; token.value = TOKlcurly; return token.value;
-					case '}': ++p; token.value = TOKrcurly; return token.value;
-					case ':': ++p; token.value = TOKcolon; return token.value;
-					case ';': ++p; token.value = TOKsemicolon; return token.value;
-					case '?': ++p; token.value = TOKquestion; return token.value;
-					case ',': ++p; token.value = TOKcomma; return token.value;
+							t.value = TOKlbracket;
+						return t.value;
+					case ']': ++p; t.value = TOKrbracket; return t.value;
+					case '{': ++p; t.value = TOKlcurly; return t.value;
+					case '}': ++p; t.value = TOKrcurly; return t.value;
+					case ':': ++p; t.value = TOKcolon; return t.value;
+					case ';': ++p; t.value = TOKsemicolon; return t.value;
+					case '?': ++p; t.value = TOKquestion; return t.value;
+					case ',': ++p; t.value = TOKcomma; return t.value;
 
 					case '/':
 						++p;
 						switch (file[p]) {
 							case '=':
-								token.value = TOKdivass;
-								return token.value;
+								t.value = TOKdivass;
+								return t.value;
 
 							case '/':
 								// single-line // comment:
@@ -855,8 +871,8 @@ class DLexer {
 								break;
 
 							default:
-								token.value = TOKdiv;
-								return token.value;
+								t.value = TOKdiv;
+								return t.value;
 						}
 						break;
 
@@ -881,17 +897,17 @@ class DLexer {
 								}
 								++p;
 								++p;
-								token.value = TOKcharv;
-								token.ustring = tok;
-								return token.value;
+								t.value = TOKcharv;
+								t.ustring = tok;
+								return t.value;
 							} else {
 								tok.length = 1;
 								tok[0] = file[p];
 								++p;
 								++p;
-								token.value = TOKcharv;
-								token.ustring = tok;
-								return token.value;
+								t.value = TOKcharv;
+								t.ustring = tok;
+								return t.value;
 							}
 						} else {
 							// Just copy over the escape strings:
@@ -905,10 +921,10 @@ class DLexer {
 								}
 								++p;
 							}
-							token.ustring = file[start .. p];
-							token.value = TOKcharv;
+							t.ustring = file[start .. p];
+							t.value = TOKcharv;
 							++p;
-							return token.value;
+							return t.value;
 						}
 					}
 
@@ -946,11 +962,11 @@ class DLexer {
 									++p;
 								}
 							}
-							token.value = TOKstring;
+							t.value = TOKstring;
 							tok.length = l;
-							token.ustring = tok;
+							t.ustring = tok;
 							++p;
-							return token.value;
+							return t.value;
 						} else {
 							// Just copy over the escape strings:
 							++p;
@@ -963,10 +979,10 @@ class DLexer {
 								}
 								++p;
 							}
-							token.value = TOKstring;
-							token.ustring = file[start .. p];
+							t.value = TOKstring;
+							t.ustring = file[start .. p];
 							++p;
-							return token.value;
+							return t.value;
 						}
 					}
 
@@ -979,9 +995,9 @@ class DLexer {
 							goto case_ident;
 						}
 					case '`':
-						token.value = TOKstring;
-						token.ustring = wysiwygString(file[p]);
-						return token.value;
+						t.value = TOKstring;
+						t.ustring = wysiwygString(file[p]);
+						return t.value;
 
 					case 'x':
 						// HEX string?
@@ -990,9 +1006,9 @@ class DLexer {
 							start = p - 1;
 							goto case_ident;
 						}
-						token.value = TOKstring;
-						token.ustring = hexString();
-						return token.value;
+						t.value = TOKstring;
+						t.ustring = hexString();
+						return t.value;
 
 					// Identifier start with _ or a-z,A-Z:
 					case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
@@ -1014,25 +1030,24 @@ class DLexer {
 						// Checks for the identifier in the keyword list, returns null if not there:
 						char[] tok = file[start .. p];
 						if (tok in keywords) {
-							token.value = keywords[tok];
+							t.value = keywords[tok];
 						} else {
-							token.value = TOKidentifier;
+							t.value = TOKidentifier;
 							// Check for the identifier in the list:
 							if (tok in identifiers) {
 								// Use that.
-								token.ident = identifiers[tok];
+								t.ident = identifiers[tok];
 							} else {
 								// Make a new one.
-								token.ident = new Identifier(tok, 0);
-								identifiers[tok] = token.ident;
+								t.ident = new Identifier(tok, 0);
+								identifiers[tok] = t.ident;
 							}
 						}
-						return token.value;
+						return t.value;
 
 					// Numeric literal:
 					case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9': {
-						number();
-						return token.value;
+						return number(t);
 					}
 
 					default:
@@ -1044,13 +1059,133 @@ class DLexer {
 		}
 
 		// Parse a real number:
-		uint	inreal() {
+		uint	inreal(Token t) {
 			printf("inreal\n");
-			return TOKfloat80v;
+
+			int		dblstate, i;
+			char[]	s;
+			char	c;
+			char	hex;			// is this a hexadecimal-floating-constant?
+			uint	result;
+
+			//printf("Lexer::inreal()\n");
+			i = 0;
+			s.length = 16;
+			dblstate = 0;
+			hex = 0;
+		Lnext:
+			while (p < file.length) {
+				// Get next char from input
+				c = file[p++];
+				while (1) {
+					switch (dblstate) {
+						case 0:			// opening state
+							if (c == '0')
+								dblstate = 9;
+							else
+								dblstate = 1;
+							break;
+				
+						case 9:
+							dblstate = 1;
+							if (c == 'X' || c == 'x') {
+								hex++;
+								break;
+							}
+						case 1:			// digits to left of .
+						case 3:			// digits to right of .
+						case 7:			// continuing exponent digits
+							if (!isdigit(c) && !(hex && isxdigit(c))) {
+								if (c == '_')
+									goto Lnext;	// ignore embedded '_'
+								dblstate++;
+								continue;
+							}
+							break;
+				
+						case 2:			// no more digits to left of .
+							if (c == '.') {
+								dblstate++;
+								break;
+							}
+						case 4:			// no more digits to right of .
+							if ((c == 'E' || c == 'e') || hex && (c == 'P' || c == 'p')) {
+								dblstate = 5;
+								hex = 0;	// exponent is always decimal
+								break;
+							}
+							if (hex)
+								error("binary-exponent-part required");
+							goto done;
+				
+						case 5:			// looking immediately to right of E
+							dblstate++;
+							if (c == '-' || c == '+')
+								break;
+						case 6:			// 1st exponent digit expected
+							if (!isdigit(c))
+								error("exponent expected");
+							dblstate++;
+							break;
+				
+						case 8:			// past end of exponent digits
+							goto done;
+					}
+					break;
+				}
+				if (i == s.length) s.length = s.length * 2;
+				s[i++] = c;
+			}
+		done:
+			p--;
+			s.length = i;
+
+			setErrno(0);
+
+			switch (file[p]) {
+				case 'F':
+				case 'f':
+					t.float80value = strtod(s.ptr, null);
+					result = TOKfloat32v;
+					p++;
+					break;
+
+				default:
+					t.float80value = strtod(s.ptr, null);
+					result = TOKfloat64v;
+					break;
+
+				case 'L':
+				case 'l':
+					t.float80value = strtold(s.ptr, null);
+					result = TOKfloat80v;
+					p++;
+					break;
+			}
+			// Imaginary value:
+			if (file[p] == 'i' || file[p] == 'I') {
+				p++;
+				switch (result)
+				{
+					case TOKfloat32v:
+						result = TOKimaginary32v;
+						break;
+					case TOKfloat64v:
+						result = TOKimaginary64v;
+						break;
+					case TOKfloat80v:
+						result = TOKimaginary80v;
+						break;
+				}
+			}
+			// Standard C:
+			if (getErrno() != 0)	// == ERANGE
+				error("number is not representable");
+			return result;
 		}
 
 		// Parse a number and return the associated value:
-		uint	number() {
+		uint	number(Token t) {
 			// We use a state machine to collect numbers
 			enum : uint { STATE_initial, STATE_0, STATE_decimal, STATE_octal, STATE_octale,
 			STATE_hex, STATE_binary, STATE_hex0, STATE_binary0,
@@ -1135,7 +1270,7 @@ class DLexer {
 								 c == 'e' || c == 'E') {
 						realnum:	// It's a real number. Back up and rescan as a real
 								p = start;
-								return inreal();
+								return inreal(t);
 							}
 							goto done;
 						}
@@ -1153,7 +1288,7 @@ class DLexer {
 							if (c == 'P' || c == 'p' || c == 'i')
 								goto realnum;
 							if (state == STATE_hex0)
-								error(format("Hex digit expected, not '%c'", c));
+								error("Hex digit expected, not '%c'", c);
 							goto done;
 						}
 						state = STATE_hex;
@@ -1280,70 +1415,89 @@ done:
 			switch (flags) {
 				case 0:
 					if (n & 0x8000000000000000L)
-						token.value = TOKuns64v;
+						t.value = TOKuns64v;
 					else if (n & 0xFFFFFFFF00000000L)
-						token.value = TOKint64v;
+						t.value = TOKint64v;
 					else if (n & 0x80000000)
-						token.value = TOKuns32v;
+						t.value = TOKuns32v;
 					else
-						token.value = TOKint32v;
+						t.value = TOKint32v;
 					break;
 
 				case FLAGS_decimal:
 					if (n & 0x8000000000000000L) {
 						error("signed integer overflow");
-						token.value = TOKuns64v;
+						t.value = TOKuns64v;
 					}
 					else if (n & 0xFFFFFFFF80000000L)
-						token.value = TOKint64v;
+						t.value = TOKint64v;
 					else
-						token.value = TOKint32v;
+						t.value = TOKint32v;
 					break;
 
 				case FLAGS_unsigned:
 				case FLAGS_decimal | FLAGS_unsigned:
 					if (n & 0xFFFFFFFF00000000L)
-						token.value = TOKuns64v;
+						t.value = TOKuns64v;
 					else
-						token.value = TOKuns32v;
+						t.value = TOKuns32v;
 					break;
 
 				case FLAGS_decimal | FLAGS_long:
 					if (n & 0x8000000000000000L) {
 						error("signed integer overflow");
-						token.value = TOKuns64v;
+						t.value = TOKuns64v;
 					} else
-						token.value = TOKint64v;
+						t.value = TOKint64v;
 					break;
 
 				case FLAGS_long:
 					if (n & 0x8000000000000000L)
-						token.value = TOKuns64v;
+						t.value = TOKuns64v;
 					else
-						token.value = TOKint64v;
+						t.value = TOKint64v;
 					break;
 
 				case FLAGS_unsigned | FLAGS_long:
 				case FLAGS_decimal | FLAGS_unsigned | FLAGS_long:
-					token.value = TOKuns64v;
+					t.value = TOKuns64v;
 					break;
 
 				default:
 					assert(0);
 			}
 
-			token.uns64value = n;
+			t.uns64value = n;
+			return t.value;
+		}
+
+		uint nextToken() {
+			Token	t;
+
+			if (token.next) {
+				t = token.next;
+				token = t;
+				t.next = null;
+			} else
+				scan(token);
+
 			return token.value;
 		}
 
 		// Only peek at the next token, don't consume it:
-		uint	peekToken() {
-			uint	savep = p, saveline = line;
-			uint	tok = nextToken();
-			p = savep;
-			line = saveline;
+		Token peek(Token ct) {
+			Token	t;
 
-			return tok;
+			if (ct.next) {
+				t = ct.next;
+			} else {
+				t = new Token();
+				scan(t);
+				t.next = null;
+				ct.next = t;
+			}
+
+			return t;
 		}
 
 		// Start the parsing at the beginning of the module:
