@@ -90,44 +90,44 @@ void luaL_argcheck(lua_State *L, bool cond, int numarg, char* extramsg)
       luaL_argerror(L, numarg, extramsg); 
 } 
 
-//#define luaL_checkstring(L,n)	(luaL_checklstring(L, (n), NULL))
+//#define luaL_checkstring(L,n)  (luaL_checklstring(L, (n), NULL))
 char *luaL_checkstring(lua_State *L, int n)
 {
    return luaL_checklstring(L, n, null); 
 }
 
-//#define luaL_optstring(L,n,d)	(luaL_optlstring(L, (n), (d), NULL))
+//#define luaL_optstring(L,n,d)  (luaL_optlstring(L, (n), (d), NULL))
 
 char* luaL_optstring(lua_State *L, int n, char *d)
 {
    return luaL_optlstring(L, n, d, null); 
 }
 
-//#define luaL_checkint(L,n)	((int)luaL_checknumber(L, n))
+//#define luaL_checkint(L,n)  ((int)luaL_checknumber(L, n))
 lua_Number luaL_checkint(lua_State *L, int n)
 {
    return cast(int)luaL_checknumber(L, n);
 }
 
-//#define luaL_checklong(L,n)	((long)luaL_checknumber(L, n))
-lua_Number luaL_checklong(lua_State *L, int n)
+//#define luaL_checkint(L,n)  ((int)luaL_checknumber(L, n))
+lua_Number luaL_checkint(lua_State *L, int n)
 {
-   return cast(long)luaL_checknumber(L, n);
+   return cast(int)luaL_checknumber(L, n);
 }
 
-//#define luaL_optint(L,n,d)	((int)luaL_optnumber(L, n,(lua_Number)(d)))
+//#define luaL_optint(L,n,d)  ((int)luaL_optnumber(L, n,(lua_Number)(d)))
 lua_Number luaL_optint(lua_State *L, int n, lua_Number d)
 {
    return cast(int)luaL_optnumber(L, n, d);
 }
 
-//#define luaL_optlong(L,n,d)	((long)luaL_optnumber(L, n,(lua_Number)(d)))
-lua_Number luaL_optlong(lua_State *L, int n, lua_Number d)
+//#define luaL_optint(L,n,d)  ((int)luaL_optnumber(L, n,(lua_Number)(d)))
+lua_Number luaL_optint(lua_State *L, int n, lua_Number d)
 {
-   return cast(long)luaL_optnumber(L, n, d);
+   return cast(int)luaL_optnumber(L, n, d);
 }
 
-alias BUFSIZ LUAL_BUFFERSIZE;	  
+alias BUFSIZ LUAL_BUFFERSIZE;   
 
 /*
 #define luaL_putchar(B,c) \
@@ -143,7 +143,7 @@ void luaL_putchar(luaL_Buffer *B, char c)
    B.p += c;
 }
 
-//#define luaL_addsize(B,n)	((B)->p += (n))
+//#define luaL_addsize(B,n)   ((B)->p += (n))
 void luaL_addsize(luaL_Buffer *B, int n)
 {
    B.p += n; 
@@ -160,17 +160,17 @@ void luaL_addsize(luaL_Buffer *B, int n)
 */
 
 
-alias luaL_checklstring    luaL_check_lstr; 	
-alias luaL_optlstring      luaL_opt_lstr; 	 
-alias luaL_checknumber     luaL_check_number; 	 
-alias luaL_optnumber       luaL_opt_number;	
-alias luaL_argcheck        luaL_arg_check;	
-alias luaL_checkstring     luaL_check_string;	
-alias luaL_optstring       luaL_opt_string;	
-alias luaL_checkint        luaL_check_int;	
-alias luaL_checklong       luaL_check_long;	
-alias luaL_optint          luaL_opt_int;	
-alias luaL_optlong         luaL_opt_long;	
+alias luaL_checklstring    luaL_check_lstr;  
+alias luaL_optlstring      luaL_opt_lstr;     
+alias luaL_checknumber     luaL_check_number;    
+alias luaL_optnumber       luaL_opt_number;  
+alias luaL_argcheck        luaL_arg_check;   
+alias luaL_checkstring     luaL_check_string;   
+alias luaL_optstring       luaL_opt_string;  
+alias luaL_checkint        luaL_check_int;   
+alias luaL_checkint       luaL_check_int; 
+alias luaL_optint          luaL_opt_int;  
+alias luaL_optint         luaL_opt_int;   
                                 
 }
 
