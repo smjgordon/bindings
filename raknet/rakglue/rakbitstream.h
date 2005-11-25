@@ -1,7 +1,7 @@
 
 #include <stdio.h> // Printf and gets
 #include <string.h> // strcpy
-#include <raknet/RakClientInterface.h>
+#include "RakClientInterface.h"
 #include "RakNetworkFactory.h"
 #include "BitStream.h"
 #include "RakServerInterface.h"

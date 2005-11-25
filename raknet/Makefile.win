@@ -1,0 +1,23 @@
+INCLUDE=-IC:\dm\include -IC:\raknet\include
+
+all: rakserverglue.obj rakclientglue.obj rakbitstreamglue.obj 
+         
+
+rakserverglue.obj: rakglue\rakserver.h rakglue\rakserverglue.cpp
+	dmc -c rakglue\rakserverglue.cpp $(INCLUDE)
+
+rakclientglue.obj: rakglue\rakclient.h rakglue\rakclientglue.cpp
+	dmc -c rakglue\rakclientglue.cpp $(INCLUDE)
+
+rakbitstreamglue.obj: rakglue\rakbitstream.h rakglue\rakbitstreamglue.cpp 
+	dmc -c rakglue\rakbitstreamglue.cpp $(INCLUDE)
+
+
+clean:
+        del rakserverglue.obj rakclientglue.obj rakbitstreamglue.obj
+
+
+
+
+
+

@@ -67,7 +67,7 @@ int main()
 
    Packet * packet = null;
     
-   int port = 60000;
+   int port = 6881;
 
    if(raknet.server.start(32, 0, 0, port)) 
    {

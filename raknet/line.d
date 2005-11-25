@@ -160,7 +160,7 @@ class ClientConnection
 
 int main()
 {
-   ClientConnection clientConnect = new ClientConnection("127.0.0.1", "60000");
+   ClientConnection clientConnect = new ClientConnection("192.168.2.3", "6881");
 
    int lineCount = 0;
 
@@ -209,27 +209,13 @@ int main()
 }
 
 
-version(Windows)
-{
-	extern(Windows):
-}
-else
-{
-	extern(C):
-}
+
+extern(C):
+
 
 char *gets( char *str );
 int atoi( char *str );
 
-void PrintMessage(char *input, int numberOfBitsOfData, PlayerID sender)
-{
-  printf("%s\n",input);
-
-  if (raknet.server.isServer())
-  {
-	 raknet.server.RPC("PrintMessage", input, numberOfBitsOfData, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 0, sender, true, false);
-  }
-}
 
 
 

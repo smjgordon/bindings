@@ -1,0 +1,11 @@
+You need some more files to get the samples running, from...
+
+http://svn.dsource.org/projects/warbots/trunk/current/core
+http://svn.dsource.org/projects/warbots/trunk/current/derelict
+
+SDL.dll
+SDL_image.dll
+SDL_mixer.dll
+lua50.dll
+
+

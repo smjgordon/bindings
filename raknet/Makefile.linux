@@ -1,0 +1,19 @@
+INCLUDE=-I"../Include"
+
+all: rakserverglue.o rakclientglue.o rakbitstreamglue.o 
+	ar crv librakglue.a rakserver.o rakclient.o rakbitstream.o 	
+	ranlib librakglue.a
+
+rakserverglue.o: rakglue/rakserver.h rakglue/rakserverglue.cpp
+	g++ -c rakglue/rakserverglue.cpp $(INCLUDE)
+
+rakclientglue.o: rakglue/rakclient.h rakglue/rakclientglue.cpp
+	g++ -c rakglue/rakclientglue.cpp $(INCLUDE)
+
+rakbitstreamglue.o: rakglue/rakbitstream.h rakglue/rakbitstreamglue.cpp	
+	g++ -c rakglue/rakbitstreamglue.cpp $(INCLUDE)
+
+
+clean:
+	rm rakserverglue.o rakclientglue.o rakbitstreamglue.o
+

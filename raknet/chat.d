@@ -157,7 +157,7 @@ int main()
    return 0;
 }
 
-
+/*
 version(Windows)
 {
 		extern(Windows):
@@ -166,6 +166,10 @@ else
 {
 		extern(C):
 }
+*/
+
+extern(C):
+
 
 char *gets( char *str );
 
