@@ -1,1 +1,5 @@
-This is the C++ source for windows and linux I got raknet to work with.
+Checkout the warbots project for the modified Raknet windows sources. 
+
+http://svn.dsource.org/projects/warbots/trunk/RaknetBinding/
+
+Removed from here due to request. 
