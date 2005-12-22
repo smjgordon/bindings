@@ -2,4 +2,4 @@ Author: Clay Smith
 
 Lua bindings for the D programming language
 
-Check the derelict forums for the derelict lua bindings, coming 'anytime soon now'
+Check the Derelict forums for a Derelictized version of the lua bindings. 

@@ -30,7 +30,7 @@ const char[] LUA_STRLIBNAME=	"string";
 const char[] LUA_MATHLIBNAME=	"math";
 const char[] LUA_DBLIBNAME	=  "debug";
 
-/*LUA_API*/ int luaopen_base (lua_State *L);
+/*LUA_API*/ int luaopen_base (lua_State * L);
 
 
 /*LUA_API*/  int luaopen_table (lua_State *L);

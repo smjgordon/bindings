@@ -17,7 +17,7 @@ extern (C) {
 struct luaL_reg {
   const char *name;
   lua_CFunction func;
-};
+}
 //alias luaL_reg luaL_reg;
 
 

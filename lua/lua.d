@@ -45,19 +45,15 @@ enum
 }
 
 extern (C) {
-struct lua_State ;
+struct lua_State;
 //alias lua_State lua_State;
 
+typedef int (*lua_CFunction) (lua_State *L);
 
-alias int (*lua_CFunction) (lua_State *L);
+// the compiler tells me so (alias lua.lua.lua_Chunkreader cannot be const)
+typedef /*const*/ char * (*lua_Chunkreader) (lua_State *L, void *ud, size_t *sz);
 
-
-
-
-
-alias const char * (*lua_Chunkreader) (lua_State *L, void *ud, size_t *sz);
-
-alias int (*lua_Chunkwriter) (lua_State *L, /*const*/ void* p,
+typedef int (*lua_Chunkwriter) (lua_State *L, /*const*/ void* p,
                                 size_t sz, void* ud);
          
 /* add: hd2 ignored all defs
@@ -408,7 +404,7 @@ const int LUA_MASKRET  =   (1 << LUA_HOOKRET);
 const int LUA_MASKLINE =	(1 << LUA_HOOKLINE);
 const int LUA_MASKCOUNT =	(1 << LUA_HOOKCOUNT);
 
-alias void (*lua_Hook) (lua_State *L, lua_Debug *ar);
+typedef void (*lua_Hook) (lua_State *L, lua_Debug *ar);
 
 
 extern int lua_getstack (lua_State *L, int level, lua_Debug *ar);
