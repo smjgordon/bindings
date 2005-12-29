@@ -50,14 +50,7 @@ alias ushort PlayerIndex;
 /// Size of PlayerID data
 const int PlayerID_Size = 6;
 
-version(Windows)
-{
-		extern(Windows):
-}
-else
-{
-		extern(C):
-}
+extern(C):
 
 struct PlayerID
 {

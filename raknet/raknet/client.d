@@ -52,14 +52,8 @@ void sendBitstream(PacketPriority priority, PacketReliability reliability, char 
 // will crash if not alias'd
 alias rakClientInterface_REG_AS_RPC REG_AS_RPC;
 
-version(Windows)
-{
-   extern(Windows):
-}
-else
-{
-   extern(C):
-}
+
+extern(C):
 
 //  ugly names
 private {

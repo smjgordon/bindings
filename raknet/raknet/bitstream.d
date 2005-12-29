@@ -132,14 +132,8 @@ bool  read (char *output, int numberOfBytes)
 }
 
 
-version(Windows)
-{
-   extern(Windows):
-}
-else
-{
-   extern(C):
-}
+
+ extern(C):
 
 
 private {
