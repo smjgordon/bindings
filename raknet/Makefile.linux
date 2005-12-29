@@ -1,7 +1,7 @@
-INCLUDE=-I"../Include"
+INCLUDE=-I"/usr/include/raknet"
 
 all: rakserverglue.o rakclientglue.o rakbitstreamglue.o 
-	ar crv librakglue.a rakserver.o rakclient.o rakbitstream.o 	
+	ar crv librakglue.a rakserverglue.o rakclientglue.o rakbitstreamglue.o 	
 	ranlib librakglue.a
 
 rakserverglue.o: rakglue/rakserver.h rakglue/rakserverglue.cpp

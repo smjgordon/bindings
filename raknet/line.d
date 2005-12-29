@@ -1,6 +1,7 @@
 
-import core.window;
-import core.input;
+import arc.io.window,
+       arc.io.input,
+       arc.phy.util;        
 
 import raknet.client,
        raknet.server,
@@ -9,7 +10,6 @@ import raknet.client,
 import std.string;
 import std.stdio;
 
-import core.math.util;
 import std.c.time;
 
 
@@ -160,22 +160,21 @@ class ClientConnection
 
 int main()
 {
-   ClientConnection clientConnect = new ClientConnection("192.168.2.3", "6881");
+   ClientConnection clientConnect = new ClientConnection("127.0.0.1", "6881");
 
    int lineCount = 0;
 
-   core.window.open("window.lua");
-   core.window.mode2D();
-   
-   core.input.open();
+   arc.io.window.open("window.lua"); 
+   arc.io.input.open();
 
    float lastX, lastY; 
    
-   while (!(core.input.keyDown(SDL_QUIT) || core.input.keyDown(SDLK_ESCAPE)))
+   while (!(arc.io.input.keyDown(SDL_QUIT) || arc.io.input.keyDown(SDLK_ESCAPE)))
    {
-      core.input.process();
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      arc.io.input.process();
 
-      if (core.input.mouseHit(LEFT))
+      if (arc.io.input.mouseHit(LEFT))
       {
          lineCount++;
 
@@ -186,13 +185,15 @@ int main()
             int g = random_range(50,255);
             int b = random_range(50,255);
 
-            clientConnect.addLocalLine(lastX, lastY, core.input.mouseX2D, core.input.mouseY2D,r,g,b);
-            clientConnect.sendLineToServer(lastX, lastY, core.input.mouseX2D, core.input.mouseY2D,r,g,b);
+            clientConnect.addLocalLine(lastX, lastY, arc.io.input.mouseX, 
+                                       arc.io.input.mouseY,r,g,b);
+            clientConnect.sendLineToServer(lastX, lastY, 
+                                       arc.io.input.mouseX, arc.io.input.mouseY,r,g,b);
          }
          else
          {  
-            lastX = core.input.mouseX2D; 
-            lastY = core.input.mouseY2D;
+            lastX = arc.io.input.mouseX; 
+            lastY = arc.io.input.mouseY;
          }
 
       }
@@ -203,7 +204,7 @@ int main()
       SDL_GL_SwapBuffers();
    }
    
-   core.window.close();
+   arc.io.window.close();
 
    return 0;
 }
