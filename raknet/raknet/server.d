@@ -39,16 +39,20 @@ void destroy()
    RakServerInterface_Destroy();
 }
 
-
-
 void disconnect( uint blockDuration )
 {
    rakServerInterface_Disconnect(blockDuration);
 }
 
-bool sendBitstream(PacketPriority priority, PacketReliability reliability, char orderingChannel, PlayerID playerId, bool broadcast)
+bool sendBitstream(PacketPriority priority, PacketReliability reliability, char orderingChannel, 
+                   PlayerID playerId, bool broadcast)
 {
    return rakServerInterface_SendBitstream(priority, reliability, orderingChannel, playerId, broadcast);
+}
+
+int getIndexFromPlayerID(PlayerID pid)
+{
+   return rakServerInterface_GetIndexFromPlayerID(pid);
 }
 
 // will crash if not alias'd
@@ -70,5 +74,6 @@ void rakServerInterface_DeallocatePacket(Packet *);
 void RakServerInterface_Destroy();
 bool rakServerInterface_SendBitstream(PacketPriority priority, PacketReliability reliability, char orderingChannel, PlayerID playerId, bool broadcast);
 void rakServerInterface_Disconnect( uint blockDuration );
+int rakServerInterface_GetIndexFromPlayerID(PlayerID pid);
 }
 

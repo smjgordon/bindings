@@ -17,9 +17,8 @@ import derelict.opengl.gl;
 import derelict.sdl.sdl;
 
 const ubyte PACKET_ID_LINE = 100;
-
-
-
+const ubyte PACKET_ID_NUM = 101;
+const ubyte PACKET_ID_NUM_REQUEST = 102; 
 
 struct Line
 {
@@ -55,6 +54,7 @@ class ClientConnection
 {
   private:
    Line[] lines;
+   int playerNum = 0;
 
    this(char *serverIP, char *portString)
    {
@@ -85,6 +85,59 @@ class ClientConnection
       line.b = b;
 
       lines ~= line;
+   }
+
+   // send player ID to server and wait to recieve player number
+   void getPlayerNum()
+   {
+      // get player ID
+      PlayerID pid = raknet.client.playerID(); 
+
+      // request player num based on player ID from server
+      raknet.bitstream.start();
+   
+      raknet.bitstream.write(PACKET_ID_NUM_REQUEST); 
+      raknet.bitstream.write(pid.binaryAddress);
+      raknet.bitstream.write(pid.port); 
+
+      raknet.client.sendBitstream(PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 0);
+
+      raknet.bitstream.end();
+
+      debug writefln("getPlayerNum: sent request");
+      
+      // wait until recieve player number from server
+      ubyte packetID = 0;
+
+      do 
+      {
+         Packet * p = raknet.client.receivePacket();
+         
+         if(p !is null) {
+
+         // decode packet
+         raknet.bitstream.start(cast(char*)p.data, p.length, false);
+      
+         // read packet ID
+         raknet.bitstream.read(packetID);
+      
+         debug writefln("recieved packet ", packetID);
+      
+         // if we found it, read its data 
+         if (packetID == PACKET_ID_NUM)
+         {
+            raknet.bitstream.read(playerNum); 
+            debug writefln("player ", playerNum, " connected");
+         }
+            
+         // otherwise deallocate and wait some more
+         raknet.client.deallocatePacket(p);
+
+         } // p !is unll
+
+      } while (packetID != PACKET_ID_NUM)
+   
+
    }
 
    void sendLineToServer(float x1, float y1, float x2, float y2, int r, int g, int b)
@@ -162,6 +215,9 @@ int main()
 {
    ClientConnection clientConnect = new ClientConnection("127.0.0.1", "6881");
 
+   // send PID to 
+   clientConnect.getPlayerNum();
+   
    int lineCount = 0;
 
    arc.io.window.open("window.lua"); 

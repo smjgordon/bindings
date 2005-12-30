@@ -66,6 +66,10 @@ void rakServerInterface_Disconnect( unsigned blockDuration )
    rakServerInterface->Disconnect(blockDuration);
 }
 
+int rakServerInterface_GetIndexFromPlayerID(PlayerID pid)
+{
+   return rakServerInterface->GetIndexFromPlayerID(pid); 
+}
 
 }
 

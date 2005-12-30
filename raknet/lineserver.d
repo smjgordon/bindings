@@ -8,6 +8,10 @@ import std.c.time;
 
 // packet identifier so we know packet is a line
 const ubyte PACKET_ID_LINE = 100;
+const ubyte PACKET_ID_NUM = 101;
+const ubyte PACKET_ID_NUM_REQUEST = 102; 
+
+int num = 0;
 
 void sendLineToClients(PlayerID clientToExclude, float x1, float y1, float x2, float y2, int r, int g, int b)
 {
@@ -24,6 +28,21 @@ void sendLineToClients(PlayerID clientToExclude, float x1, float y1, float x2, f
    raknet.bitstream.write(b);
 
    raknet.server.sendBitstream(PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 0, clientToExclude, true);
+
+   // deallocates bitstream
+   raknet.bitstream.end();
+}
+
+void sendNumToClients(PlayerID pid, int num)
+{
+   // allocates bitstream
+   raknet.bitstream.start();      
+ 
+   // send info & packet ID
+   raknet.bitstream.write(PACKET_ID_NUM);
+   raknet.bitstream.write(num);
+
+   raknet.server.sendBitstream(PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 0, pid, false);
 
    // deallocates bitstream
    raknet.bitstream.end();
@@ -53,6 +72,15 @@ void handlePacket(Packet * p)
       
       sendLineToClients(p.playerId, x1, y1, x2, y2, r, g, b);
    break;
+
+   // on incoming connection tell player which number it is 
+   case ID_NEW_INCOMING_CONNECTION:
+      debug writefln("player ", p.playerIndex, " connected");
+
+      sendNumToClients(p.playerId, p.playerIndex);
+   break; 
+
+
    default:
       printf("Unhandled packet (not a problem): %i\n", cast(int)packetID);
    }

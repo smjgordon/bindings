@@ -65,6 +65,11 @@ bool rakClientInterface_SendBitstream(PacketPriority priority, PacketReliability
    return rakClientInterface->Send(dataStream, priority, reliability, orderingChannel);
 }
 
+PlayerID  rakClientInterface_GetPlayerID()
+{
+   return rakClientInterface->GetPlayerID(); 
+}
+
 
 }
 

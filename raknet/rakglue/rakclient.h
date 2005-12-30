@@ -32,6 +32,8 @@ void rakClientInterface_REG_AS_RPC(char* uniqueID, void ( *functionName ) ( char
 void rakClientInterface_Disconnect (unsigned blockDuration);
 bool rakClientInterface_SendBitstream(PacketPriority priority, PacketReliability reliability, char orderingChannel);
 
+PlayerID  rakClientInterface_GetPlayerID(); 
+
 }
 
 #endif

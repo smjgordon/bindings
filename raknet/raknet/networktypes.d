@@ -1,5 +1,7 @@
 module raknet.networktypes;
 
+debug import std.stdio; 
+
 /* -*- mode: c++; c-file-style: raknet; tab-always-indent: nil; -*- */
 /**
  * @file
@@ -67,6 +69,14 @@ struct PlayerID
    * @param input a player ID 
    * @return a reference to the current object 
    */
+
+debug
+{
+   void print()
+   {
+      writefln("Binary Address: ", binaryAddress, ", port: ", port);
+   }
+}
 
    // handles == and !=
    int opEquals(inout PlayerID pid)

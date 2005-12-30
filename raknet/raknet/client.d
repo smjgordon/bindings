@@ -49,6 +49,11 @@ void sendBitstream(PacketPriority priority, PacketReliability reliability, char 
    rakClientInterface_SendBitstream(priority, reliability, orderingChannel);
 }
 
+PlayerID playerID() 
+{
+   return rakClientInterface_GetPlayerID();
+}
+
 // will crash if not alias'd
 alias rakClientInterface_REG_AS_RPC REG_AS_RPC;
 
@@ -76,5 +81,7 @@ void rakClientInterface_REG_AS_RPC(char* uniqueID, void ( *functionName ) ( char
 void rakClientInterface_Disconnect (uint blockDuration);
 
 void rakClientInterface_SendBitstream(PacketPriority priority, PacketReliability reliability, char orderingChannel);
+
+PlayerID  rakClientInterface_GetPlayerID(); 
 }
 

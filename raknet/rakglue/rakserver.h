@@ -34,6 +34,8 @@ void RakServerInterface_Destroy();
 bool rakServerInterface_SendBitstream(PacketPriority priority, PacketReliability reliability, char orderingChannel, PlayerID playerId, bool broadcast);
 
 void rakServerInterface_Disconnect( unsigned blockDuration );
+
+int rakServerInterface_GetIndexFromPlayerID(PlayerID pid);
 }
 
 #endif
