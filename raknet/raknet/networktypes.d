@@ -40,6 +40,13 @@ alias ubyte UniqueIDType;
 */
 alias ushort PlayerIndex;
 
+const PlayerIndex UNASSIGNED_PLAYER_INDEX = 65535;
+
+const PlayerID UNASSIGNED_PLAYER_ID =
+{
+   binaryAddress:0xFFFFFFFF, port:0xFFFF
+};
+
 
 
 /**
@@ -51,6 +58,7 @@ alias ushort PlayerIndex;
 
 /// Size of PlayerID data
 const int PlayerID_Size = 6;
+
 
 extern(C):
 
