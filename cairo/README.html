@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.3.8: http://docutils.sourceforge.net/" />
+<title>cairo bindings for D</title>
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="cairo-bindings-for-d">
+<h1 class="title">cairo bindings for D</h1>
+<!-- This document is written in reStructuredText. -->
+<!-- Build command:
+rst2html.py - -date - -time README.rst README.html -->
+<div class="section" id="introduction">
+<h1><a name="introduction">Introduction</a></h1>
+<p>This project's aim is to provide a complete, up-to-date D binding for the
+<a class="reference" href="http://cairographics.org/">cairo</a> 2D drawing API.  Currently, the binding supports the base cairo
+functions, PNG functions, and Win32 functions.</p>
+</div>
+<div class="section" id="installation">
+<h1><a name="installation">Installation</a></h1>
+<p>To install, simply copy the <tt class="docutils literal"><span class="pre">cairo</span></tt> directory to a place in your D
+compiler's import path.  That's all there is to it.  Currently, there is no
+automated support for building an import library, although this is planned
+for a future release (ie: when I get around to it).</p>
+<div class="section" id="cairo-for-windows">
+<h2><a name="cairo-for-windows">cairo for Windows</a></h2>
+<p>If you are using Windows, you will also probably want to grab the cairo
+library itself.  The best version I have found is on <a class="reference" href="http://www.iki.fi/tml/index.html">Tor Lillqvist</a>'s
+<a class="reference" href="http://www.gimp.org/%7Etml/gimp/win32/downloads.html">GTK+ for Windows</a> website.</p>
+<p>If you go to that page, you will need to download the following packages:</p>
+<ul class="simple">
+<li>cairo-1.x.y.zip</li>
+<li>libpng 1.x.y binaries zip</li>
+<li>Zlib 1.x.y</li>
+</ul>
+<p>Specifically, you're after <tt class="docutils literal"><span class="pre">libcairo-2.dll</span></tt>, <tt class="docutils literal"><span class="pre">libpng13.dll</span></tt> and
+<tt class="docutils literal"><span class="pre">zlib1.dll</span></tt>.  Just place these files into either your system path
+somewhere, or (a better idea) place them in the working directory of any
+programs you're developing.</p>
+</div>
+</div>
+<div class="section" id="usage">
+<h1><a name="usage">Usage</a></h1>
+<p>To use the binding, simply import <tt class="docutils literal"><span class="pre">cairo.cairo</span></tt>, along with any other
+parts of the library you need.  For example, if you wanted the base cairo
+functionality, along with the PNG functions, you would add the following to
+your code:</p>
+<pre class="literal-block">
+import cairo.cairo;
+import cairo.png.cairo_png;
+</pre>
+<p>Also, before using the cairo library, you need to tell it to load the actual
+library proper.  You can do this like so:</p>
+<pre class="literal-block">
+cairo_load();
+cairo_png_load();
+</pre>
+<p>If some part of the library fails to load, these functions will thrown an
+exception which can be caught and dealt with.</p>
+<p>From there, just start using the cairo API as you would from C.  The cairo
+website contains a collection of <a class="reference" href="http://cairographics.org/samples/">example snippets</a> in C, and this binding
+comes complete with the majority of these examples converted to D.  Just
+look in the <tt class="docutils literal"><span class="pre">cairo_snippets</span></tt> directory.</p>
+</div>
+<div class="section" id="contributing">
+<h1><a name="contributing">Contributing</a></h1>
+<p>The cairo api has a lot of functionality in it that this binding does not
+yet cover: X11, PDF, PS and more.  However, the only binary version of cairo
+I have access to is limited to what is currently covered, and I have thus
+far had no success in compiling cairo myself.</p>
+<p>So, currently the best way to contribute is to contribute and maintain a
+binding for some currently unsupported part of cairo.  You can look at the
+PNG binding for a simple example.</p>
+</div>
+<div class="section" id="thanks">
+<h1><a name="thanks">Thanks</a></h1>
+<ul class="simple">
+<li>Many thanks for the hard work by the people behind the cairo library.</li>
+<li>Also, thanks to Michael Parker for letting me steal <a class="reference" href="http://www.dsource.org/projects/derelict/">Derelict</a>'s dynamic
+loader code.</li>
+</ul>
+</div>
+<div class="section" id="credits">
+<h1><a name="credits">Credits</a></h1>
+<p>cairo bindings for D Copyright © 2006 Daniel Keep.  Portions Copyright ©
+2006 Michael Parker.</p>
+<p>Released under the <a class="reference" href="http://www.opensource.org/licenses/bsd-license.php">BSD license</a>.</p>
+<!-- Links -->
+</div>
+</div>
+<div class="footer">
+<hr class="footer" />
+Generated on: 2006-05-04 14:08 UTC.
+
+</div>
+</body>
+</html>
