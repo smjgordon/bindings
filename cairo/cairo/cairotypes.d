@@ -222,7 +222,7 @@ union cairo_path_data_t
     struct
     {
         cairo_path_data_type_t type;
-        int length;
+        int length = 0;
     }
     struct
     {
@@ -232,9 +232,9 @@ union cairo_path_data_t
 
 struct cairo_path_t
 {
-    cairo_status_t status;
-    cairo_path_data_t *data;
-    int num_data;
+    cairo_status_t status = cairo_status_t.CAIRO_STATUS_SUCCESS;
+    cairo_path_data_t *data = null;
+    int num_data = 0;
 }
 
 enum cairo_content_t
