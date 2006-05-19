@@ -1,0 +1,17 @@
+# Builds lesson 06 using Derek Parnell's build tool.
+
+# Set the include path so we can find the cairooo binding.
+-I../..
+
+# Build in release mode
+-release
+-inline
+-O
+
+# Get rid of intermediate files (cuts down on clutter)
+-clean
+
+# Set the executable name
+-ofdlogo
+
+dlogo.d

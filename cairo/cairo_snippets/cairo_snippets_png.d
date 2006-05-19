@@ -75,6 +75,16 @@ void do_snippet(char[] name, snippet_fn snippet)
     cairo_scale(cr, IMAGE_WIDTH, IMAGE_HEIGHT);
     cairo_set_line_width(cr, LINE_WIDTH);
 
+    // Clear the background
+    cairo_rectangle(cr, 0, 0, 1, 1);
+    cairo_set_source_rgba(cr, 1, 1, 1, 0);
+    cairo_set_operator(cr, cairo_operator_t.CAIRO_OPERATOR_CLEAR);
+    cairo_fill(cr);
+
+    // Reset the context for the snippet
+    cairo_set_source_rgb(cr, 0, 0, 0);
+    cairo_set_operator(cr, cairo_operator_t.CAIRO_OPERATOR_OVER);
+
     // Call the snippet.
     cairo_save(cr);
     snippet(cr, IMAGE_WIDTH, IMAGE_HEIGHT);

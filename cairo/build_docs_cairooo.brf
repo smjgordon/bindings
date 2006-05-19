@@ -1,0 +1,16 @@
+# Builds the documentation for cairooo
+-cleanup
+-D
+-Dddocs
+-o-
+-nolib
+-nolink
+-Xcairo
+-Xwin32
+cairooo/all.d
+cairooo/cairo.d
+cairooo/extra/all.d
+cairooo/glitz/all.d
+cairooo/png/all.d
+cairooo/win32/all.d
+cairooo/xlib/all.d

@@ -3,12 +3,13 @@
  * library under various platforms.  It is largely stolen from
  * the Derelict project's loader.d file.
  *
- * Copyright: \&copy; 2005-2006, Derelict developers;
- *            \&copy; 2006 Daniel Keep.
- * License: BSD <http://www.opensource.org/licenses/bsd-license.php>
+ * Authors: Daniel Keep
+ * Copyright: 2005-2006, Derelict developers;
+ *            2006, Daniel Keep.
+ * License: BSD v2 (http://www.opensource.org/licenses/bsd-license.php).
  */
 /*
- * Copyright (c) 2006 Daniel Keep
+ * Copyright © 2006 Daniel Keep
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -98,7 +99,15 @@ public:
     }
 }
 
-class SharedLibLoadException : Exception
+class CairoLoaderException : Exception
+{
+    this(char[] msg)
+    {
+        super(msg);
+    }
+}
+
+class SharedLibLoadException : CairoLoaderException
 {
     this(char[] libName)
     {
@@ -107,7 +116,7 @@ class SharedLibLoadException : Exception
     }
 }
 
-class ProcNotFoundException : Exception
+class ProcNotFoundException : CairoLoaderException
 {
     this(SharedLib lib, char[] procName)
     {
@@ -254,6 +263,15 @@ version(Windows)
  */
 else version(linux)
 {
+    version(build)
+    {
+        pragma(link, dl);
+    }
+    else
+    {
+        pragma(lib, "dl.a");
+    }
+    
     private import std.c.linux.linux;
 
     private typedef void* HLIB;

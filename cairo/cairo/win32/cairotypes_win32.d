@@ -4,11 +4,12 @@
  * point, someone should pin down exactly *which* modules to
  * import :)
  *
- * Copyright: \&copy; 2006 Daniel Keep
- * License: BSD <http://www.opensource.org/licenses/bsd-license.php>
+ * Authors: Daniel Keep
+ * Copyright: 2006, Daniel Keep
+ * License: BSD v2 (http://www.opensource.org/licenses/bsd-license.php).
  */
 /*
- * Copyright (c) 2006 Daniel Keep
+ * Copyright © 2006 Daniel Keep
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

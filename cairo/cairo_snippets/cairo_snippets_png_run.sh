@@ -1,4 +1,4 @@
-#1/usr/bin/bash
+#!/bin/bash
 
 if [ ! -d output ]; then
     mkdir output

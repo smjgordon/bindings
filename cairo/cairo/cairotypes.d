@@ -2,11 +2,12 @@
  * This module contains all the various types that are defined
  * by cairo.
  *
- * Copyright: \&copy; 2006, Daniel Keep.
- * License: BSD <http://www.opensource.org/licenses/bsd-license.php>
+ * Authors: Daniel Keep
+ * Copyright: 2006, Daniel Keep
+ * License: BSD v2 (http://www.opensource.org/licenses/bsd-license.php).
  */
 /*
- * Copyright (c) 2006 Daniel Keep
+ * Copyright © 2006 Daniel Keep
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,9 +87,9 @@ enum cairo_status_t
     CAIRO_STATUS_INVALID_DASH
 }
 
-alias cairo_status_t function(void* closure, char* data, uint length) cairo_write_func_t;
+alias cairo_status_t function(void* closure, ubyte* data, uint length) cairo_write_func_t;
 
-alias cairo_status_t function(void* closure, char* data, uint length) cairo_read_func_t;
+alias cairo_status_t function(void* closure, ubyte* data, uint length) cairo_read_func_t;
 
 enum cairo_operator_t
 {

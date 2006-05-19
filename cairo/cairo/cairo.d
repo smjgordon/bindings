@@ -1,11 +1,12 @@
 /**
  * cairo bindings for D.
  * 
- * Copyright: \&copy; 2006 Daniel Keep
- * License: BSD <http://www.opensource.org/licenses/bsd-license.php>
+ * Authors: Daniel Keep
+ * Copyright: 2006, Daniel Keep
+ * License: BSD v2 (http://www.opensource.org/licenses/bsd-license.php).
  */
 /*
- * Copyright (c) 2006 Daniel Keep
+ * Copyright © 2006 Daniel Keep
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,7 +62,7 @@ public void cairo_load()
     version(Windows)
         cairo_load("libcairo-2.dll");
     else version(linux)
-        cairo_load("libcairo-2.so");
+        cairo_load("libcairo.so");
     else
     {
         pragma(msg, "I'm sorry, but implicit loading is not supported on"

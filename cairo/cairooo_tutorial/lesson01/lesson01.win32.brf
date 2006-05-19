@@ -1,0 +1,15 @@
+# Builds lesson 01 using Derek Parnell's build tool.
+
+# Set the include path so we can find the cairooo binding.
+-I..\..
+
+# Build in release mode
+-release
+
+# Get rid of intermediate files (cuts down on clutter)
+-clean
+
+# Set the executable name
+-oflesson01
+
+lesson01.d

@@ -7,20 +7,112 @@
  cairo bindings for D
 ======================
 
+.. contents::
+
 Introduction
 ============
 
 This project's aim is to provide a complete, up-to-date D binding for the
 cairo_ 2D drawing API.  Currently, the binding supports the base cairo
-functions, PNG functions, and Win32 functions.
+functions and PNG functions.  It also contains support for the Glitz, Win32
+and Xlib backends, but these are largely untested.
+
+This project also provides an object-oriented layer above the raw bindings
+called ``cairooo`` which adds support for objects and exceptions, integrating
+cairo more seamlessly with D style programming.  In time, we hope to also
+provide a library of additional, high-level functionality with this layer.
 
 Installation
 ============
 
+cairo binding
+-------------
+
 To install, simply copy the ``cairo`` directory to a place in your D
-compiler's import path.  That's all there is to it.  Currently, there is no
-automated support for building an import library, although this is planned
-for a future release (ie: when I get around to it).
+compiler's import path.  That's all there is to it.
+
+If you really want to have import libraries to use, then you can build these
+using the ``cairo-build.d`` script, which will place them in the ``lib``
+directory.  It can be run using either::
+
+  dmd -run cairo-build.d ARGS
+
+Or, if that fails::
+
+  build cairo-build.d
+  cairo-build ARGS
+
+The command line arguments may be empty (signifying a default build), or
+contain one or more targets to build.  You may also use the ``--verbose``
+switch to get more verbose output, and the ``--debug`` switch to produce
+libraries with debug symbols [#debuglibs]_.
+
+Use the ``--help`` switch for full usage information.
+
+cairooo binding
+---------------
+
+To install the cairooo binding, simply copy both the ``cairo`` and ``cairooo``
+directories to a place on your D compiler's import path.
+
+If you want to build import libraries, then you can use the
+``cairooo-build.d`` script, which will build them to the ``lib`` directory.
+Usage is mostly the same as using ``cairo-build.d`` (see above).
+
+cairo snippets
+--------------
+
+The ``cairo_snippets`` and ``cairooo_snippets`` directories contain the
+"snippets" example programs provided by the cairo developers ported to D.
+They use the ``cairo`` and ``cairooo`` bindings respectively.
+
+These do not have a "proper" build script like the binding itself: they are
+generally built with either a Windows batch file or shell script.  However, if
+you wish to build them manually, the command to do so usually looks like
+this::
+
+  build -cleanup -release -inline -I.. NAME_OF_SNIPPET
+
+Just be sure to create the ``output`` directory if it does not exist first.
+
+cairooo tutorial
+----------------
+
+The ``cairooo_tutorial`` contains the beginnings of a very simple introductory
+tutorial to programming image programs in D using the cairooo binding.  It is
+pathetically incomplete; however, it may be a useful starting point.
+
+demos
+-----
+
+The ``demos`` directory will contain a few small demo programs to showcase the
+binding.  Currently, it only has one demo, so the plural is prehaps
+misleading.  Hopefully this will change :)
+
+documentation
+-------------
+
+Whilst this project hopes to eventually have full DDoc documentation for the
+cairooo binding, we will not be providing anything other than minimal
+documentation for the raw cairo API binding.  The rationale is that since the
+original C api and the raw D api are for the most part identical, there is no
+need to duplicate the existing C documentation.
+
+That said, the cairooo documentation itself is woefully lacking.  What does
+exist can be built using the following command::
+
+  build @build_docs_cairooo.brf
+
+Please note that you will need to create the following directory structure
+*first* if it does not yet exist::
+
+  docs\
+    cairooo\
+      extra\
+      glitz\
+      png\
+      win32\
+      xlib\
 
 cairo for Windows
 -----------------
@@ -46,6 +138,9 @@ programs you're developing.
 Usage
 =====
 
+cairo
+-----
+
 To use the binding, simply import ``cairo.cairo``, along with any other
 parts of the library you need.  For example, if you wanted the base cairo
 functionality, along with the PNG functions, you would add the following to
@@ -68,17 +163,70 @@ website contains a collection of `example snippets`_ in C, and this binding
 comes complete with the majority of these examples converted to D.  Just
 look in the ``cairo_snippets`` directory.
 
+cairooo
+-------
+
+To use the cairooo binding instead, import ``cairooo.all``, along with any
+other parts of the library that you need.  To copy the above example, to
+import the base and PNG functions::
+
+  import cairooo.all;
+  import cairooo.png.all;
+
+As with the raw binding, you need to tell the binding to load the cairo
+library before you can use it.  You can do that like so::
+
+  Cairo.load();
+  CairoPNG.load();
+
+Again, if anything fails to load, an exception will be thrown.
+
+There are no huge, arbitrary differences between the flat C api and the
+object-oriented one.  The largest change is that anywhere you would pass a
+handle, you instead pass an object.  The naming translation is roughly::
+
+  cairo_foo_bar_xxx_t* --> FooBarXXX
+
+An exception to this is the cairo context, ``cairo_t*``, which becomes
+``Context``.
+
+Also, the following differences should be kept in mind:
+
+* "lower_case_with_underscores" functions become "lowerCaseWithUnderscores".
+* "CAIRO_ENUM_TYPE_ENUM_NAME" becomes "EnumType.enumName".
+
+Finally, where there have been multiple ways of creating a certain kind of
+object (such as a Surface or Pattern), creating them is split between using
+constructors and static members.  This will get resolved eventually, but for
+the moment, which one to use is unclear.
+
+The general rule is that if you want to convert::
+  
+  xxx = cairo_some_object_create_foo(arg1, arg2, ...);
+
+You should try the following::
+
+  xxx = new SomeObject(arg1, arg2, ...);
+  xxx = SomeObject.create(arg1, arg2, ...);
+  xxx = SomeObject.createFoo(arg1, arg2, ...);
+
+For more concrete examples, see the ``cairooo_snippets``, ``cairooo_tutorial``
+and ``demos`` directories.
+
 Contributing
 ============
 
-The cairo api has a lot of functionality in it that this binding does not
-yet cover: X11, PDF, PS and more.  However, the only binary version of cairo
+The cairo api has a functionality in it that this binding does not
+yet cover: PDF abd PS for example.  However, the only binary version of cairo
 I have access to is limited to what is currently covered, and I have thus
 far had no success in compiling cairo myself.
 
 So, currently the best way to contribute is to contribute and maintain a
 binding for some currently unsupported part of cairo.  You can look at the
 PNG binding for a simple example.
+
+That, or you can write samples and demos to test the bindings that I can't.
+In addition to being fun, you get to make pretty pictures in the process!
 
 Thanks
 ======
@@ -102,4 +250,11 @@ Released under the `BSD license`_.
 .. _cairo: http://cairographics.org/
 .. _Derelict: http://www.dsource.org/projects/derelict/
 .. _example snippets: http://cairographics.org/samples/
+
+.. Footnotes
+
+.. [#debuglibs] The debug libraries will have "_debug" appended to their
+                filename, so you do not need to worry about overwriting your
+                release libraries.
+
 

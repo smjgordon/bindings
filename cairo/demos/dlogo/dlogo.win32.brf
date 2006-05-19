@@ -1,0 +1,12 @@
+
+-I..\..
+
+-release
+-inline
+-O
+
+-clean
+
+-ofdlogo
+
+dlogo.d

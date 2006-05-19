@@ -13,20 +13,124 @@
 <!-- This document is written in reStructuredText. -->
 <!-- Build command:
 rst2html.py - -date - -time README.rst README.html -->
+<div class="contents topic" id="contents">
+<p class="topic-title first"><a name="contents">Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#introduction" id="id3" name="id3">Introduction</a></li>
+<li><a class="reference" href="#installation" id="id4" name="id4">Installation</a><ul>
+<li><a class="reference" href="#cairo-binding" id="id5" name="id5">cairo binding</a></li>
+<li><a class="reference" href="#cairooo-binding" id="id6" name="id6">cairooo binding</a></li>
+<li><a class="reference" href="#cairo-snippets" id="id7" name="id7">cairo snippets</a></li>
+<li><a class="reference" href="#cairooo-tutorial" id="id8" name="id8">cairooo tutorial</a></li>
+<li><a class="reference" href="#demos" id="id9" name="id9">demos</a></li>
+<li><a class="reference" href="#documentation" id="id10" name="id10">documentation</a></li>
+<li><a class="reference" href="#cairo-for-windows" id="id11" name="id11">cairo for Windows</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#usage" id="id12" name="id12">Usage</a><ul>
+<li><a class="reference" href="#cairo" id="id13" name="id13">cairo</a></li>
+<li><a class="reference" href="#cairooo" id="id14" name="id14">cairooo</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#contributing" id="id15" name="id15">Contributing</a></li>
+<li><a class="reference" href="#thanks" id="id16" name="id16">Thanks</a></li>
+<li><a class="reference" href="#credits" id="id17" name="id17">Credits</a></li>
+</ul>
+</div>
 <div class="section" id="introduction">
-<h1><a name="introduction">Introduction</a></h1>
+<h1><a class="toc-backref" href="#id3" name="introduction">Introduction</a></h1>
 <p>This project's aim is to provide a complete, up-to-date D binding for the
 <a class="reference" href="http://cairographics.org/">cairo</a> 2D drawing API.  Currently, the binding supports the base cairo
-functions, PNG functions, and Win32 functions.</p>
+functions and PNG functions.  It also contains support for the Glitz, Win32
+and Xlib backends, but these are largely untested.</p>
+<p>This project also provides an object-oriented layer above the raw bindings
+called <tt class="docutils literal"><span class="pre">cairooo</span></tt> which adds support for objects and exceptions, integrating
+cairo more seamlessly with D style programming.  In time, we hope to also
+provide a library of additional, high-level functionality with this layer.</p>
 </div>
 <div class="section" id="installation">
-<h1><a name="installation">Installation</a></h1>
+<h1><a class="toc-backref" href="#id4" name="installation">Installation</a></h1>
+<div class="section" id="cairo-binding">
+<h2><a class="toc-backref" href="#id5" name="cairo-binding">cairo binding</a></h2>
 <p>To install, simply copy the <tt class="docutils literal"><span class="pre">cairo</span></tt> directory to a place in your D
-compiler's import path.  That's all there is to it.  Currently, there is no
-automated support for building an import library, although this is planned
-for a future release (ie: when I get around to it).</p>
+compiler's import path.  That's all there is to it.</p>
+<p>If you really want to have import libraries to use, then you can build these
+using the <tt class="docutils literal"><span class="pre">cairo-build.d</span></tt> script, which will place them in the <tt class="docutils literal"><span class="pre">lib</span></tt>
+directory.  It can be run using either:</p>
+<pre class="literal-block">
+dmd -run cairo-build.d ARGS
+</pre>
+<p>Or, if that fails:</p>
+<pre class="literal-block">
+build cairo-build.d
+cairo-build ARGS
+</pre>
+<p>The command line arguments may be empty (signifying a default build), or
+contain one or more targets to build.  You may also use the <tt class="docutils literal"><span class="pre">--verbose</span></tt>
+switch to get more verbose output, and the <tt class="docutils literal"><span class="pre">--debug</span></tt> switch to produce
+libraries with debug symbols <a class="footnote-reference" href="#debuglibs" id="id1" name="id1">[1]</a>.</p>
+<p>Use the <tt class="docutils literal"><span class="pre">--help</span></tt> switch for full usage information.</p>
+</div>
+<div class="section" id="cairooo-binding">
+<h2><a class="toc-backref" href="#id6" name="cairooo-binding">cairooo binding</a></h2>
+<p>To install the cairooo binding, simply copy both the <tt class="docutils literal"><span class="pre">cairo</span></tt> and <tt class="docutils literal"><span class="pre">cairooo</span></tt>
+directories to a place on your D compiler's import path.</p>
+<p>If you want to build import libraries, then you can use the
+<tt class="docutils literal"><span class="pre">cairooo-build.d</span></tt> script, which will build them to the <tt class="docutils literal"><span class="pre">lib</span></tt> directory.
+Usage is mostly the same as using <tt class="docutils literal"><span class="pre">cairo-build.d</span></tt> (see above).</p>
+</div>
+<div class="section" id="cairo-snippets">
+<h2><a class="toc-backref" href="#id7" name="cairo-snippets">cairo snippets</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">cairo_snippets</span></tt> and <tt class="docutils literal"><span class="pre">cairooo_snippets</span></tt> directories contain the
+&quot;snippets&quot; example programs provided by the cairo developers ported to D.
+They use the <tt class="docutils literal"><span class="pre">cairo</span></tt> and <tt class="docutils literal"><span class="pre">cairooo</span></tt> bindings respectively.</p>
+<p>These do not have a &quot;proper&quot; build script like the binding itself: they are
+generally built with either a Windows batch file or shell script.  However, if
+you wish to build them manually, the command to do so usually looks like
+this:</p>
+<pre class="literal-block">
+build -cleanup -release -inline -I.. NAME_OF_SNIPPET
+</pre>
+<p>Just be sure to create the <tt class="docutils literal"><span class="pre">output</span></tt> directory if it does not exist first.</p>
+</div>
+<div class="section" id="cairooo-tutorial">
+<h2><a class="toc-backref" href="#id8" name="cairooo-tutorial">cairooo tutorial</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">cairooo_tutorial</span></tt> contains the beginnings of a very simple introductory
+tutorial to programming image programs in D using the cairooo binding.  It is
+pathetically incomplete; however, it may be a useful starting point.</p>
+</div>
+<div class="section" id="demos">
+<h2><a class="toc-backref" href="#id9" name="demos">demos</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">demos</span></tt> directory will contain a few small demo programs to showcase the
+binding.  Currently, it only has one demo, so the plural is prehaps
+misleading.  Hopefully this will change :)</p>
+</div>
+<div class="section" id="documentation">
+<h2><a class="toc-backref" href="#id10" name="documentation">documentation</a></h2>
+<p>Whilst this project hopes to eventually have full DDoc documentation for the
+cairooo binding, we will not be providing anything other than minimal
+documentation for the raw cairo API binding.  The rationale is that since the
+original C api and the raw D api are for the most part identical, there is no
+need to duplicate the existing C documentation.</p>
+<p>That said, the cairooo documentation itself is woefully lacking.  What does
+exist can be built using the following command:</p>
+<pre class="literal-block">
+build &#64;build_docs_cairooo.brf
+</pre>
+<p>Please note that you will need to create the following directory structure
+<em>first</em> if it does not yet exist:</p>
+<pre class="literal-block">
+docs\
+  cairooo\
+    extra\
+    glitz\
+    png\
+    win32\
+    xlib\
+</pre>
+</div>
 <div class="section" id="cairo-for-windows">
-<h2><a name="cairo-for-windows">cairo for Windows</a></h2>
+<h2><a class="toc-backref" href="#id11" name="cairo-for-windows">cairo for Windows</a></h2>
 <p>If you are using Windows, you will also probably want to grab the cairo
 library itself.  The best version I have found is on <a class="reference" href="http://www.iki.fi/tml/index.html">Tor Lillqvist</a>'s
 <a class="reference" href="http://www.gimp.org/%7Etml/gimp/win32/downloads.html">GTK+ for Windows</a> website.</p>
@@ -43,7 +147,9 @@ programs you're developing.</p>
 </div>
 </div>
 <div class="section" id="usage">
-<h1><a name="usage">Usage</a></h1>
+<h1><a class="toc-backref" href="#id12" name="usage">Usage</a></h1>
+<div class="section" id="cairo">
+<h2><a class="toc-backref" href="#id13" name="cairo">cairo</a></h2>
 <p>To use the binding, simply import <tt class="docutils literal"><span class="pre">cairo.cairo</span></tt>, along with any other
 parts of the library you need.  For example, if you wanted the base cairo
 functionality, along with the PNG functions, you would add the following to
@@ -65,18 +171,67 @@ website contains a collection of <a class="reference" href="http://cairographics
 comes complete with the majority of these examples converted to D.  Just
 look in the <tt class="docutils literal"><span class="pre">cairo_snippets</span></tt> directory.</p>
 </div>
+<div class="section" id="cairooo">
+<h2><a class="toc-backref" href="#id14" name="cairooo">cairooo</a></h2>
+<p>To use the cairooo binding instead, import <tt class="docutils literal"><span class="pre">cairooo.all</span></tt>, along with any
+other parts of the library that you need.  To copy the above example, to
+import the base and PNG functions:</p>
+<pre class="literal-block">
+import cairooo.all;
+import cairooo.png.all;
+</pre>
+<p>As with the raw binding, you need to tell the binding to load the cairo
+library before you can use it.  You can do that like so:</p>
+<pre class="literal-block">
+Cairo.load();
+CairoPNG.load();
+</pre>
+<p>Again, if anything fails to load, an exception will be thrown.</p>
+<p>There are no huge, arbitrary differences between the flat C api and the
+object-oriented one.  The largest change is that anywhere you would pass a
+handle, you instead pass an object.  The naming translation is roughly:</p>
+<pre class="literal-block">
+cairo_foo_bar_xxx_t* --&gt; FooBarXXX
+</pre>
+<p>An exception to this is the cairo context, <tt class="docutils literal"><span class="pre">cairo_t*</span></tt>, which becomes
+<tt class="docutils literal"><span class="pre">Context</span></tt>.</p>
+<p>Also, the following differences should be kept in mind:</p>
+<ul class="simple">
+<li>&quot;lower_case_with_underscores&quot; functions become &quot;lowerCaseWithUnderscores&quot;.</li>
+<li>&quot;CAIRO_ENUM_TYPE_ENUM_NAME&quot; becomes &quot;EnumType.enumName&quot;.</li>
+</ul>
+<p>Finally, where there have been multiple ways of creating a certain kind of
+object (such as a Surface or Pattern), creating them is split between using
+constructors and static members.  This will get resolved eventually, but for
+the moment, which one to use is unclear.</p>
+<p>The general rule is that if you want to convert:</p>
+<pre class="literal-block">
+xxx = cairo_some_object_create_foo(arg1, arg2, ...);
+</pre>
+<p>You should try the following:</p>
+<pre class="literal-block">
+xxx = new SomeObject(arg1, arg2, ...);
+xxx = SomeObject.create(arg1, arg2, ...);
+xxx = SomeObject.createFoo(arg1, arg2, ...);
+</pre>
+<p>For more concrete examples, see the <tt class="docutils literal"><span class="pre">cairooo_snippets</span></tt>, <tt class="docutils literal"><span class="pre">cairooo_tutorial</span></tt>
+and <tt class="docutils literal"><span class="pre">demos</span></tt> directories.</p>
+</div>
+</div>
 <div class="section" id="contributing">
-<h1><a name="contributing">Contributing</a></h1>
-<p>The cairo api has a lot of functionality in it that this binding does not
-yet cover: X11, PDF, PS and more.  However, the only binary version of cairo
+<h1><a class="toc-backref" href="#id15" name="contributing">Contributing</a></h1>
+<p>The cairo api has a functionality in it that this binding does not
+yet cover: PDF abd PS for example.  However, the only binary version of cairo
 I have access to is limited to what is currently covered, and I have thus
 far had no success in compiling cairo myself.</p>
 <p>So, currently the best way to contribute is to contribute and maintain a
 binding for some currently unsupported part of cairo.  You can look at the
 PNG binding for a simple example.</p>
+<p>That, or you can write samples and demos to test the bindings that I can't.
+In addition to being fun, you get to make pretty pictures in the process!</p>
 </div>
 <div class="section" id="thanks">
-<h1><a name="thanks">Thanks</a></h1>
+<h1><a class="toc-backref" href="#id16" name="thanks">Thanks</a></h1>
 <ul class="simple">
 <li>Many thanks for the hard work by the people behind the cairo library.</li>
 <li>Also, thanks to Michael Parker for letting me steal <a class="reference" href="http://www.dsource.org/projects/derelict/">Derelict</a>'s dynamic
@@ -84,16 +239,25 @@ loader code.</li>
 </ul>
 </div>
 <div class="section" id="credits">
-<h1><a name="credits">Credits</a></h1>
+<h1><a class="toc-backref" href="#id17" name="credits">Credits</a></h1>
 <p>cairo bindings for D Copyright © 2006 Daniel Keep.  Portions Copyright ©
 2006 Michael Parker.</p>
 <p>Released under the <a class="reference" href="http://www.opensource.org/licenses/bsd-license.php">BSD license</a>.</p>
 <!-- Links -->
+<!-- Footnotes -->
+<table class="docutils footnote" frame="void" id="debuglibs" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1" name="debuglibs">[1]</a></td><td>The debug libraries will have &quot;_debug&quot; appended to their
+filename, so you do not need to worry about overwriting your
+release libraries.</td></tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2006-05-04 14:08 UTC.
+Generated on: 2006-05-19 02:45 UTC.
 
 </div>
 </body>
