@@ -40,6 +40,8 @@ static this() {
 		aldrv = ExeModule_Load("OpenAL32.dll");
 	} else version (linux) {
 		aldrv = ExeModule_Load("libal.so");
+	} else version (darwin) {
+		aldrv = ExeModule_Load("/System/Library/Frameworks/OpenAL.framework");
 	}
 	//al.d
 	alEnable = cast(pfalEnable)getProc("alEnable");

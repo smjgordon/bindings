@@ -1065,6 +1065,8 @@ static this () {
 		gldrv = ExeModule_Load("OpenGL32.dll");
 	} else version (linux) {
 		gldrv = ExeModule_Load("libGL.so");
+	} else version (darwin) {
+		gldrv = ExeModule_Load("/System/Library/Frameworks/OpenGL.framework");
 	}
 	glClearIndex = cast(pfglClearIndex)getProc("glClearIndex");
 	glClearColor = cast(pfglClearColor)getProc("glClearColor");

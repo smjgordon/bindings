@@ -226,6 +226,8 @@ static this () {
 		gludrv = ExeModule_Load("glu32.dll");
 	} else version (linux) {
 		gludrv = ExeModule_Load("libGLU.so");
+	} else version (darwin) {
+		gludrv = ExeModule_Load("/System/Library/Frameworks/OpenGL.framework");
 	}
 	gluBeginCurve = cast(pfgluBeginCurve)getProc("gluBeginCurve");
 	gluBeginPolygon = cast(pfgluBeginPolygon)getProc("gluBeginPolygon");

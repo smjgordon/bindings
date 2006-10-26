@@ -38,6 +38,8 @@ static this() {
 		alutdrv = ExeModule_Load("OpenAL32.dll");
 	} else version (linux) {
 		alutdrv = ExeModule_Load("libalut.so");
+	} else version (darwin) {
+		alutdrv = ExeModule_Load("/System/Library/Frameworks/ALUT.framework");
 	}
 	alutInit = cast(pfalutInit)getProc("alutInit");
 	alutExit = cast(pfalutExit)getProc("alutExit");

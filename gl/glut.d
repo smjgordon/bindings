@@ -330,6 +330,8 @@ static this() {
 		glutdrv = ExeModule_Load("glut32.dll");
 	} else version (linux) {
 		glutdrv = ExeModule_Load("libglut.so");
+	} else version (darwin) {
+		glutdrv = ExeModule_Load("/System/Library/Frameworks/GLUT.framework");
 	}
 	glutInit = cast(pfglutInit)getProc("glutInit");
 	glutInitWindowPosition = cast(pfglutInitWindowPosition)getProc("glutInitWindowPosition");
