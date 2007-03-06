@@ -43,8 +43,8 @@
  */
 module cairo.win32.cairo_win32;
 
-import cairo.win32.cairotypes_win32;
-import cairo.win32.cairofuncs_win32;
+public import cairo.win32.cairotypes_win32;
+public import cairo.win32.cairofuncs_win32;
 
 private
 {

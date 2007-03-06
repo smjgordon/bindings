@@ -38,7 +38,10 @@ License: BSD v2 (http://opensource.org/licenses/bsd-license.php).
 **/
 module cairooo.xlib.all;
 
-import cairooo.xlib.xlib;
-import cairooo.xlib.drawablesurface;
-import cairooo.xlib.pixmapsurface;
+public
+{
+    import cairooo.xlib.xlib;
+    import cairooo.xlib.drawablesurface;
+    import cairooo.xlib.pixmapsurface;
+}
 

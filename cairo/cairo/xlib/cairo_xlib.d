@@ -45,8 +45,8 @@
  */
 module cairo.xlib.cairo_xlib;
 
-import cairo.xlib.cairotypes_xlib;
-import cairo.xlib.cairofuncs_xlib;
+public import cairo.xlib.cairotypes_xlib;
+public import cairo.xlib.cairofuncs_xlib;
 
 private
 {

@@ -41,7 +41,7 @@
  */
 module cairo.glitz.cairotypes_glitz;
 
-import cairo.cairotypes;
+public import cairo.cairotypes;
 
 /*
     ** How to use a custom Glitz binding **
@@ -59,7 +59,7 @@ import cairo.cairotypes;
 */
 version(UseCustomBinding)
 {
-    import your.glitz.binding;
+    public import your.glitz.binding;
 }
 else
 {

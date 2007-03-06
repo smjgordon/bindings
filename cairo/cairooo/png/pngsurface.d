@@ -41,6 +41,7 @@ module cairooo.png.pngsurface;
 private
 {
     import std.stream;
+    import std.string;
     import cairo.cairo;
     import cairo.png.cairo_png;
     import cairooo.callbacks;
@@ -101,7 +102,8 @@ class PNGSurface : ImageSurface
 
     this(char[] filename)
     {
-        super(cairo_image_surface_create_from_png(filename), false);
+        super(cairo_image_surface_create_from_png(
+                    toStringz(filename)), false);
     }
 
     //
@@ -130,7 +132,8 @@ class PNGSurface : ImageSurface
     void
     writeToPNG(Surface surface, char[] filename)
     {
-        .checkStatus(cairo_surface_write_to_png(surface.handle, filename));
+        .checkStatus(cairo_surface_write_to_png(surface.handle,
+                    toStringz(filename)));
     }
 
     static

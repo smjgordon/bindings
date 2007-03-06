@@ -45,8 +45,8 @@
  */
 module cairo.glitz.cairo_glitz;
 
-import cairo.glitz.cairotypes_glitz;
-import cairo.glitz.cairofuncs_glitz;
+public import cairo.glitz.cairotypes_glitz;
+public import cairo.glitz.cairofuncs_glitz;
 
 private
 {

@@ -39,8 +39,8 @@
  */
 module cairo.png.cairo_png;
 
-import cairo.png.cairotypes_png;
-import cairo.png.cairofuncs_png;
+public import cairo.png.cairotypes_png;
+public import cairo.png.cairofuncs_png;
 
 private
 {

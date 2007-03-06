@@ -25,14 +25,14 @@
 +/
 module util.script;
 
-import std.file;
-import std.format;
-import std.path;
-import std.process;
-import std.stdio;
-import std.string;
-import std.zip;
-import std.c.stdio;
+public import std.file;
+public import std.format;
+public import std.path;
+public import std.process;
+public import std.stdio;
+public import std.string;
+public import std.zip;
+public import std.c.stdio;
 
 version(Windows) {}
 else version(linux) {}

@@ -72,26 +72,29 @@ License: BSD v2 (http://opensource.org/licenses/bsd-license.php).
 **/
 module cairooo.all;
 
-import cairooo.cairo;
-import cairooo.callbacks;
-import cairooo.context;
-import cairooo.enums;
-import cairooo.exceptions;
-import cairooo.fontextents;
-import cairooo.fontface;
-import cairooo.fontoptions;
-import cairooo.glyph;
-import cairooo.gradient;
-import cairooo.imagebuffersurface;
-import cairooo.imagesurface;
-import cairooo.lineargradient;
-import cairooo.matrix;
-import cairooo.path;
-import cairooo.pattern;
-import cairooo.radialgradient;
-import cairooo.scaledfont;
-import cairooo.solidpattern;
-import cairooo.surface;
-import cairooo.surfacepattern;
-import cairooo.textextents;
+public
+{
+    import cairooo.cairo;
+    import cairooo.callbacks;
+    import cairooo.context;
+    import cairooo.enums;
+    import cairooo.exceptions;
+    import cairooo.fontextents;
+    import cairooo.fontface;
+    import cairooo.fontoptions;
+    import cairooo.glyph;
+    import cairooo.gradient;
+    import cairooo.imagebuffersurface;
+    import cairooo.imagesurface;
+    import cairooo.lineargradient;
+    import cairooo.matrix;
+    import cairooo.path;
+    import cairooo.pattern;
+    import cairooo.radialgradient;
+    import cairooo.scaledfont;
+    import cairooo.solidpattern;
+    import cairooo.surface;
+    import cairooo.surfacepattern;
+    import cairooo.textextents;
+}
 

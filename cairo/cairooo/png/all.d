@@ -38,6 +38,9 @@ License: BSD v2 (http://opensource.org/licenses/bsd-license.php).
 **/
 module cairooo.png.all;
 
-import cairooo.png.png;
-import cairooo.png.pngsurface;
+public
+{
+    import cairooo.png.png;
+    import cairooo.png.pngsurface;
+}
 

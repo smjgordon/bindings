@@ -38,8 +38,8 @@
  */
 module cairo.cairo;
 
-import cairo.cairotypes;
-import cairo.cairofuncs;
+public import cairo.cairotypes;
+public import cairo.cairofuncs;
 
 private import cairo.loader;
 package SharedLib libCairo;

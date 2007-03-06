@@ -4,6 +4,7 @@ module snippets.text_extents;
 private
 {
     import std.math;
+    import std.string;
     import cairo.cairo;
     import snippets.common;
 }
@@ -20,13 +21,13 @@ void snippet_text_extents(cairo_t* cr, int width, int height)
         cairo_font_weight_t.CAIRO_FONT_WEIGHT_NORMAL);
 
     cairo_set_font_size (cr, 0.4);
-    cairo_text_extents (cr, utf8, &extents);
+    cairo_text_extents (cr, toStringz(utf8), &extents);
 
     x=0.1;
     y=0.6;
 
     cairo_move_to (cr, x,y);
-    cairo_show_text (cr, utf8);
+    cairo_show_text (cr, toStringz(utf8));
 
     /* draw helping lines */
     cairo_set_source_rgba (cr, 1,0.2,0.2, 0.6);

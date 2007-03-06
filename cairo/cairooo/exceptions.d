@@ -44,7 +44,7 @@ private
     import cairo.cairo;
 }
 
-package void
+void
 checkStatus(cairo_status_t status)
 {
     switch(status)

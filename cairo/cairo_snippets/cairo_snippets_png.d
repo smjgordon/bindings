@@ -91,7 +91,7 @@ void do_snippet(char[] name, snippet_fn snippet)
     cairo_restore(cr);
 
     // Write the results to disk.
-    cairo_surface_write_to_png(surface, OUTPUT_PATH.format(name));
+    cairo_surface_write_to_png(surface, toStringz(OUTPUT_PATH.format(name)));
 
     writefln("Done.");
 }

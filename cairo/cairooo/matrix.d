@@ -130,7 +130,8 @@ struct Matrix
     static Matrix
     fromPtr(cairo_matrix_t* ptr)
     {
-        return cast(Matrix) (*ptr);
+        //return cast(Matrix) (*ptr);
+        return *(cast(Matrix*)ptr);
     }
 }
 

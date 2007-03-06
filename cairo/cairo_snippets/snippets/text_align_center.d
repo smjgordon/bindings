@@ -4,6 +4,7 @@ module snippets.text_align_center;
 private
 {
     import std.math;
+    import std.string;
     import cairo.cairo;
     import snippets.common;
 }
@@ -20,12 +21,12 @@ void snippet_text_align_center(cairo_t* cr, int width, int height)
         cairo_font_weight_t.CAIRO_FONT_WEIGHT_NORMAL);
 
     cairo_set_font_size (cr, 0.2);
-    cairo_text_extents (cr, utf8, &extents);
+    cairo_text_extents (cr, toStringz(utf8), &extents);
     x = 0.5-(extents.width/2 + extents.x_bearing);
     y = 0.5-(extents.height/2 + extents.y_bearing);
 
     cairo_move_to (cr, x, y);
-    cairo_show_text (cr, utf8);
+    cairo_show_text (cr, toStringz(utf8));
 
     /* draw helping lines */
     cairo_set_source_rgba (cr, 1,0.2,0.2, 0.6);

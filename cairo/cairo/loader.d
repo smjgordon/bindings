@@ -251,7 +251,7 @@ version(Windows)
     body
     {
         auto winlib = cast(WinSharedLib)lib;
-        void* proc = GetProcAddress(winlib.handle, procName);
+        void* proc = GetProcAddress(winlib.handle, toStringz(procName));
         if( proc == null )
             throw new ProcNotFoundException(lib, procName);
 

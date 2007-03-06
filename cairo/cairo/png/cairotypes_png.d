@@ -39,5 +39,5 @@
  */
 module cairo.png.cairotypes_png;
 
-import cairo.cairotypes;
+public import cairo.cairotypes;
 

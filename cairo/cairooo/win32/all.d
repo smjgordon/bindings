@@ -38,8 +38,11 @@ License: BSD v2 (http://opensource.org/licenses/bsd-license.php).
 **/
 module cairooo.win32.all;
 
-import cairooo.win32.win32;
-import cairooo.win32.win32fontface;
-import cairooo.win32.win32scaledfont;
-import cairooo.win32.win32surface;
+public
+{
+    import cairooo.win32.win32;
+    import cairooo.win32.win32fontface;
+    import cairooo.win32.win32scaledfont;
+    import cairooo.win32.win32surface;
+}
 

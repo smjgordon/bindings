@@ -41,7 +41,7 @@
  */
 module cairo.xlib.cairotypes_xlib;
 
-import cairo.cairotypes;
+public import cairo.cairotypes;
 
 /*
     ** How to use a custom XLib binding **
@@ -63,7 +63,7 @@ import cairo.cairotypes;
 */
 version(UseCustomBinding)
 {
-    import your.xlib.binding;
+    public import your.xlib.binding;
 }
 else
 {

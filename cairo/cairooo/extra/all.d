@@ -38,6 +38,9 @@ License: BSD v2 (http://opensource.org/licenses/bsd-license.php).
 **/
 module cairooo.extra.all;
 
-import cairooo.extra.shapetemplate;
-import cairooo.extra.types;
+public
+{
+    import cairooo.extra.shapetemplate;
+    import cairooo.extra.types;
+}
 

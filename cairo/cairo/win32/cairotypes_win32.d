@@ -41,6 +41,6 @@
  */
 module cairo.win32.cairotypes_win32;
 
-import cairo.cairotypes;
-import win32.windows;
+public import cairo.cairotypes;
+public import win32.windows;
 

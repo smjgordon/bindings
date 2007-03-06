@@ -108,7 +108,7 @@ public:
         // and check that stride is valid.
         this._data = data;
         this.selfAllocated = false;
-        super(cairo_image_surface_create_for_data(data,
+        super(cairo_image_surface_create_for_data(data.ptr,
                     cast(cairo_format_t) format, width, height, stride),
                 true);
     }

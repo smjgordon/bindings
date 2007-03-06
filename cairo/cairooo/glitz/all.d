@@ -38,6 +38,9 @@ License: BSD v2 (http://opensource.org/licenses/bsd-license.php).
 **/
 module cairooo.glitz.all;
 
-import cairooo.glitz.glitz;
-import cairooo.glitz.glitzsurface;
+public
+{
+    import cairooo.glitz.glitz;
+    import cairooo.glitz.glitzsurface;
+}
 

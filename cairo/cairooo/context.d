@@ -317,7 +317,7 @@ public:
     setDash(double[] dashes, double offset)
     {
         scope(success) checkStatus();
-        cairo_set_dash(this.handle, dashes, dashes.length, offset);
+        cairo_set_dash(this.handle, dashes.ptr, dashes.length, offset);
     }
 
     /**
@@ -851,7 +851,7 @@ public:
     glyphPath(Glyph[] glyphs)
     {
         scope(success) checkStatus();
-        cairo_glyph_path(this.handle, cast(cairo_glyph_t*) glyphs,
+        cairo_glyph_path(this.handle, cast(cairo_glyph_t*) glyphs.ptr,
                 glyphs.length);
     }
 
@@ -1126,7 +1126,7 @@ public:
     showGlyphs(Glyph[] glyphs)
     {
         scope(success) checkStatus();
-        cairo_show_glyphs(this.handle, cast(cairo_glyph_t*) glyphs,
+        cairo_show_glyphs(this.handle, cast(cairo_glyph_t*) glyphs.ptr,
                 glyphs.length);
     }
 
@@ -1173,7 +1173,7 @@ public:
     {
         scope(success) checkStatus();
         TextExtents result;
-        cairo_glyph_extents(this.handle, cast(cairo_glyph_t*) glyphs,
+        cairo_glyph_extents(this.handle, cast(cairo_glyph_t*) glyphs.ptr,
                 glyphs.length, cast(cairo_text_extents_t*) &result);
         return result;
     }
