@@ -1,0 +1,98 @@
+D bindings for the GNU Scientific Library
+(c) Daniel Truemper <truemped.dsource <with> hence22.org>
+
+Table of contents
+=================
+0. Disclaimer
+1. Remarks
+2. Build & Install
+3. Testing
+4. Using the library
+5. Links
+
+
+
+0. Disclaimer
+=============
+
+These bindings have only been tested in a Debian/Linux (x32) environment using
+gdc. If you have successfully run them on Windows or Mac or whatever, simply
+contact me and I'll add appropriate comments to this file; or you might change
+this file on your own and submit it via SVN.
+
+
+
+1. Remarks
+==========
+
+This version really is beta! If you want to or are using these bindings and
+experience erros and have fixed them, feel free to add them either directly
+via SVN to the bindings project[1] or you might find me in #d or #d.tango on
+freenode or post in the forums. Of corse you can also contact me via email.
+
+Since I am currently writing my diploma thesis I might not have the time to
+really test _all_ functions so there really might be errors...
+
+
+
+2. Builld & Install
+===================
+
+I built this library with the help of dsss[2] a really great tool you should
+consider using, if you are not by now. Writing Makefiles is obsolete with it.
+If you have dsss installed you simply type in the main directory
+
+	$ dsss build
+
+In order to install the library correctly just type
+
+	$ dsss install
+
+If you (one day) do not need the library anymore just uninstall it using
+
+	$ dsss uninstall gsl
+
+
+
+3. Testing
+==========
+
+I have added the first basic testing routines to the test directory. Again
+there is a dsss.conf file allowing you to build the testing program on your
+own:
+
+	$ dsss build
+
+and then run
+
+	$ ./testgsl
+
+If you want to help me do the testing, simply add routines to the
+"test/test/main.d" file. It's a bit annoying for the moment but I couldn't
+find a more less usefull testing environment for now, it will probably change
+in the future.
+
+
+
+4. Using the library
+====================
+
+If you simply want to use the library with your own program and have
+successfully install the library with dsss, add the following line to your
+dsss.conf file:
+
+	buildflags = -L-lgsl -L-lblas
+
+Of corse you need the real libraries installed on your machine. On Debian
+based systems search for libgsl and libblas.
+
+If you have done this, you should be able to simply add import statements
+similar to the "#include <gsl/gsl_*.h>" statements from the documentation.
+You only have to change the import from "gsl/*" to "gsl.*" ommiting the ".h"
+in the end.
+
+5. Links
+========
+[1]: http://www.dsource.org/projects/bindings
+[2]: http://www.dsource.org/projects/dsss
+
