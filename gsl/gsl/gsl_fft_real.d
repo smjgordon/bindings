@@ -32,22 +32,20 @@ public import gsl.gsl_fft;
 extern (C):
 int  gsl_fft_real_radix2_transform(double *data, size_t stride, size_t n);
 
-struct _N5
+struct gsl_fft_real_wavetable
 {
     size_t n;
     size_t nf;
     size_t [64]factor;
     gsl_complex *[64]twiddle;
     gsl_complex *trig;
-}
-alias _N5 gsl_fft_real_wavetable;
+};
 
-struct _N6
+struct gsl_fft_real_workspace
 {
     size_t n;
     double *scratch;
-}
-alias _N6 gsl_fft_real_workspace;
+};
 
 gsl_fft_real_wavetable * gsl_fft_real_wavetable_alloc(size_t n);
 

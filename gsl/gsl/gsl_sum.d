@@ -36,7 +36,8 @@ import tango.stdc.stdlib;
  *   dsum        = derivative of sum wrt term i; length = size
  */
 
-struct _N1
+extern (C):
+struct gsl_sum_levin_u_workspace
 {
     size_t size;
     size_t i;
@@ -47,9 +48,7 @@ struct _N1
     double *dq_num;
     double *dq_den;
     double *dsum;
-}
-extern (C):
-alias _N1 gsl_sum_levin_u_workspace;
+};
 
 gsl_sum_levin_u_workspace * gsl_sum_levin_u_alloc(size_t n);
 
@@ -102,7 +101,7 @@ int  gsl_sum_levin_u_step(double term, size_t n, size_t nmax, gsl_sum_levin_u_wo
    of the error has already been estimated reliably and is not
    expected to change.  */
 
-struct _N2
+struct gsl_sum_levin_utrunc_workspace
 {
     size_t size;
     size_t i;
@@ -111,8 +110,7 @@ struct _N2
     double *q_num;
     double *q_den;
     double *dsum;
-}
-alias _N2 gsl_sum_levin_utrunc_workspace;
+};
 
 gsl_sum_levin_utrunc_workspace * gsl_sum_levin_utrunc_alloc(size_t n);
 

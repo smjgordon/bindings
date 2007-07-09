@@ -29,7 +29,8 @@ public import gsl.gsl_monte;
 
 public import gsl.gsl_monte_plain;
 
-struct _N5
+extern (C):
+struct gsl_monte_miser_state
 {
     size_t min_calls;
     size_t min_calls_per_bisection;
@@ -54,9 +55,7 @@ struct _N5
     double *fsum2_r;
     size_t *hits_l;
     size_t *hits_r;
-}
-extern (C):
-alias _N5 gsl_monte_miser_state;
+};
 
 int  gsl_monte_miser_integrate(gsl_monte_function *f, double *xl, double *xh, size_t dim, size_t calls, gsl_rng *r, gsl_monte_miser_state *state, double *result, double *abserr);
 

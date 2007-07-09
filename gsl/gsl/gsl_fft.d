@@ -23,6 +23,7 @@ module gsl.gsl_fft;
 
 public import gsl.gsl_complex;
 
+extern (C):
 enum
 {
     forward = -1,
@@ -30,7 +31,6 @@ enum
     gsl_fft_forward = -1,
     gsl_fft_backward = 1,
 }
-extern (C):
 alias int gsl_fft_direction;
 
 /* this gives the sign in the formula

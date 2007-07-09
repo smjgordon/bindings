@@ -38,15 +38,14 @@ int  gsl_fft_halfcomplex_float_radix2_inverse(float *data, size_t stride, size_t
 
 int  gsl_fft_halfcomplex_float_radix2_transform(float *data, size_t stride, size_t n);
 
-struct _N7
+struct gsl_fft_halfcomplex_wavetable_float
 {
     size_t n;
     size_t nf;
     size_t [64]factor;
     gsl_complex_float *[64]twiddle;
     gsl_complex_float *trig;
-}
-alias _N7 gsl_fft_halfcomplex_wavetable_float;
+};
 
 gsl_fft_halfcomplex_wavetable_float * gsl_fft_halfcomplex_wavetable_float_alloc(size_t n);
 

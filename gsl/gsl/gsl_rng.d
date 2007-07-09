@@ -28,7 +28,8 @@ public import gsl.gsl_types;
 
 public import gsl.gsl_errno;
 
-struct _N2
+extern (C):
+struct gsl_rng_type
 {
     char *name;
     uint max;
@@ -37,16 +38,13 @@ struct _N2
     void  function(void *state, uint seed)set;
     uint  function(void *state)get;
     double  function(void *state)get_double;
-}
-extern (C):
-alias _N2 gsl_rng_type;
+};
 
-struct _N3
+struct gsl_rng
 {
     gsl_rng_type *type;
     void *state;
-}
-alias _N3 gsl_rng;
+};
 
 /* These structs also need to appear in default.c so you can select
    them via the environment variable GSL_RNG_TYPE */

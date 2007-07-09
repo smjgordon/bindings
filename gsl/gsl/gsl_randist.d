@@ -202,13 +202,12 @@ int  gsl_ran_choose(gsl_rng *r, void *dest, size_t k, void *src, size_t n, size_
 
 void  gsl_ran_sample(gsl_rng *r, void *dest, size_t k, void *src, size_t n, size_t size);
 
-struct _N4
+struct gsl_ran_discrete_t
 {
     size_t K;
     size_t *A;
     double *F;
-}
-alias _N4 gsl_ran_discrete_t;
+};
 
 gsl_ran_discrete_t * gsl_ran_discrete_preproc(size_t K, double *P);
 

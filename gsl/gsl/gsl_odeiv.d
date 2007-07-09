@@ -46,15 +46,14 @@ public import gsl.gsl_types;
  * data is also present. 
  */
 
-struct _N1
+extern (C):
+struct gsl_odeiv_system
 {
     int  function(double t, double *y, double *dydt, void *params)func;
     int  function(double t, double *y, double *dfdy, double *dfdt, void *params)jacobian;
     size_t dimension;
     void *params;
-}
-extern (C):
-alias _N1 gsl_odeiv_system;
+};
 
 /* General stepper object.
  *
@@ -63,7 +62,7 @@ alias _N1 gsl_odeiv_system;
  * iterating the stepping operation.
  */
 
-struct _N2
+struct gsl_odeiv_step_type
 {
     char *name;
     int can_use_dydt_in;
@@ -73,16 +72,14 @@ struct _N2
     int  function(void *state, size_t dim)reset;
     uint  function(void *state)order;
     void  function(void *state)free;
-}
-alias _N2 gsl_odeiv_step_type;
+};
 
-struct _N3
+struct gsl_odeiv_step
 {
     gsl_odeiv_step_type *type;
     size_t dimension;
     void *state;
-}
-alias _N3 gsl_odeiv_step;
+};
 
 /* Available stepper types.
  *
@@ -146,22 +143,20 @@ int  gsl_odeiv_step_apply(gsl_odeiv_step *, double t, double h, double *y, doubl
  * to store state and control their heuristics.
  */
 
-struct _N4
+struct gsl_odeiv_control_type
 {
     char *name;
     void * function()alloc;
     int  function(void *state, double eps_abs, double eps_rel, double a_y, double a_dydt)init;
     int  function(void *state, size_t dim, uint ord, double *y, double *yerr, double *yp, double *h)hadjust;
     void  function(void *state)free;
-}
-alias _N4 gsl_odeiv_control_type;
+};
 
-struct _N5
+struct gsl_odeiv_control
 {
     gsl_odeiv_control_type *type;
     void *state;
-}
-alias _N5 gsl_odeiv_control;
+};
 
 /* Possible return values for an hadjust() evolution method.
  */
@@ -216,7 +211,7 @@ gsl_odeiv_control * gsl_odeiv_control_scaled_new(double eps_abs, double eps_rel,
 /* General evolution object.
  */
 
-struct _N6
+struct gsl_odeiv_evolve
 {
     size_t dimension;
     double *y0;
@@ -226,8 +221,7 @@ struct _N6
     double last_step;
     uint count;
     uint failed_steps;
-}
-alias _N6 gsl_odeiv_evolve;
+};
 
 /* Evolution object methods.
  */

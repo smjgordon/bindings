@@ -27,17 +27,16 @@ public import gsl.gsl_types;
 
 public import gsl.gsl_math;
 
-struct _N1
+extern (C):
+struct gsl_min_fminimizer_type
 {
     char *name;
     size_t size;
     int  function(void *state, gsl_function *f, double x_minimum, double f_minimum, double x_lower, double f_lower, double x_upper, double f_upper)set;
     int  function(void *state, gsl_function *f, double *x_minimum, double *f_minimum, double *x_lower, double *f_lower, double *x_upper, double *f_upper)iterate;
-}
-extern (C):
-alias _N1 gsl_min_fminimizer_type;
+};
 
-struct _N2
+struct gsl_min_fminimizer
 {
     gsl_min_fminimizer_type *type;
     gsl_function *func;
@@ -48,11 +47,9 @@ struct _N2
     double f_lower;
     double f_upper;
     void *state;
-}
-alias _N2 gsl_min_fminimizer;
+};
 
 gsl_min_fminimizer * gsl_min_fminimizer_alloc(gsl_min_fminimizer_type *T);
-                                      
 
 void  gsl_min_fminimizer_free(gsl_min_fminimizer *s);
 

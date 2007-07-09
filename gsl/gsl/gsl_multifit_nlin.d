@@ -45,10 +45,9 @@ struct gsl_multifit_function_struct
     size_t p;
     void *params;
 }
-
 alias gsl_multifit_function_struct gsl_multifit_function;
 
-struct _N89
+struct gsl_multifit_fsolver_type
 {
     char *name;
     size_t size;
@@ -56,10 +55,9 @@ struct _N89
     int  function(void *state, gsl_multifit_function *func, gsl_vector *x, gsl_vector *f, gsl_vector *dx)set;
     int  function(void *state, gsl_multifit_function *func, gsl_vector *x, gsl_vector *f, gsl_vector *dx)iterate;
     void  function(void *state)free;
-}
-alias _N89 gsl_multifit_fsolver_type;
+};
 
-struct _N90
+struct gsl_multifit_fsolver
 {
     gsl_multifit_fsolver_type *type;
     gsl_multifit_function *func;
@@ -67,8 +65,7 @@ struct _N90
     gsl_vector *f;
     gsl_vector *dx;
     void *state;
-}
-alias _N90 gsl_multifit_fsolver;
+};
 
 gsl_multifit_fsolver * gsl_multifit_fsolver_alloc(gsl_multifit_fsolver_type *T, size_t n, size_t p);
 
@@ -94,10 +91,9 @@ struct gsl_multifit_function_fdf_struct
     size_t p;
     void *params;
 }
-
 alias gsl_multifit_function_fdf_struct gsl_multifit_function_fdf;
 
-struct _N91
+struct gsl_multifit_fdfsolver_type
 {
     char *name;
     size_t size;
@@ -105,10 +101,9 @@ struct _N91
     int  function(void *state, gsl_multifit_function_fdf *fdf, gsl_vector *x, gsl_vector *f, gsl_matrix *J, gsl_vector *dx)set;
     int  function(void *state, gsl_multifit_function_fdf *fdf, gsl_vector *x, gsl_vector *f, gsl_matrix *J, gsl_vector *dx)iterate;
     void  function(void *state)free;
-}
-alias _N91 gsl_multifit_fdfsolver_type;
+};
 
-struct _N92
+struct gsl_multifit_fdfsolver
 {
     gsl_multifit_fdfsolver_type *type;
     gsl_multifit_function_fdf *fdf;
@@ -117,8 +112,7 @@ struct _N92
     gsl_matrix *J;
     gsl_vector *dx;
     void *state;
-}
-alias _N92 gsl_multifit_fdfsolver;
+};
 
 gsl_multifit_fdfsolver * gsl_multifit_fdfsolver_alloc(gsl_multifit_fdfsolver_type *T, size_t n, size_t p);
 

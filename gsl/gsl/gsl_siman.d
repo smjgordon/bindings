@@ -48,7 +48,7 @@ alias void  function(void *xp)gsl_siman_destroy_t;
 
   /* the following parameters are for the Boltzmann distribution */
 
-struct _N4
+struct gsl_siman_params_t
 {
     int n_tries;
     int iters_fixed_T;
@@ -57,8 +57,7 @@ struct _N4
     double t_initial;
     double mu_t;
     double t_min;
-}
-alias _N4 gsl_siman_params_t;
+};
 
 /* prototype for the workhorse function */
 

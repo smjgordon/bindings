@@ -27,18 +27,16 @@ public import gsl.gsl_interp;
 
 /* general interpolation object */
 
-struct _N4
+extern (C):
+struct gsl_spline
 {
     gsl_interp *interp;
     double *x;
     double *y;
     size_t size;
-}
-extern (C):
-alias _N4 gsl_spline;
+};
 
 gsl_spline * gsl_spline_alloc(gsl_interp_type *T, size_t size);
-     
 
 int  gsl_spline_init(gsl_spline *spline, double *xa, double *ya, size_t size);
 

@@ -29,7 +29,8 @@ public import gsl.gsl_vector;
 
 public import gsl.gsl_matrix;
 
-struct _N89
+extern (C):
+struct gsl_multifit_linear_workspace
 {
     size_t n;
     size_t p;
@@ -40,9 +41,7 @@ struct _N89
     gsl_vector *t;
     gsl_vector *xt;
     gsl_vector *D;
-}
-extern (C):
-alias _N89 gsl_multifit_linear_workspace;
+};
 
 gsl_multifit_linear_workspace * gsl_multifit_linear_alloc(size_t n, size_t p);
 

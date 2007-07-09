@@ -25,26 +25,24 @@ import tango.stdc.stdlib;
 
 import tango.stdc.stdio;
 
-struct _N1
+extern (C):
+struct gsl_histogram2d
 {
     size_t nx;
     size_t ny;
     double *xrange;
     double *yrange;
     double *bin;
-}
-extern (C):
-alias _N1 gsl_histogram2d;
+};
 
-struct _N2
+struct gsl_histogram2d_pdf
 {
     size_t nx;
     size_t ny;
     double *xrange;
     double *yrange;
     double *sum;
-}
-alias _N2 gsl_histogram2d_pdf;
+};
 
 gsl_histogram2d * gsl_histogram2d_alloc(size_t nx, size_t ny);
 
@@ -65,8 +63,6 @@ double  gsl_histogram2d_get(gsl_histogram2d *h, size_t i, size_t j);
 int  gsl_histogram2d_get_xrange(gsl_histogram2d *h, size_t i, double *xlower, double *xupper);
 
 int  gsl_histogram2d_get_yrange(gsl_histogram2d *h, size_t j, double *ylower, double *yupper);
-
-                                     
 
 double  gsl_histogram2d_xmax(gsl_histogram2d *h);
 

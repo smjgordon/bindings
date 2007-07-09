@@ -32,7 +32,8 @@ public import gsl.gsl_check_range;
 
 public import gsl.gsl_vector_ulong;
 
-struct _N5
+extern (C):
+struct gsl_matrix_ulong
 {
     size_t size1;
     size_t size2;
@@ -40,24 +41,18 @@ struct _N5
     uint *data;
     gsl_block_ulong *block;
     int owner;
-}
-extern (C):
-alias _N5 gsl_matrix_ulong;
+};
 
-struct _N6
+struct _gsl_matrix_ulong_view
 {
     gsl_matrix_ulong matrix;
-}
-alias _N6 _gsl_matrix_ulong_view;
-
+};
 alias _gsl_matrix_ulong_view gsl_matrix_ulong_view;
 
-struct _N7
+struct _gsl_matrix_ulong_const_view
 {
     gsl_matrix_ulong matrix;
-}
-alias _N7 _gsl_matrix_ulong_const_view;
-
+};
 alias _gsl_matrix_ulong_const_view gsl_matrix_ulong_const_view;
 
 /* Allocation */

@@ -36,11 +36,9 @@ public import gsl.gsl_vector_complex_double;
 
 public import gsl.gsl_block_complex_double;
 
-extern(C) {
-	alias _N11 gsl_matrix_complex;
-}
+extern (C):
 
-struct _N11
+struct gsl_matrix_complex
 {
     size_t size1;
     size_t size2;
@@ -48,23 +46,18 @@ struct _N11
     double *data;
     gsl_block_complex *block;
     int owner;
-}
-extern (C):
+};
 
-struct _N12
+struct _gsl_matrix_complex_view
 {
     gsl_matrix_complex matrix;
-}
-alias _N12 _gsl_matrix_complex_view;
-
+};
 alias _gsl_matrix_complex_view gsl_matrix_complex_view;
 
-struct _N13
+struct _gsl_matrix_complex_const_view
 {
     gsl_matrix_complex matrix;
-}
-alias _N13 _gsl_matrix_complex_const_view;
-
+};
 alias _gsl_matrix_complex_const_view gsl_matrix_complex_const_view;
 
 /* Allocation */

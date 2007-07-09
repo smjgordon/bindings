@@ -35,7 +35,8 @@ public import gsl.gsl_check_range;
 public import gsl.gsl_vector_complex_long_double;
 public import gsl.gsl_block_complex_long_double;
 
-struct _N11
+extern (C):
+struct gsl_matrix_complex_long_double
 {
     size_t size1;
     size_t size2;
@@ -43,24 +44,18 @@ struct _N11
     real *data;
     gsl_block_complex_long_double *block;
     int owner;
-}
-extern (C):
-alias _N11 gsl_matrix_complex_long_double;
+};
 
-struct _N12
+struct _gsl_matrix_complex_long_double_view
 {
     gsl_matrix_complex_long_double matrix;
-}
-alias _N12 _gsl_matrix_complex_long_double_view;
-
+};
 alias _gsl_matrix_complex_long_double_view gsl_matrix_complex_long_double_view;
 
-struct _N13
+struct _gsl_matrix_complex_long_double_const_view
 {
     gsl_matrix_complex_long_double matrix;
-}
-alias _N13 _gsl_matrix_complex_long_double_const_view;
-
+};
 alias _gsl_matrix_complex_long_double_const_view gsl_matrix_complex_long_double_const_view;
 
 /* Allocation */

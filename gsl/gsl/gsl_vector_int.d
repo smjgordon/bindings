@@ -32,31 +32,26 @@ public import gsl.gsl_check_range;
 
 public import gsl.gsl_block_int;
 
-struct _N2
+extern (C):
+struct gsl_vector_int
 {
     size_t size;
     size_t stride;
     int *data;
     gsl_block_int *block;
     int owner;
-}
-extern (C):
-alias _N2 gsl_vector_int;
+};
 
-struct _N3
+struct _gsl_vector_int_view
 {
     gsl_vector_int vector;
-}
-alias _N3 _gsl_vector_int_view;
-
+};
 alias _gsl_vector_int_view gsl_vector_int_view;
 
-struct _N4
+struct _gsl_vector_int_const_view
 {
     gsl_vector_int vector;
-}
-alias _N4 _gsl_vector_int_const_view;
-
+};
 alias _gsl_vector_int_const_view gsl_vector_int_const_view;
 
 /* Allocation */

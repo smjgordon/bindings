@@ -16,30 +16,28 @@ public import gsl.gsl_errno;
 /* Structure describing a type of generator.
  */
 
-struct _N2
+extern (C):
+struct gsl_qrng_type
 {
     char *name;
     uint max_dimension;
     size_t  function(uint dimension)state_size;
     int  function(void *state, uint dimension)init_state;
     int  function(void *state, uint dimension, double *x)get;
-}
-extern (C):
-alias _N2 gsl_qrng_type;
+};
 
 /* Structure describing a generator instance of a
  * specified type, with generator-specific state info
  * and dimension-specific info.
  */
 
-struct _N3
+struct gsl_qrng
 {
     gsl_qrng_type *type;
     uint dimension;
     size_t state_size;
     void *state;
-}
-alias _N3 gsl_qrng;
+};
 
 /* Supported generator types.
  */

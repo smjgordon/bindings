@@ -32,28 +32,25 @@ public import gsl.gsl_errno;
 
 public import gsl.gsl_histogram;
 
-struct _N4
+extern (C):
+struct gsl_ntuple
 {
     FILE *file;
     void *ntuple_data;
     size_t size;
-}
-extern (C):
-alias _N4 gsl_ntuple;
+};
 
-struct _N5
+struct gsl_ntuple_select_fn
 {
     int  function(void *ntuple_data, void *params)func;
     void *params;
-}
-alias _N5 gsl_ntuple_select_fn;
+};
 
-struct _N6
+struct gsl_ntuple_value_fn
 {
     double  function(void *ntuple_data, void *params)func;
     void *params;
-}
-alias _N6 gsl_ntuple_value_fn;
+};
 
 gsl_ntuple * gsl_ntuple_open(char *filename, void *ntuple_data, size_t size);
 

@@ -45,7 +45,8 @@ enum
 
   /* scratch variables preserved between calls to vegas1/2/3  */
 
-struct _N5
+extern (C):
+struct gsl_monte_vegas_state
 {
     size_t dim;
     size_t bins_max;
@@ -77,9 +78,7 @@ struct _N5
     uint samples;
     uint calls_per_box;
     FILE *ostream;
-}
-extern (C):
-alias _N5 gsl_monte_vegas_state;
+};
 
 int  gsl_monte_vegas_integrate(gsl_monte_function *f, double *xl, double *xu, size_t dim, size_t calls, gsl_rng *r, gsl_monte_vegas_state *state, double *result, double *abserr);
 

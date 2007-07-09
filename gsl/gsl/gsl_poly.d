@@ -66,12 +66,11 @@ int  gsl_poly_complex_solve_cubic(double a, double b, double c, gsl_complex *z0,
 
 /* Solve for the complex roots of a general real polynomial */
 
-struct _N4
+struct gsl_poly_complex_workspace
 {
     size_t nc;
     double *matrix;
-}
-alias _N4 gsl_poly_complex_workspace;
+};
 
 gsl_poly_complex_workspace * gsl_poly_complex_workspace_alloc(size_t n);
 

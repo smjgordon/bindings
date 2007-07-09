@@ -45,7 +45,7 @@ alias gsl_multiroot_function_struct gsl_multiroot_function;
 
 int  gsl_multiroot_fdjacobian(gsl_multiroot_function *F, gsl_vector *x, gsl_vector *f, double epsrel, gsl_matrix *jacobian);
 
-struct _N89
+struct gsl_multiroot_fsolver_type
 {
     char *name;
     size_t size;
@@ -53,10 +53,9 @@ struct _N89
     int  function(void *state, gsl_multiroot_function *func, gsl_vector *x, gsl_vector *f, gsl_vector *dx)set;
     int  function(void *state, gsl_multiroot_function *func, gsl_vector *x, gsl_vector *f, gsl_vector *dx)iterate;
     void  function(void *state)free;
-}
-alias _N89 gsl_multiroot_fsolver_type;
+};
 
-struct _N90
+struct gsl_multiroot_fsolver
 {
     gsl_multiroot_fsolver_type *type;
     gsl_multiroot_function *func;
@@ -64,8 +63,7 @@ struct _N90
     gsl_vector *f;
     gsl_vector *dx;
     void *state;
-}
-alias _N90 gsl_multiroot_fsolver;
+};
 
 gsl_multiroot_fsolver * gsl_multiroot_fsolver_alloc(gsl_multiroot_fsolver_type *T, size_t n);
 
@@ -97,7 +95,7 @@ struct gsl_multiroot_function_fdf_struct
 
 alias gsl_multiroot_function_fdf_struct gsl_multiroot_function_fdf;
 
-struct _N91
+struct gsl_multiroot_fdfsolver_type
 {
     char *name;
     size_t size;
@@ -105,10 +103,9 @@ struct _N91
     int  function(void *state, gsl_multiroot_function_fdf *fdf, gsl_vector *x, gsl_vector *f, gsl_matrix *J, gsl_vector *dx)set;
     int  function(void *state, gsl_multiroot_function_fdf *fdf, gsl_vector *x, gsl_vector *f, gsl_matrix *J, gsl_vector *dx)iterate;
     void  function(void *state)free;
-}
-alias _N91 gsl_multiroot_fdfsolver_type;
+};
 
-struct _N92
+struct gsl_multiroot_fdfsolver
 {
     gsl_multiroot_fdfsolver_type *type;
     gsl_multiroot_function_fdf *fdf;
@@ -117,8 +114,7 @@ struct _N92
     gsl_matrix *J;
     gsl_vector *dx;
     void *state;
-}
-alias _N92 gsl_multiroot_fdfsolver;
+};
 
 gsl_multiroot_fdfsolver * gsl_multiroot_fdfsolver_alloc(gsl_multiroot_fdfsolver_type *T, size_t n);
 

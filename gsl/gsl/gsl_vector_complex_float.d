@@ -38,31 +38,26 @@ public import gsl.gsl_vector_complex;
 
 public import gsl.gsl_block_complex_float;
 
-struct _N8
+extern (C):
+struct gsl_vector_complex_float
 {
     size_t size;
     size_t stride;
     float *data;
     gsl_block_complex_float *block;
     int owner;
-}
-extern (C):
-alias _N8 gsl_vector_complex_float;
+};
 
-struct _N9
+struct _gsl_vector_complex_float_view
 {
     gsl_vector_complex_float vector;
-}
-alias _N9 _gsl_vector_complex_float_view;
-
+};
 alias _gsl_vector_complex_float_view gsl_vector_complex_float_view;
 
-struct _N10
+struct _gsl_vector_complex_float_const_view
 {
     gsl_vector_complex_float vector;
-}
-alias _N10 _gsl_vector_complex_float_const_view;
-
+};
 alias _gsl_vector_complex_float_const_view gsl_vector_complex_float_const_view;
 
 /* Allocation */

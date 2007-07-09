@@ -27,7 +27,8 @@ public import gsl.gsl_math;
 
 /* Workspace for adaptive integrators */
 
-struct _N1
+extern (C):
+struct gsl_integration_workspace
 {
     size_t limit;
     size_t size;
@@ -40,9 +41,7 @@ struct _N1
     double *elist;
     size_t *order;
     size_t *level;
-}
-extern (C):
-alias _N1 gsl_integration_workspace;
+};
 
 gsl_integration_workspace * gsl_integration_workspace_alloc(size_t n);
 
@@ -50,7 +49,7 @@ void  gsl_integration_workspace_free(gsl_integration_workspace *w);
 
 /* Workspace for QAWS integrator */
 
-struct _N2
+struct gsl_integration_qaws_table
 {
     double alpha;
     double beta;
@@ -60,8 +59,7 @@ struct _N2
     double [25]rj;
     double [25]rg;
     double [25]rh;
-}
-alias _N2 gsl_integration_qaws_table;
+};
 
 gsl_integration_qaws_table * gsl_integration_qaws_table_alloc(double alpha, double beta, int mu, int nu);
 
@@ -77,7 +75,7 @@ enum gsl_integration_qawo_enum
     GSL_INTEG_SINE,
 }
 
-struct _N3
+struct gsl_integration_qawo_table
 {
     size_t n;
     double omega;
@@ -85,8 +83,7 @@ struct _N3
     double par;
     gsl_integration_qawo_enum sine;
     double *chebmo;
-}
-alias _N3 gsl_integration_qawo_table;
+};
 
 gsl_integration_qawo_table * gsl_integration_qawo_table_alloc(double omega, double L, gsl_integration_qawo_enum sine, size_t n);
 

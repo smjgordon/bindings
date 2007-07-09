@@ -68,21 +68,18 @@ alias float *gsl_const_complex_packed_float_ptr;
 
 alias real *gsl_const_complex_packed_long_double_ptr;
 
-struct _N1
+struct gsl_complex_long_double
 {
     real [2]dat;
-}
-alias _N1 gsl_complex_long_double;
+};
 
-struct _N2
+struct gsl_complex
 {
     double [2]dat;
-}
-alias _N2 gsl_complex;
+};
 
-struct _N3
+struct gsl_complex_float
 {
     float [2]dat;
-}
-alias _N3 gsl_complex_float;
+};
 

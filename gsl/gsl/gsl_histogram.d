@@ -25,22 +25,20 @@ import tango.stdc.stdlib;
 
 import tango.stdc.stdio;
 
-struct _N1
+extern (C):
+struct gsl_histogram
 {
     size_t n;
     double *range;
     double *bin;
-}
-extern (C):
-alias _N1 gsl_histogram;
+};
 
-struct _N2
+struct gsl_histogram_pdf
 {
     size_t n;
     double *range;
     double *sum;
-}
-alias _N2 gsl_histogram_pdf;
+};
 
 gsl_histogram * gsl_histogram_alloc(size_t n);
 
@@ -60,7 +58,6 @@ double  gsl_histogram_get(gsl_histogram *h, size_t i);
 
 int  gsl_histogram_get_range(gsl_histogram *h, size_t i, double *lower, double *upper);
                                      
-
 double  gsl_histogram_max(gsl_histogram *h);
 
 double  gsl_histogram_min(gsl_histogram *h);
@@ -95,7 +92,6 @@ int  gsl_histogram_sub(gsl_histogram *h1, gsl_histogram *h2);
 
 int  gsl_histogram_mul(gsl_histogram *h1, gsl_histogram *h2);
  
-
 int  gsl_histogram_div(gsl_histogram *h1, gsl_histogram *h2);
 
 int  gsl_histogram_scale(gsl_histogram *h, double scale);

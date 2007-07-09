@@ -30,18 +30,17 @@ public import gsl.gsl_types;
 
 /* evaluation accelerator */
 
-struct _N1
+extern (C):
+struct gsl_interp_accel
 {
     size_t cache;
     size_t miss_count;
     size_t hit_count;
-}
-extern (C):
-alias _N1 gsl_interp_accel;
+};
 
 /* interpolation object type */
 
-struct _N2
+struct gsl_interp_type
 {
     char *name;
     uint min_size;
@@ -52,20 +51,18 @@ struct _N2
     int  function(void *, double *xa, double *ya, size_t size, double x, gsl_interp_accel *, double *y_pp)eval_deriv2;
     int  function(void *, double *xa, double *ya, size_t size, gsl_interp_accel *, double a, double b, double *result)eval_integ;
     void  function(void *)free;
-}
-alias _N2 gsl_interp_type;
+};
 
 /* general interpolation object */
 
-struct _N3
+struct gsl_interp
 {
     gsl_interp_type *type;
     double xmin;
     double xmax;
     size_t size;
     void *state;
-}
-alias _N3 gsl_interp;
+};
 
 /* available types */
 
@@ -117,10 +114,4 @@ double  gsl_interp_eval_integ(gsl_interp *obj, double *xa, double *ya, double a,
 void  gsl_interp_free(gsl_interp *interp);
 
 size_t  gsl_interp_bsearch(double *x_array, double x, size_t index_lo, size_t index_hi);
-
-  
-
- 
-
-  
 

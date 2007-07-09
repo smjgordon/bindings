@@ -32,24 +32,22 @@ enum
     GSL_IEEE_TYPE_ZERO,
 }
 
-struct _N2
+extern (C):
+struct gsl_ieee_float_rep
 {
     int sign;
     char [24]mantissa;
     int exponent;
     int type;
-}
-extern (C):
-alias _N2 gsl_ieee_float_rep;
+};
 
-struct _N3
+struct gsl_ieee_double_rep
 {
     int sign;
     char [53]mantissa;
     int exponent;
     int type;
-}
-alias _N3 gsl_ieee_double_rep;
+};
 
 void  gsl_ieee_printf_float(float *x);
 

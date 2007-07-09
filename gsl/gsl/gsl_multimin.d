@@ -39,14 +39,13 @@ public import gsl.gsl_min;
 /* Definition of an arbitrary real-valued function with gsl_vector input and */
 /* parameters */
 
+extern (C):
 struct gsl_multimin_function_struct
 {
     double  function(gsl_vector *x, void *params)f;
     size_t n;
     void *params;
 }
-
-extern (C):
 alias gsl_multimin_function_struct gsl_multimin_function;
 
 /* Definition of an arbitrary differentiable real-valued function */
@@ -60,14 +59,13 @@ struct gsl_multimin_function_fdf_struct
     size_t n;
     void *params;
 }
-
 alias gsl_multimin_function_fdf_struct gsl_multimin_function_fdf;
 
 int  gsl_multimin_diff(gsl_multimin_function *f, gsl_vector *x, gsl_vector *g);
 
 /* minimization of non-differentiable functions */
 
-struct _N91
+struct gsl_multimin_fminimizer_type
 {
     char *name;
     size_t size;
@@ -75,14 +73,13 @@ struct _N91
     int  function(void *state, gsl_multimin_function *f, gsl_vector *x, double *size, gsl_vector *step_size)set;
     int  function(void *state, gsl_multimin_function *f, gsl_vector *x, double *size, double *fval)iterate;
     void  function(void *state)free;
-}
-alias _N91 gsl_multimin_fminimizer_type;
+};
 
   /* multi dimensional part */
 
   
 
-struct _N92
+struct gsl_multimin_fminimizer
 {
     gsl_multimin_fminimizer_type *type;
     gsl_multimin_function *f;
@@ -90,8 +87,7 @@ struct _N92
     gsl_vector *x;
     double size;
     void *state;
-}
-alias _N92 gsl_multimin_fminimizer;
+};
 
 gsl_multimin_fminimizer * gsl_multimin_fminimizer_alloc(gsl_multimin_fminimizer_type *T, size_t n);
 
@@ -117,7 +113,7 @@ int  gsl_multimin_test_size(double size, double epsabs);
 
 /* minimisation of differentiable functions */
 
-struct _N93
+struct gsl_multimin_fdfminimizer_type
 {
     char *name;
     size_t size;
@@ -126,12 +122,11 @@ struct _N93
     int  function(void *state, gsl_multimin_function_fdf *fdf, gsl_vector *x, double *f, gsl_vector *gradient, gsl_vector *dx)iterate;
     int  function(void *state)restart;
     void  function(void *state)free;
-}
-alias _N93 gsl_multimin_fdfminimizer_type;
+};
 
   /* multi dimensional part */
 
-struct _N94
+struct gsl_multimin_fdfminimizer
 {
     gsl_multimin_fdfminimizer_type *type;
     gsl_multimin_function_fdf *fdf;
@@ -140,8 +135,7 @@ struct _N94
     gsl_vector *gradient;
     gsl_vector *dx;
     void *state;
-}
-alias _N94 gsl_multimin_fdfminimizer;
+};
 
 gsl_multimin_fdfminimizer * gsl_multimin_fdfminimizer_alloc(gsl_multimin_fdfminimizer_type *T, size_t n);
 

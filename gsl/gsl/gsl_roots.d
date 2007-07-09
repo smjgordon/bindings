@@ -27,17 +27,16 @@ public import gsl.gsl_types;
 
 public import gsl.gsl_math;
 
-struct _N1
+extern (C):
+struct gsl_root_fsolver_type
 {
     char *name;
     size_t size;
     int  function(void *state, gsl_function *f, double *root, double x_lower, double x_upper)set;
     int  function(void *state, gsl_function *f, double *root, double *x_lower, double *x_upper)iterate;
-}
-extern (C):
-alias _N1 gsl_root_fsolver_type;
+};
 
-struct _N2
+struct gsl_root_fsolver
 {
     gsl_root_fsolver_type *type;
     gsl_function *func;
@@ -45,26 +44,23 @@ struct _N2
     double x_lower;
     double x_upper;
     void *state;
-}
-alias _N2 gsl_root_fsolver;
+};
 
-struct _N3
+struct gsl_root_fdfsolver_type
 {
     char *name;
     size_t size;
     int  function(void *state, gsl_function_fdf *f, double *root)set;
     int  function(void *state, gsl_function_fdf *f, double *root)iterate;
-}
-alias _N3 gsl_root_fdfsolver_type;
+};
 
-struct _N4
+struct gsl_root_fdfsolver
 {
     gsl_root_fdfsolver_type *type;
     gsl_function_fdf *fdf;
     double root;
     void *state;
-}
-alias _N4 gsl_root_fdfsolver;
+};
 
 gsl_root_fsolver * gsl_root_fsolver_alloc(gsl_root_fsolver_type *T);
 

@@ -38,15 +38,14 @@ int  gsl_fft_halfcomplex_radix2_inverse(double *data, size_t stride, size_t n);
 
 int  gsl_fft_halfcomplex_radix2_transform(double *data, size_t stride, size_t n);
 
-struct _N7
+struct gsl_fft_halfcomplex_wavetable
 {
     size_t n;
     size_t nf;
     size_t [64]factor;
     gsl_complex *[64]twiddle;
     gsl_complex *trig;
-}
-alias _N7 gsl_fft_halfcomplex_wavetable;
+};
 
 gsl_fft_halfcomplex_wavetable * gsl_fft_halfcomplex_wavetable_alloc(size_t n);
 

@@ -25,14 +25,13 @@ public import gsl.gsl_vector;
 
 public import gsl.gsl_matrix;
 
-struct _N89
+struct gsl_eigen_symm_workspace
 {
     size_t size;
     double *d;
     double *sd;
-}
+};
 extern (C):
-alias _N89 gsl_eigen_symm_workspace;
 
 gsl_eigen_symm_workspace * gsl_eigen_symm_alloc(size_t n);
 
@@ -40,15 +39,14 @@ void  gsl_eigen_symm_free(gsl_eigen_symm_workspace *w);
 
 int  gsl_eigen_symm(gsl_matrix *A, gsl_vector *eval, gsl_eigen_symm_workspace *w);
 
-struct _N90
+struct gsl_eigen_symmv_workspace
 {
     size_t size;
     double *d;
     double *sd;
     double *gc;
     double *gs;
-}
-alias _N90 gsl_eigen_symmv_workspace;
+};
 
 gsl_eigen_symmv_workspace * gsl_eigen_symmv_alloc(size_t n);
 
@@ -56,14 +54,13 @@ void  gsl_eigen_symmv_free(gsl_eigen_symmv_workspace *w);
 
 int  gsl_eigen_symmv(gsl_matrix *A, gsl_vector *eval, gsl_matrix *evec, gsl_eigen_symmv_workspace *w);
 
-struct _N91
+struct gsl_eigen_herm_workspace
 {
     size_t size;
     double *d;
     double *sd;
     double *tau;
-}
-alias _N91 gsl_eigen_herm_workspace;
+};
 
 gsl_eigen_herm_workspace * gsl_eigen_herm_alloc(size_t n);
 
@@ -71,7 +68,7 @@ void  gsl_eigen_herm_free(gsl_eigen_herm_workspace *w);
 
 int  gsl_eigen_herm(gsl_matrix_complex *A, gsl_vector *eval, gsl_eigen_herm_workspace *w);
 
-struct _N92
+struct gsl_eigen_hermv_workspace
 {
     size_t size;
     double *d;
@@ -79,8 +76,7 @@ struct _N92
     double *tau;
     double *gc;
     double *gs;
-}
-alias _N92 gsl_eigen_hermv_workspace;
+};
 
 gsl_eigen_hermv_workspace * gsl_eigen_hermv_alloc(size_t n);
 

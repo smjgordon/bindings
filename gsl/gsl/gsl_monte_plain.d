@@ -31,13 +31,12 @@ public import gsl.gsl_monte;
 
 public import gsl.gsl_rng;
 
-struct _N4
+extern (C):
+struct gsl_monte_plain_state
 {
     size_t dim;
     double *x;
-}
-extern (C):
-alias _N4 gsl_monte_plain_state;
+};
 
 int  gsl_monte_plain_integrate(gsl_monte_function *f, double *xl, double *xu, size_t dim, size_t calls, gsl_rng *r, gsl_monte_plain_state *state, double *result, double *abserr);
 

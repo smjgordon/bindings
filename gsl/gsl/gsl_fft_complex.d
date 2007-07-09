@@ -50,22 +50,20 @@ int  gsl_fft_complex_radix2_dif_transform(gsl_complex_packed_array data, size_t 
 
 /*  Mixed Radix general-N routines  */
 
-struct _N5
+struct gsl_fft_complex_wavetable
 {
     size_t n;
     size_t nf;
     size_t [64]factor;
     gsl_complex *[64]twiddle;
     gsl_complex *trig;
-}
-alias _N5 gsl_fft_complex_wavetable;
+};
 
-struct _N6
+struct gsl_fft_complex_workspace
 {
     size_t n;
     double *scratch;
-}
-alias _N6 gsl_fft_complex_workspace;
+};
 
 gsl_fft_complex_wavetable * gsl_fft_complex_wavetable_alloc(size_t n);
 

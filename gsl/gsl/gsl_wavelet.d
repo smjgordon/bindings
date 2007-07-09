@@ -37,14 +37,13 @@ enum
 extern (C):
 alias int gsl_wavelet_direction;
 
-struct _N3
+struct gsl_wavelet_type
 {
     char *name;
     int  function(double **h1, double **g1, double **h2, double **g2, size_t *nc, size_t *offset, size_t member)init;
-}
-alias _N3 gsl_wavelet_type;
+};
 
-struct _N4
+struct gsl_wavelet
 {
     gsl_wavelet_type *type;
     double *h1;
@@ -53,15 +52,13 @@ struct _N4
     double *g2;
     size_t nc;
     size_t offset;
-}
-alias _N4 gsl_wavelet;
+};
 
-struct _N5
+struct gsl_wavelet_workspace
 {
     double *scratch;
     size_t n;
-}
-alias _N5 gsl_wavelet_workspace;
+};
 
 extern gsl_wavelet_type *gsl_wavelet_daubechies;
 
