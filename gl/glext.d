@@ -2357,7 +2357,7 @@ private HXModule glextdrv;
 private void* getProc (char[] procname) {
 	void* symbol = ExeModule_GetSymbol(glextdrv, procname);
 	if (symbol is null) {
-		printf ("Failed to load OpenGL proc address " ~ procname ~ ".\n");
+		printf (("Failed to load OpenGL proc address " ~ procname ~ ".\n\0").ptr);
 	}
 	return symbol;
 }

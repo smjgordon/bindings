@@ -198,9 +198,9 @@ const GLdouble GLU_TESS_MAX_COORD		= 1.0e150;
 // TYPES
 //==============================================================================
 
-struct GLUnurbs;
-struct GLUquadric;
-struct GLUtesselator;
+struct GLUnurbs { }
+struct GLUquadric { }
+struct GLUtesselator { }
 
 typedef GLUnurbs GLUnurbsObj;
 typedef GLUquadric GLUquadricObj;
@@ -217,7 +217,7 @@ private HXModule gludrv;
 private void* getProc (char[] procname) {
 	void* symbol = ExeModule_GetSymbol(gludrv, procname);
 	if (symbol is null)
-		printf ("Failed to load GLU proc address " ~ procname ~ ".\n");
+		printf (("Failed to load GLU proc address " ~ procname ~ ".\n\0").ptr);
 	return symbol;
 }
 
