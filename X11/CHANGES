@@ -1,3 +1,7 @@
+Release 0.11 ALPHA:
+==================
+added: Full xcb bindings
+	
 Release 0.1 ALPHA:
 ==================
 	First release of binding

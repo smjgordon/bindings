@@ -2,14 +2,14 @@ FAQ:
 
 1)What is it ?
 ------------
-This is a binding of Xlib for D language (version 1)
+This is a binding of Xlib and xcb for D language (version 1)
 
 2)I found a bug and/or I want to patch this binding
 ---------------------------------------------------
 For any bug/modification please send me a report/patch at sligor(at)free.fr with object:"[Xlib]Bug Report"
 You can also patch directly here http://www.dsource.org/projects/bindings
 
-3)How I use this binding ?
+3)How I use Xlib binding ?
 --------------------------
 
 -add "import std.c.linux.Xlib;" to your code.
@@ -31,7 +31,10 @@ For a complete example read example.d
 http://tronche.com/gui/x/xlib-tutorial/ for a complete tutorial
 http://tronche.com/gui/x/xlib/ for documentation
 
+5)How I use xcb binding ?
+-------------------------
+Read README file in xcb directory
 
-5)I want to improove this binding what I can do?
+6)I want to improove this binding what I can do?
 ------------------------------------------------
 	->read TODO file
