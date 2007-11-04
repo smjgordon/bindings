@@ -60,30 +60,44 @@ const Target
         sources:["cairo/cairo.d"]},
     TARGET_GLITZ = {name:"glitz", type:"lib", target:"lib/cairo_glitz",
         sources:["cairo/glitz/cairo_glitz.d"]},
+    TARGET_PDF = {name:"pdf", type:"lib", target:"lib/cairo_pdf",
+        sources:["cairo/pdf/cairo_pdf.d"]},
     TARGET_PNG = {name:"png", type:"lib", target:"lib/cairo_png",
         sources:["cairo/png/cairo_png.d"]},
+    TARGET_PS = {name:"ps", type:"lib", target:"lib/cairo_ps",
+        sources:["cairo/ps/cairo_ps.d"]},
+    TARGET_SVG = {name:"svg", type:"lib", target:"lib/cairo_svg",
+        sources:["cairo/svg/cairo_svg.d"]},
     TARGET_WIN32 = {name:"win32", type:"lib", target:"lib/cairo_win32",
         flags:["-Xwin32"], sources:["cairo/win32/cairo_win32.d"]},
+    TARGET_WIN32_DFL = {name:"win32-dfl", type:"lib",
+        target:"lib/cairo_win32_dfl",
+        flags:["-Xwin32","-Xdfl","-version=cairo_dfl"],
+        sources:["cairo/win32/cairo_win32.d"]},
     TARGET_XLIB = {name:"xlib", type:"lib", target:"lib/cairo_xlib",
         sources:["cairo/xlib/cairo_xlib.d"]};
 
 version(Windows)
     const Target
         TARGET_ALL = {name:"all", type:"dummy",
-            deps:[&TARGET_CAIRO, &TARGET_GLITZ, &TARGET_PNG, &TARGET_WIN32]};
+            deps:[&TARGET_CAIRO, &TARGET_GLITZ, &TARGET_PDF,
+                  &TARGET_PNG, &TARGET_PS, &TARGET_SVG,
+                  &TARGET_WIN32]};
 version(linux)
     const Target
         TARGET_ALL = {name:"all", type:"dummy",
-            deps:[&TARGET_CAIRO, &TARGET_GLITZ, &TARGET_PNG, &TARGET_XLIB]};
+            deps:[&TARGET_CAIRO, &TARGET_GLITZ, &TARGET_PDF,
+                  &TARGET_PNG, &TARGET_PS, &TARGET_SVG,
+                  &TARGET_XLIB]};
 
 const Target[] TARGETS =
     [TARGET_ALL, TARGET_PNG, TARGET_CAIRO, TARGET_GLITZ, TARGET_WIN32,
-     TARGET_XLIB];
+     TARGET_WIN32_DFL, TARGET_XLIB, TARGET_PDF, TARGET_PS, TARGET_SVG];
 const DEFAULT_TARGET = &TARGET_ALL;
 const DEBUG_TARGET_SUFFIX = "_debug";
 
 const char[][] FLAGS = ["-allobj","-cleanup"];
-const char[][] FLAGS_DEBUG = ["-debug","-unittest","-g"];
+const char[][] FLAGS_DEBUG = ["-debug","-unittest","-version=Unittest","-g"];
 const char[][] FLAGS_RELEASE = ["-release","-inline","-O"];
 
 /* ************************************************************************* */
@@ -147,6 +161,7 @@ Options:
     --verbose       Verbose script commands.
     --very-verbose  Verbose script AND toolchain commands.
     --help          This message.
+    +arg            "arg" is passed on to the compiler verbatim.
 
 Supported targets:
     %s
@@ -183,6 +198,7 @@ main(char[][] args)
     bool debugVersion = false;
     bool veryVerbose = false;
     char[][] targetNames;
+    char[][] extraFlags;
     
     // Check for flags
     foreach( arg ; args[1..$] )
@@ -199,6 +215,10 @@ main(char[][] args)
         {
             showHelp();
             return 0;
+        }
+        else if( arg[0] == '+' )
+        {
+            extraFlags.pushBack(arg[1..$]);
         }
         else if( arg[0..2] == "--" )
         {
@@ -268,7 +288,7 @@ TargetNames:
             flags ~= "-v";
 
         // Do the build
-        build(flags ~ target.flags ~ target.sources);
+        build(flags ~ target.flags ~ extraFlags ~ target.sources);
     }
 
     return 0;

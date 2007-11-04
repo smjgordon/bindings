@@ -64,6 +64,10 @@ const Target
         sources:["cairooo/png/all.d"]},
     TARGET_WIN32 = {name:"win32oo", type:"lib", target:"lib/cairooo_win32",
         flags:["-Xwin32"], sources:["cairooo/win32/all.d"]},
+    TARGET_WIN32_DFL = {name:"win32oo-dfl", type:"lib",
+        target:"lib/cairooo_win32_dfl",
+        flags:["-Xwin32","-Xdfl","-version=cairo_dfl"],
+        sources:["cairooo/win32/all.d"]},
     TARGET_XLIB = {name:"xliboo", type:"lib", target:"lib/cairooo_xlib",
         sources:["cairooo/xlib/all.d"]},
     TARGET_EXTRA = {name:"extra", type:"lib", target:"lib/cairooo_extra",
@@ -82,12 +86,12 @@ version(linux)
 
 const Target[] TARGETS =
     [TARGET_ALL, TARGET_PNG, TARGET_CAIRO, TARGET_GLITZ, TARGET_WIN32,
-     TARGET_XLIB, TARGET_EXTRA];
+     TARGET_WIN32_DFL, TARGET_XLIB, TARGET_EXTRA];
 const DEFAULT_TARGET = &TARGET_ALL;
 const DEBUG_TARGET_SUFFIX = "_debug";
 
 const char[][] FLAGS = ["-allobj","-cleanup"];
-const char[][] FLAGS_DEBUG = ["-debug","-unittest","-g"];
+const char[][] FLAGS_DEBUG = ["-debug","-unittest","-version=Unittest","-g"];
 const char[][] FLAGS_RELEASE = ["-release","-inline","-O"];
 
 /* ************************************************************************* */

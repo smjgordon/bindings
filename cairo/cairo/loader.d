@@ -3,13 +3,12 @@
  * library under various platforms.  It is largely stolen from
  * the Derelict project's loader.d file.
  *
- * Authors: Daniel Keep
- * Copyright: 2005-2006, Derelict developers;
- *            2006, Daniel Keep.
+ * Authors: Derelict developers, Daniel Keep
+ * Copyright: 2005-2006 Derelict developers, 2006 Daniel Keep.
  * License: BSD v2 (http://www.opensource.org/licenses/bsd-license.php).
  */
 /*
- * Copyright © 2006 Daniel Keep
+ * Copyright © 2006 Daniel Keep.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

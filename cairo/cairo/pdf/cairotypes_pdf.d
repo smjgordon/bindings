@@ -1,8 +1,5 @@
 /**
- * This module pulls in the types needed for cairo's Windows
- * functions.  Currently, it pulls in all of win32.  At some
- * point, someone should pin down exactly *which* modules to
- * import :)
+ * This module defines the various types needed for the PDF binding.
  *
  * Authors: Daniel Keep
  * Copyright: 2006, Daniel Keep
@@ -39,16 +36,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-module cairo.win32.cairotypes_win32;
+module cairo.pdf.cairotypes_pdf;
 
 public import cairo.cairotypes;
-
-version( cairo_dfl )
-{
-    public import dfl.internal.winapi : HDC, LOGFONTW;
-}
-else
-{
-    public import win32.windows : HDC, LOGFONTW;
-}
 

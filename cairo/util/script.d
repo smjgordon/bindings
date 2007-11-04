@@ -85,11 +85,17 @@ template Script()
         writefln("");
     }
 
-    void
+    /+void
     echof(...)
     {
         // D really needs argument exploding...
         writefx(stdout, _arguments, _argptr, true);
+    }+/
+
+    void
+    echof(T...)(T args)
+    {
+        writefln("", args);
     }
 
     char[]
@@ -119,7 +125,7 @@ template Script()
             opts.length = opts.length + 1;
             opts[$-1] = fixPath(opt);
         }
-        exec("build",opts);
+        exec("bud",opts);
     }
 	
 	void

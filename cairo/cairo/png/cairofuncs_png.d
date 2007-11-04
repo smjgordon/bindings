@@ -41,6 +41,8 @@
  */
 module cairo.png.cairofuncs_png;
 
+version( cairo_1_4 ) { version = cairo_1_2; }
+
 private
 {
     import cairo.loader;

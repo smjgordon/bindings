@@ -49,6 +49,18 @@ libraries with debug symbols [#debuglibs]_.
 
 Use the ``--help`` switch for full usage information.
 
+Also, please note that if you are building static libraries that these
+libraries only compile for one particular version of cairo at a time.  To
+select which version of the cairo API you want to compile for, you need to use
+the following additional arguments to the build script:
+
+* cairo 1.0: no arguments needed.
+* cairo 1.2: ``+--version=cairo_1_2``
+* cairo 1.4: ``+--version=cairo_1_4``
+
+You will also need to specify the same version identifier when you compile
+your programs.
+
 cairooo binding
 ---------------
 
@@ -58,6 +70,8 @@ directories to a place on your D compiler's import path.
 If you want to build import libraries, then you can use the
 ``cairooo-build.d`` script, which will build them to the ``lib`` directory.
 Usage is mostly the same as using ``cairo-build.d`` (see above).
+
+Note that cairooo currently does not support cairo 1.2 or 1.4.
 
 cairo snippets
 --------------
@@ -157,6 +171,13 @@ library proper.  You can do this like so::
 
 If some part of the library fails to load, these functions will thrown an
 exception which can be caught and dealt with.
+
+To select a particular version of the cairo library, make sure you compile
+with an appropriate version flag:
+
+* cairo 1.0: no version flag necessary.
+* cairo 1.2: --version=cairo_1_2.
+* cairo 1.4: --version=cairo_1_4.
 
 From there, just start using the cairo API as you would from C.  The cairo
 website contains a collection of `example snippets`_ in C, and this binding

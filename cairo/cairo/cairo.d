@@ -53,6 +53,26 @@ public void cairo_load( char[] libName )
         return;
     
     libCairo = loadSharedLib(libName);
+
+    /* Try to find out what version of cairo we've got.  If it's too old,
+     * throw an exception explaining this.
+     */
+    auto versionnum = (cast(pf_cairo_version)
+            getProc(libCairo,"cairo_version"))();
+
+    version( cairo_1_4 )
+        auto expected_version = CAIRO_VERSION_ENCODE(1,4,0);
+
+    else version( cairo_1_2 )
+        auto expected_version = CAIRO_VERSION_ENCODE(1,2,0);
+    
+    else
+        auto expected_version = CAIRO_VERSION_ENCODE(1,0,0);
+    
+    if( versionnum < expected_version )
+        throw new CairoVersionException(versionnum, expected_version);
+
+    // Now we can actually load the functions.
     cairo_loadprocs(libCairo);
 }
 
@@ -87,6 +107,38 @@ public void cairo_unload()
     
     unloadSharedLib(libCairo);
     libCairo = null;
+}
+
+version( Tango )
+{
+    import tango.text.convert.Integer : toUtf8;
+    alias toUtf8 intToString;
+}
+else
+{
+    import std.string : toString;
+    alias toString intToString;
+}
+
+private char[] verToString(int ver)
+{
+    return intToString(ver/100_00)
+        ~ "." ~ intToString((ver/100)%100)
+        ~ "." ~ intToString(ver%100);
+}
+
+private class CairoVersionException : Exception
+{
+    this(int got, int expected)
+    {
+        this("expected cairo version "~verToString(expected)
+                ~", got version "~verToString(got)~".");
+    }
+
+    this(char[] msg)
+    {
+        super(msg);
+    }
 }
 
 static ~this()

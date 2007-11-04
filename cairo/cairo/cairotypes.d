@@ -39,6 +39,8 @@
  */
 module cairo.cairotypes;
 
+version( cairo_1_4 ) { version = cairo_1_2; }
+
 extern(C):
 
 alias int cairo_bool_t;
@@ -268,5 +270,55 @@ enum cairo_filter_t
     CAIRO_FILTER_NEAREST,
     CAIRO_FILTER_BILINEAR,
     CAIRO_FILTER_GAUSSIAN
+}
+
+version( cairo_1_2 )
+{
+    enum cairo_font_type_t
+    {
+        CAIRO_FONT_TYPE_TOY,
+        CAIRO_FONT_TYPE_FT,
+        CAIRO_FONT_TYPE_WIN32,
+        CAIRO_FONT_TYPE_ATSUI
+    }
+
+    enum cairo_pattern_type_t
+    {
+        CAIRO_PATTERN_TYPE_SOLID,
+        CAIRO_PATTERN_TYPE_SURFACE,
+        CAIRO_PATTERN_TYPE_LINEAR,
+        CAIRO_PATTERN_TYPE_RADIAL
+    }
+
+    enum cairo_surface_type_t
+    {
+        CAIRO_SURFACE_TYPE_IMAGE,
+        CAIRO_SURFACE_TYPE_PDF,
+        CAIRO_SURFACE_TYPE_PS,
+        CAIRO_SURFACE_TYPE_XLIB,
+        CAIRO_SURFACE_TYPE_XCB,
+        CAIRO_SURFACE_TYPE_GLITZ,
+        CAIRO_SURFACE_TYPE_QUARTZ,
+        CAIRO_SURFACE_TYPE_WIN32,
+        CAIRO_SURFACE_TYPE_BEOS,
+        CAIRO_SURFACE_TYPE_DIRECTFB,
+        CAIRO_SURFACE_TYPE_SVG,
+        CAIRO_SURFACE_TYPE_OS2
+    }
+}
+
+version( cairo_1_4 )
+{
+    struct cairo_rectangle_t
+    {
+        double x, y, width, height;
+    }
+
+    struct cairo_rectangle_list_t
+    {
+        cairo_status_t status;
+        cairo_rectangle_t* rectangles;
+        int num_rectangles;
+    }
 }
 
