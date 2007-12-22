@@ -1,0 +1,4 @@
+There are bindings for the TAUCS sparse matrix library maintained as part of the "murray" project.  They do not depend on murray, and can be checked out
+separately from Murray using the URL:
+
+http://svn.dsource.org/projects/multiarray/trunk/multiarray/TAUCS/
