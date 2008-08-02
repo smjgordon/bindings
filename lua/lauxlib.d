@@ -1,180 +1,127 @@
-/************************************************
+module lua.lauxlib;
 
-   lua 5.0.2
-   file created using h2d by Clay Smith
-   all changes from h2d are commented out
-   and all additions are commented about with
-   add: note
-   
-************************************************/
+private import lua.lua;
+private import lua.luaconf;
 
-module lua.lauxlib; 
+extern (C):
 
-import lua.lua; 
-const int BUFSIZ = 0x4000; // add (BUFSIZ)
+int luaL_getn(lua_State* L, int i) { return lua_objlen(L, i); }
+void luaL_setn(lua_State* L, int i, int j) { }
 
-extern (C) {
-struct luaL_reg {
-  const char *name;
-  lua_CFunction func;
-}
-//alias luaL_reg luaL_reg;
+alias luaL_openlib luaI_openlib;
 
-
-
-/*LUA_API*/ void luaL_openlib (lua_State *L,  char *libname,
-                                luaL_reg *l, int nup);
-/*LUA_API*/ int luaL_getmetafield (lua_State *L, int obj,  char *e);
-/*LUA_API*/ int luaL_callmeta (lua_State *L, int obj,  char *e);
-/*LUA_API*/ int luaL_typerror (lua_State *L, int narg,  char *tname);
-/*LUA_API*/ int luaL_argerror (lua_State *L, int numarg,  char *extramsg);
-/*LUA_API*/  char *luaL_checklstring (lua_State *L, int numArg, size_t *l);
-/*LUA_API*/  char *luaL_optlstring (lua_State *L, int numArg,
-                                            char *def, size_t *l);
-/*LUA_API*/ lua_Number luaL_checknumber (lua_State *L, int numArg);
-/*LUA_API*/ lua_Number luaL_optnumber (lua_State *L, int nArg, lua_Number def);
-
-/*LUA_API*/ void luaL_checkstack (lua_State *L, int sz,  char *msg);
-/*LUA_API*/ void luaL_checktype (lua_State *L, int narg, int t);
-/*LUA_API*/ void luaL_checkany (lua_State *L, int narg);
-
-/*LUA_API*/ int luaL_newmetatable (lua_State *L,  char *tname);
-/*LUA_API*/ void luaL_getmetatable (lua_State *L,  char *tname);
-/*LUA_API*/ void *luaL_checkudata (lua_State *L, int ud,  char *tname);
-
-/*LUA_API*/ void luaL_where (lua_State *L, int lvl);
-/*LUA_API*/ int luaL_error (lua_State *L,  char *fmt, ...);
-
-/*LUA_API*/ int luaL_findstring ( char *st,  char * lst[]);
-
-/*LUA_API*/ int luaL_ref (lua_State *L, int t);
-/*LUA_API*/ void luaL_unref (lua_State *L, int t, int ref);
-
-/*LUA_API*/ int luaL_getn (lua_State *L, int t);
-/*LUA_API*/ void luaL_setn (lua_State *L, int t, int n);
-
-/*LUA_API*/ int luaL_loadfile (lua_State *L,  char *filename);
-/*LUA_API*/ int luaL_loadbuffer (lua_State *L,  char *buff, size_t sz,
-                                 char *name);
-struct luaL_Buffer {
-  char *p;
-  int lvl;
-  lua_State *L;
-  char buffer[BUFSIZ];
-};
-//alias luaL_Buffer luaL_Buffer;
-
-
-
-/*LUA_API*/ void luaL_buffinit (lua_State *L, luaL_Buffer *B);
-/*LUA_API*/ char *luaL_prepbuffer (luaL_Buffer *B);
-/*LUA_API*/ void luaL_addlstring (luaL_Buffer *B,  char *s, size_t l);
-/*LUA_API*/ void luaL_addstring (luaL_Buffer *B,  char *s);
-/*LUA_API*/ void luaL_addvalue (luaL_Buffer *B);
-/*LUA_API*/ void luaL_pushresult (luaL_Buffer *B);
-
-
-
-/* add: macros
-** ===============================================================
-** some useful macros
-** ===============================================================
-*/
-
-//#define luaL_argcheck(L, cond,numarg,extramsg) if (!(cond)) \
-//                                              luaL_argerror(L, numarg,extramsg)
-
-void luaL_argcheck(lua_State *L, bool cond, int numarg, char* extramsg)
+struct luaL_Reg
 {
-   if (!(cond))
-      luaL_argerror(L, numarg, extramsg); 
-} 
-
-//#define luaL_checkstring(L,n)  (luaL_checklstring(L, (n), NULL))
-char *luaL_checkstring(lua_State *L, int n)
-{
-   return luaL_checklstring(L, n, null); 
+    char *name;
+    lua_CFunction func;
 }
 
-//#define luaL_optstring(L,n,d)  (luaL_optlstring(L, (n), (d), NULL))
+void  luaL_openlib(lua_State *L, char *libname, luaL_Reg *l, int nup);
+void  luaL_register(lua_State *L, char *libname, luaL_Reg *l);
+int  luaL_getmetafield(lua_State *L, int obj, char *e);
+int  luaL_callmeta(lua_State *L, int obj, char *e);
+int  luaL_typerror(lua_State *L, int narg, char *tname);
+int  luaL_argerror(lua_State *L, int numarg, char *extramsg);
+char * luaL_checklstring(lua_State *L, int numArg, size_t *l);
+char * luaL_optlstring(lua_State *L, int numArg, char *def, size_t *l);
+lua_Number  luaL_checknumber(lua_State *L, int numArg);
+lua_Number  luaL_optnumber(lua_State *L, int nArg, lua_Number def);
 
-char* luaL_optstring(lua_State *L, int n, char *d)
+lua_Integer  luaL_checkinteger(lua_State *L, int numArg);
+lua_Integer  luaL_optinteger(lua_State *L, int nArg, lua_Integer def);
+
+void  luaL_checkstack(lua_State *L, int sz, char *msg);
+void  luaL_checktype(lua_State *L, int narg, int t);
+void  luaL_checkany(lua_State *L, int narg);
+
+int  luaL_newmetatable(lua_State *L, char *tname);
+void * luaL_checkudata(lua_State *L, int ud, char *tname);
+
+void  luaL_where(lua_State *L, int lvl);
+int  luaL_error(lua_State *L, char *fmt,...);
+
+int  luaL_checkoption(lua_State *L, int narg, char *def, char **lst);
+
+int  luaL_ref(lua_State *L, int t);
+void  luaL_unref(lua_State *L, int t, int _ref);
+
+int  luaL_loadfile(lua_State *L, char *filename);
+int  luaL_loadbuffer(lua_State *L, char *buff, size_t sz, char *name);
+int  luaL_loadstring(lua_State *L, char *s);
+
+lua_State * luaL_newstate();
+
+char * luaL_gsub(lua_State *L, char *s, char *p, char *r);
+
+char * luaL_findtable(lua_State *L, int idx, char *fname, int szhint);
+
+// some useful macros
+
+void luaL_argcheck(lua_State* L, int cond, int numarg, char* extramsg) { if (!cond) luaL_argerror(L, numarg, extramsg); }
+char* luaL_checkstring(lua_State* L, int n) { return luaL_checklstring(L, n, null); }
+char* luaL_optstring(lua_State* L, int n, char* d) { return luaL_optlstring(L, n, d, null); }
+int luaL_checkint(lua_State* L, int n) { return luaL_checkinteger(L, n); }
+int luaL_optint (lua_State* L, int n, int d) { return luaL_optinteger(L, n, d); }
+long luaL_checklong(lua_State* L, int n) { return luaL_checkinteger(L, n); }
+int luaL_optlong(lua_State* L, int n, int d) { return luaL_optinteger(L, n, d); }
+
+char* luaL_typename(lua_State* L, int i) { return lua_typename(L, lua_type(L, i)); }
+
+int luaL_dofile(lua_State* L, char* fn) { return luaL_loadfile(L, fn) || lua_pcall(L, 0, LUA_MULTRET, 0); }
+
+int luaL_dostring(lua_State*L, char* s) { return luaL_loadstring(L, s) || lua_pcall(L, 0, LUA_MULTRET, 0); }
+
+void luaL_getmetatable(lua_State* L, char* s) { lua_getfield(L, LUA_REGISTRYINDEX, s); }
+
+bool luaL_opt(lua_State* L, int function(lua_State*, int) f, int n, int d) { return luaL_opt(L, f, n, d); }
+
+// Generic Buffer manipulation
+struct luaL_Buffer
 {
-   return luaL_optlstring(L, n, d, null); 
+    char *p;
+    int lvl;
+    lua_State *L;
+    char [LUAL_BUFFERSIZE]buffer;
 }
 
-//#define luaL_checkint(L,n)  ((int)luaL_checknumber(L, n))
-lua_Number luaL_checkint(lua_State *L, int n)
+void luaL_addchar(luaL_Buffer* B, char c)
 {
-   return cast(int)luaL_checknumber(L, n);
+	if (B.p < B.buffer.ptr + LUAL_BUFFERSIZE || (luaL_prepbuffer(B)))
+	{
+		*B.p = c;
+		B.p++;
+	}
 }
 
-//#define luaL_checkint(L,n)  ((int)luaL_checknumber(L, n))
-lua_Number luaL_checkint(lua_State *L, int n)
-{
-   return cast(int)luaL_checknumber(L, n);
-}
+void luaL_putchar(luaL_Buffer* B, char c) { luaL_addchar(B, c); }
 
-//#define luaL_optint(L,n,d)  ((int)luaL_optnumber(L, n,(lua_Number)(d)))
-lua_Number luaL_optint(lua_State *L, int n, lua_Number d)
-{
-   return cast(int)luaL_optnumber(L, n, d);
-}
+void luaL_addsize(luaL_Buffer* B, int n) { B.p += n; }
 
-//#define luaL_optint(L,n,d)  ((int)luaL_optnumber(L, n,(lua_Number)(d)))
-lua_Number luaL_optint(lua_State *L, int n, lua_Number d)
-{
-   return cast(int)luaL_optnumber(L, n, d);
-}
-
-alias BUFSIZ LUAL_BUFFERSIZE;   
-
-/*
-#define luaL_putchar(B,c) \
-  ((void)((B)->p < ((B)->buffer+LUAL_BUFFERSIZE) || luaL_prepbuffer(B)), \
-   (*(B)->p++ = (char)(c)))
-*/
-// someone posted online this is the translation of the macro
-// i'm not so sure, but it might be right
-
-void luaL_putchar(luaL_Buffer *B, char c)
-{
-   if (B.p >= &B.buffer[LUAL_BUFFERSIZE-1]) luaL_prepbuffer(B);
-   B.p += c;
-}
-
-//#define luaL_addsize(B,n)   ((B)->p += (n))
-void luaL_addsize(luaL_Buffer *B, int n)
-{
-   B.p += n; 
-}
+void  luaL_buffinit(lua_State *L, luaL_Buffer *B);
+char * luaL_prepbuffer(luaL_Buffer *B);
+void  luaL_addlstring(luaL_Buffer *B, char *s, size_t l);
+void  luaL_addstring(luaL_Buffer *B, char *s);
+void  luaL_addvalue(luaL_Buffer *B);
+void  luaL_pushresult(luaL_Buffer *B);
 
 
-/*LUA_API*/ int lua_dofile (lua_State *L,  char *filename);
-/*LUA_API*/ int lua_dostring (lua_State *L,  char *str);
-/*LUA_API*/ int lua_dobuffer (lua_State *L,  char *buff, size_t sz,
-                                char *n);
-                                
-/*
-** Compatibility macros and functions
-*/
+// compatibility with ref system
 
+const LUA_NOREF = -2;
+const LUA_REFNIL = -1;
 
-alias luaL_checklstring    luaL_check_lstr;  
-alias luaL_optlstring      luaL_opt_lstr;     
-alias luaL_checknumber     luaL_check_number;    
-alias luaL_optnumber       luaL_opt_number;  
-alias luaL_argcheck        luaL_arg_check;   
+void lua_ref(lua_State* L, int lock) { lock ? luaL_ref(L, LUA_REGISTRYINDEX) : lua_pushstring(L, "unlocked reference are obsolete"); lua_error(L); }
+void lua_unref(lua_State* L, int _ref) { luaL_unref(L, LUA_REGISTRYINDEX, _ref); }
+void lua_getref(lua_State* L, int _ref) { lua_rawgeti(L, LUA_REGISTRYINDEX, _ref); }
+
+alias luaL_Reg luaL_reg;
+
+// some additional aliases
 alias luaL_checkstring     luaL_check_string;   
 alias luaL_optstring       luaL_opt_string;  
 alias luaL_checkint        luaL_check_int;   
 alias luaL_checkint       luaL_check_int; 
+alias luaL_checklong       luaL_check_long;
 alias luaL_optint          luaL_opt_int;  
 alias luaL_optint         luaL_opt_int;   
-                                
-}
-
-
-
-
-
+alias luaL_optlong         luaL_opt_long;
