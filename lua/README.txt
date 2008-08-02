@@ -1,4 +1,4 @@
-Author: Clay Smith
+Authors: Clay Smith, Matthias Walter
 
 Lua bindings for the D programming language
 
