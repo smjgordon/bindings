@@ -373,7 +373,7 @@ class LuaState
 		Protected calls catch errors inside the called function (and all further
 		called functions) and throw according exceptions. Lua errors result in
 		LuaCodeExceptions and exceptions in D routines which are correctly wrapped
-		via the dlua mixins result in LuaForwardExceptions.
+		via the lua mixins result in LuaForwardExceptions.
 
 		Unprotected calls do not catch errors, but quietly propagate them to the
 		next protected call in the call stack. If there is no such protected call,

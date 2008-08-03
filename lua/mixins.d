@@ -16,7 +16,7 @@ public import lua.lua : lua_State;
 
 /*******************************************************************************
 
-	Returns the dlua-mangled name of a given class.
+	Returns the lua-mangled name of a given class.
 
 *******************************************************************************/
 
@@ -33,7 +33,7 @@ public static char[] mangleClass (char[] class_name)
 
 /*******************************************************************************
 
-	Returns the dlua-mangled name of a given function.
+	Returns the lua-mangled name of a given function.
 
 *******************************************************************************/
 

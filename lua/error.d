@@ -477,7 +477,7 @@ class LuaCodeException : Exception
 	Exception, which is forwarded.
 
 	This is necessary, as the Lua library cannot handle exceptions. Therefore,
-	the dlua routines which call D code catch exceptions, save them in
+	the lua routines which call D code catch exceptions, save them in
 	LuaForwardException.exceptions and call lua_error. If the lua code was
 	called in protected mode, the error is parsed by LuaState.call which
 	extracts the exception from LuaForwardException.exceptions, adds some
