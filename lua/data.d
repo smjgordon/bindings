@@ -11,15 +11,15 @@ module lua.data;
 private import lua.lua;
 private import lua.buffer, lua.mixins, lua.error, lua.state;
 
+
 version (Tango)
 {
-	private import TangoFloat = tango.text.convert.Float;
-	alias TangoFloat.toString float2string;
+    private import TangoFloat = tango.text.convert.Float;
+    alias TangoFloat.toString float2string;
 }
-
-version (Phobos)
+else
 {
-    alias std.string.toString float2string;
+    private import std.string;
 }
 
 /*******************************************************************************
@@ -239,7 +239,10 @@ class LuaNumberObject : LuaObject
 
 	public override char[] toString ()
 	{
-		return float2string (this.value_);
+	    version (Tango)
+                return float2string (this.value_);
+            else
+                return std.string.toString (this.value_);
 	}
 	
 	/// Saves it as binary array.

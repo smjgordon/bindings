@@ -470,6 +470,35 @@ class LuaCodeException : Exception
     }
 }
 
+
+
+
+
+version (Tango)
+{
+    alias Exception ExtendedException;
+}
+else
+{
+    class ExtendedException : Exception
+    {
+	private Exception next_;
+	
+	this (char[] message, Exception next)
+	{
+	    this.next_ = next;
+	    super (message);
+	}
+	
+	this (char[] message, char[] file, int line, Exception next)
+	{
+	    this.next_ = next;
+	    super (message);
+	}
+    }
+}
+
+
 /*******************************************************************************
 
 	Exception for forwarding other Exceptions through Lua code. It contains
@@ -491,7 +520,7 @@ class LuaCodeException : Exception
 
 *******************************************************************************/
 
-class LuaForwardException : Exception
+class LuaForwardException : ExtendedException
 {
 	/// Call Trace
 	private LuaCallTrace call_trace_;

@@ -192,8 +192,6 @@ class LuaBuffer
     }
 }
 
-import tango.io.Stdout;
-
 unittest
 {
 
