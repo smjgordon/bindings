@@ -19,7 +19,7 @@ version (Tango)
 }
 else
 {
-    private import std.string;
+    private import std.string : float2string = toString;
 }
 
 /*******************************************************************************
@@ -239,10 +239,7 @@ class LuaNumberObject : LuaObject
 
 	public override char[] toString ()
 	{
-	    version (Tango)
-                return float2string (this.value_);
-            else
-                return std.string.toString (this.value_);
+            return float2string (this.value_);
 	}
 	
 	/// Saves it as binary array.
