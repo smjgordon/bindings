@@ -68,7 +68,7 @@ public static char[] mixinLuaRegisterMethodAtLine (char[] lua_state, char[] clas
 
     return ``
         ~ `{`
-        ~ `  extern (C) static int ` ~ wrapper ~ ` (void **L)`
+        ~ `  extern (C) static int ` ~ wrapper ~ ` (lua_State *L)`
         ~ `  {`
         ~ `    auto state = LuaState.states[L];`
         ~ `    try`
@@ -153,7 +153,7 @@ public static char[] mixinLuaPushFunctionAtLine (char[] lua_state, char[] name, 
 
     return ``
         ~ `{`
-        ~ `  extern (C) static int `  ~ wrapper ~ ` (void **L)`
+        ~ `  extern (C) static int `  ~ wrapper ~ ` (lua_State *L)`
         ~ `  {`
         ~ `    auto state = LuaState.states[L];`
         ~ `    try`
@@ -167,7 +167,7 @@ public static char[] mixinLuaPushFunctionAtLine (char[] lua_state, char[] name, 
         ~ `      return luaL_error (L, lua.utils.toStringz ("LFE=" ~ lua.mixins.int2string (cast (ulong) cast(void*)  f) ~ ";"));`
         ~ `    }`
         ~ `  }`
-        ~ `  ` ~ lua_state ~ `.pushCFunction (cast (int function (void** L)) &` ~ wrapper ~ `);`
+        ~ `  ` ~ lua_state ~ `.pushCFunction (cast (int function (lua_State *L)) &` ~ wrapper ~ `);`
         ~ `}`;
 }
 
@@ -298,7 +298,7 @@ public static char[] mixinLuaRegisterConstructorAtLine (char[] lua_state, char[]
 
     return ``
         ~ `{`
-        ~ `  extern (C) static int ` ~ wrapper ~ ` (void **L)`
+        ~ `  extern (C) static int ` ~ wrapper ~ ` (lua_State *L)`
         ~ `  {`
         ~ `    auto state = LuaState.states[L];`
         ~ `    try`
@@ -314,7 +314,7 @@ public static char[] mixinLuaRegisterConstructorAtLine (char[] lua_state, char[]
         ~ `      return luaL_error (L, lua.utils.toStringz ("LFE=" ~ lua.mixins.int2string (cast (ulong) cast(void*)  f) ~ ";"));`
         ~ `    }`
         ~ `  }`
-        ~ `  ` ~ lua_state ~ `.registerFunction ("` ~ lua_function ~ `", cast (int function (void** L)) &` ~ wrapper ~ `, ` ~ lua_library ~ `);`
+        ~ `  ` ~ lua_state ~ `.registerFunction ("` ~ lua_function ~ `", cast (int function (lua_State *L)) &` ~ wrapper ~ `, ` ~ lua_library ~ `);`
         ~ `}`;
 }
 
