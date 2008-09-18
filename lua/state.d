@@ -2,7 +2,7 @@
 
 	copyright:      Copyright (c) 2008 Matthias Walter. All rights reserved
 
-    authors:        Matthias Walter
+    authors:        Matthias Walter, 
 
 *******************************************************************************/
 
@@ -2778,6 +2778,26 @@ class LuaState
 
 		return this;
     }
+    
+    /*******************************************************************************
+
+ 		A helper method for wrapClass.
+
+		Params:
+		instance = Class instance to wrap
+		type_name = Name of the class type 
+
+	*******************************************************************************/
+	
+	public LuaState wrapClass_ (Object instance, char[] type_name)
+	{
+		auto ptr = cast (Object *) newUserdata ( (Object *).sizeof);
+		*ptr = instance;
+		loadClassMetatable (type_name);
+		setMetatable (-2);
+
+		return this;
+	}
 
     /*******************************************************************************
 
@@ -2795,12 +2815,7 @@ class LuaState
 
     public LuaState wrapClass (T) (T instance)
     {
-		T* ptr = cast (T *) newUserdata ( (T *).sizeof);
-		*ptr = instance;
-		loadClassMetatable (typeid (T).toString);
-		setMetatable (-2);
-
-		return this;
+    	return wrapClass_ (instance, typeid (T).toString);
     }
 
     /*******************************************************************************
