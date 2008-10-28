@@ -2,7 +2,7 @@
 
 	copyright:      Copyright (c) 2008 Matthias Walter. All rights reserved
 
-    authors:        Matthias Walter
+    authors:        Matthias Walter, Andreas Hollandt
 
 *******************************************************************************/
 

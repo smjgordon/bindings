@@ -2,7 +2,7 @@
 
 	copyright:      Copyright (c) 2008 Matthias Walter. All rights reserved
 
-    authors:        Matthias Walter, 
+    authors:        Matthias Walter, Andreas Hollandt, Clemens Hofreither
 
 *******************************************************************************/
 
@@ -40,8 +40,9 @@ public enum LuaStandardLibraries : int
     OS = 8,
     IO = 16,
     DEBUG = 32,
-    SAFE = BASE | TABLE | STRING | MATH | OS,
-    ALL = BASE | TABLE | STRING | MATH | OS | IO | DEBUG
+    PACKAGE = 64,
+    SAFE = BASE | TABLE | STRING | MATH | OS | PACKAGE,
+    ALL = BASE | TABLE | STRING | MATH | OS | PACKAGE | IO | DEBUG
 }
 
 /*******************************************************************************
@@ -52,7 +53,7 @@ public enum LuaStandardLibraries : int
 
 public enum LuaType : int
 {
-	NONE = LUA_TNONE,
+    NONE = LUA_TNONE,
     NIL = LUA_TNIL,
     NUMBER = LUA_TNUMBER,
     BOOL = LUA_TBOOLEAN,
@@ -142,6 +143,9 @@ class LuaState
 
     /// Writer delegate, the Lua stdout
     private LuaPrint write_;
+    
+    /// Whether the LuaState was created as a sub-thread of another state by calling newThread().
+	private bool is_thread_state_;
 
     /// Constant to pass instead of a number of expected results, if this number is unknown.
     public const int MULTIPLE_RETURN_VALUES = LUA_MULTRET;
@@ -200,7 +204,12 @@ class LuaState
     {
     	LuaState.states.remove (this.state_);
 
-    	lua_close (this.state_);
+    	// bugfix by Clemens:
+    	// states which represent child threads may not be destroyed
+		if (!is_thread_state_)
+		{
+			lua_close (this.state_);
+		}
     }
 
     /*******************************************************************************
@@ -241,7 +250,8 @@ class LuaState
 		     { LUA_OSLIBNAME, &luaopen_os, LuaStandardLibraries.OS },
 		     { LUA_STRLIBNAME, &luaopen_string, LuaStandardLibraries.STRING },
 		     { LUA_MATHLIBNAME, &luaopen_math, LuaStandardLibraries.MATH },
-		     { LUA_DBLIBNAME, &luaopen_debug, LuaStandardLibraries.DEBUG }
+		     { LUA_DBLIBNAME, &luaopen_debug, LuaStandardLibraries.DEBUG },
+		     { LUA_LOADLIBNAME, &luaopen_package, LuaStandardLibraries.PACKAGE }
 		];
 
 		openLibraries (lualibs, categories);
@@ -601,8 +611,6 @@ class LuaState
     	}
 
     	throw new LuaCodeException ("Invalid option: '" ~ name ~ "'");
-
-    	return 0;
     }
 
     /*******************************************************************************
@@ -2385,7 +2393,11 @@ class LuaState
     	if (state is null)
     		return null;
     	else
-    		return new LuaState (this.write_, state);
+    	{
+    		auto thread = new LuaState (this.write_, state);
+			thread.is_thread_state_ = true;
+			return thread;
+		}
     }
 
     /*******************************************************************************
@@ -2423,7 +2435,9 @@ class LuaState
 
     public LuaState newThread ()
     {
-    	return new LuaState (this.write_, lua_newthread (this.state_));
+    	auto thread = new LuaState (this.write_, lua_newthread (this.state_));
+		thread.is_thread_state_ = true;
+		return thread;
     }
 
     /*******************************************************************************

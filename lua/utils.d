@@ -2,7 +2,12 @@
 
 	copyright:      Copyright (c) 2008 Matthias Walter. All rights reserved
 
-    authors:        Matthias Walter
+    authors:        Matthias Walter, Andreas Hollandt
+    
+    Many functions already exist in Tango, Phobos or even both. But most of
+    them are needed at compile time! E.g. Tangos text.convert.Integers
+    conversion functionality is not (yet) available at compile time, so
+    integer conversions are implemented here.
 
 *******************************************************************************/
 
