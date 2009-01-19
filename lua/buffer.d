@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 
 	copyright:      Copyright (c) 2008 Matthias Walter. All rights reserved
 
@@ -8,6 +8,7 @@
 
 module lua.buffer;
 
+private import lua.common;
 private import lua.state;
 private import lua.lauxlib;
 
@@ -117,7 +118,7 @@ class LuaBuffer
 
     *******************************************************************************/
 
-    public LuaBuffer addString (char[] string)
+    public LuaBuffer addString (cstring string)
     {
     	luaL_addlstring (&this.buffer_, string.ptr, string.length);
 
@@ -195,9 +196,9 @@ class LuaBuffer
 unittest
 {
 
-    char[] output = "";
+    string output = "";
 
-    void write (char[] data)
+    void write (cstring data)
     {
     	output ~= data;
     }
@@ -210,7 +211,7 @@ unittest
     L.pushNumber (2.1);
     buffer.addValue ();
 
-    auto buf = buffer.prepare ();
+    auto buf = buffer.prepare();
     buf[0] = 'B';
     buf[1] = 'u';
     buf[2] = 'f';

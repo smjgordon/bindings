@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 
 	copyright:      Copyright (c) 2008 Matthias Walter. All rights reserved
 
@@ -12,6 +12,8 @@
 *******************************************************************************/
 
 module lua.utils;
+private import lua.common;
+private import lua.error;
 
 /*******************************************************************************
 
@@ -74,7 +76,7 @@ public static byte digit2int (char c)
 
 *******************************************************************************/
 
-public static char[] int2string (T) (T i, int radix = 10)
+public static istring int2string (T) (T i, int radix = 10)
 {
 	if (i < 0)
         return "-" ~ int2string !(ulong) (-i, radix);
@@ -108,7 +110,7 @@ unittest
 
 *******************************************************************************/
 
-public static T parseInt (T) (char[] str, out int read, uint radix = 10)
+public static T parseInt (T) (cstring str, out int read, uint radix = 10)
 {
 	read = 0;
 	if (str.length == 0)
@@ -174,16 +176,16 @@ public static T parseInt (T) (char[] str, out int read, uint radix = 10)
 
 *******************************************************************************/
 
-public static T string2int (T = long) (char[] str, uint radix = 10)
+public static T string2int (T = long) (cstring str, uint radix = 10)
 {
 	int read;
 	T result = parseInt ! (T) (str, read, radix);
 	if (read == str.length)
 		return result;
 	else if (read < 0)
-		throw new Exception ("Parse error in '" ~ str ~ "': Integer overflow.");
+		throw new ExtendedException (cast(istring) ("Parse error in '" ~ str ~ "': Integer overflow."), __FILE__, __LINE__);
 	else
-		throw new Exception ("Parse error in '" ~ str ~ "' at position " ~ int2string (read));
+		throw new ExtendedException (cast(istring) ("Parse error in '" ~ str ~ "' at position " ~ int2string (read)), __FILE__, __LINE__);
 }
 
 unittest
@@ -229,7 +231,7 @@ unittest
 
 *******************************************************************************/
 
-public static int find (char[] str, char c)
+public static int find (cstring str, char c)
 {
     foreach (int i, char ch; str)
     {
@@ -248,7 +250,7 @@ public static int find (char[] str, char c)
 
 *******************************************************************************/
 
-public static int rfind (char[] str, char c)
+public static int rfind (cstring str, char c)
 {
     foreach_reverse (int i, char ch; str)
     {
@@ -264,14 +266,14 @@ public static int rfind (char[] str, char c)
 
 *******************************************************************************/
 
-public static char* toStringz (char[] s)
+public static char* toStringz (cstring s)
 {
     if (s.ptr)
     {
     	if (! (s.length && s[$-1] is 0))
     		s = s ~ '\0';
     }
-    return s.ptr;
+    return cast(char*) s.ptr;
 }
 
 /*******************************************************************************
@@ -280,7 +282,7 @@ public static char* toStringz (char[] s)
 
 *******************************************************************************/
 
-public static size_t strlenz (char* s)
+public static size_t strlenz (cchar* s)
 {
     size_t i;
 
@@ -293,7 +295,7 @@ public static size_t strlenz (char* s)
 }
 
 
-public static char[] ltrim (char[] str, char[] chars)
+public static cstring ltrim (cstring str, cstring chars)
 {
 	foreach (i, c; str)
 	{

@@ -1,4 +1,4 @@
-module lua.luaconf;
+﻿module lua.luaconf;
 
 extern (C):
 

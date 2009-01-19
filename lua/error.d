@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 
 	copyright:      Copyright (c) 2008 Matthias Walter. All rights reserved
 
@@ -8,6 +8,7 @@
 
 module lua.error;
 
+private import lua.common;
 private import lua.lua;
 private import lua.lauxlib;
 private import lua.data;
@@ -54,7 +55,7 @@ class LuaActivationRecord
 
     ***************************************************************************/
 
-	private static CodeType parseCodeType (char[] str)
+	private static CodeType parseCodeType (cstring str)
 	{
 		switch (str)
 		{
@@ -62,7 +63,7 @@ class LuaActivationRecord
 			case "C": return CodeType.C;
 			case "main": return CodeType.MAIN;
 			case "tail": return CodeType.TAIL;
-			default: throw new LuaFatalException (str ~ " is an invalid LuaCodeType.");
+			default: throw new LuaFatalException ("parseCodeType: " ~ str ~ " is an invalid LuaCodeType.");
 		}
 	}
 
@@ -75,7 +76,7 @@ class LuaActivationRecord
 
     ***************************************************************************/
 
-	public static char[] toString (CodeType code_type)
+	public static istring toString (CodeType code_type)
 	{
 		switch (code_type)
 		{
@@ -83,6 +84,7 @@ class LuaActivationRecord
 			case CodeType.C: return "C";
 			case CodeType.MAIN: return "main";
 			case CodeType.TAIL: return "tail call";
+			default: throw new LuaFatalException ("toString: " ~ int2string(cast(int)code_type) ~ " is an invalid LuaCodeType.");
 		}
 	}
 
@@ -95,7 +97,7 @@ class LuaActivationRecord
 
     ***************************************************************************/
 
-	private static NameType parseNameType (char[] str)
+	private static NameType parseNameType (cstring str)
 	{
 		switch (str)
 		{
@@ -117,7 +119,7 @@ class LuaActivationRecord
 
     ***************************************************************************/
 
-	public static char[] toString (NameType name_type)
+	public static istring toString (NameType name_type)
 	{
 		switch (name_type)
 		{
@@ -136,11 +138,11 @@ class LuaActivationRecord
 	/// Name type
 	private NameType name_type_;
 	/// Name
-	private char[] name_;
+	private mstring name_;
 	/// Whether this function was loaded from a file.
 	private bool is_from_file_;
 	/// Source string, containing the source or filename.
-	private char[] source_;
+	private mstring source_;
 	/// Start of the definition of this function in the source.
 	private uint definition_start_;
 	/// End of the definition of this function in the source.
@@ -220,9 +222,9 @@ class LuaActivationRecord
 
 	/// Returns the name of the function.
 
-	public char[] name ()
+	public istring name ()
 	{
-		return this.name_;
+		return cast(istring) this.name_;
 	}
 
 	/// Returns true, if and only if the function was defined in a file.
@@ -234,9 +236,9 @@ class LuaActivationRecord
 
 	/// Returns the source for the function or the filename, where it was defined.
 
-	public char[] source ()
+	public istring source ()
 	{
-		return this.source_;
+		return cast(istring) this.source_;
 	}
 
 	/// Returns the start of the defintion of the function.
@@ -269,9 +271,9 @@ class LuaActivationRecord
 
 	/// Returns of compact string representation of the information about the function.
 
-	public char[] toString ()
+	public istring toString ()
 	{
-		char[] result = toString (codeType) ~ " function";
+		istring result = toString (codeType) ~ " function";
 
 		if (this.name_ !is null)
 			result ~= " " ~ name ~ ((this.nameType == NameType.UNKNOWN) ? "" : (" (" ~ toString (nameType) ~ ")"));
@@ -325,10 +327,10 @@ class LuaCallTrace
 
 	/// Prints the Call Trace in a user-friendly way.
 
-	public char[] toString ()
+	public istring toString ()
 	{
 
-		char[] result = "* Call Trace (last function call)\n";
+		istring result = "* Call Trace (last function call)\n";
 		foreach (level, record; this.records_)
 		{
 			result ~= "*  " ~ int2string (records_.length - level) ~ ": " ~ record.toString () ~ "\n";
@@ -370,9 +372,9 @@ class LuaStackTrace
 
 	/// Prints the Stack Trace in a user-friendly way.
 
-	public char[] toString ()
+	public istring toString ()
 	{
-		char[] result = "# Stack Trace (top of stack)\n";
+		istring result = "# Stack Trace (top of stack)\n";
 		foreach_reverse (i, obj; this.objects_)
 		{
 			result ~= "#  " ~ int2string (i+1) ~ ": " ~ obj.toString () ~ "\n";
@@ -400,10 +402,19 @@ class LuaFatalException : Exception
 
     ***************************************************************************/
 
-    this (char[] message)
+    this (cstring message)
     {
-        super (message);
+        super (cast(istring) message);
     }
+
+	/// ditto
+	this (cstring message, cstring file, size_t line)
+	{
+		version(D_Version2)
+			super(cast(istring) message, cast(istring) file, line);
+		else
+			super(this.classinfo.name ~ "@" ~ file ~ "(" ~ int2string(line) ~ "): " ~ message);
+	}
 
 	/***************************************************************************
 
@@ -427,6 +438,37 @@ class LuaFatalException : Exception
     	else
     		super ("Unknown Lua error");
     }
+
+	/// ditto
+    this (int error, cstring file, size_t line)
+    {
+		version(D_Version2)
+		{
+			if (error == LUA_ERRRUN)
+				super ("Runtime error", cast(istring) file, line);
+			else if (error == LUA_ERRMEM)
+				super ("Memory allocation error", cast(istring) file, line);
+			else if (error == LUA_ERRERR)
+				super ("Error while running the error handler function", cast(istring) file, line);
+			else if (error == LUA_ERRFILE)
+				super ("Error opening the file", cast(istring) file, line);
+			else
+				super ("Unknown Lua error", cast(istring) file, line);
+		}
+		else
+		{
+			if (error == LUA_ERRRUN)
+				super (this.classinfo.name ~ "@" ~ file ~ "(" ~ int2string(line) ~ "): " ~ "Runtime error");
+			else if (error == LUA_ERRMEM)
+				super (this.classinfo.name ~ "@" ~ file ~ "(" ~ int2string(line) ~ "): " ~ "Memory allocation error");
+			else if (error == LUA_ERRERR)
+				super (this.classinfo.name ~ "@" ~ file ~ "(" ~ int2string(line) ~ "): " ~ "Error while running the error handler function");
+			else if (error == LUA_ERRFILE)
+				super (this.classinfo.name ~ "@" ~ file ~ "(" ~ int2string(line) ~ "): " ~ "Error opening the file");
+			else
+				super (this.classinfo.name ~ "@" ~ file ~ "(" ~ int2string(line) ~ "): " ~ "Unknown Lua error");
+		}
+    }
 }
 
 
@@ -444,10 +486,19 @@ class LuaIOException : Exception
 
     ***************************************************************************/
 
-    public this (char[] message)
+    public this (cstring message)
     {
-    	super (message);
+    	super (cast(istring) message);
     }
+
+	/// ditto
+	this (cstring message, cstring file, size_t line)
+	{
+		version(D_Version2)
+			super(cast(istring) message, cast(istring) file, line);
+		else
+			super(this.classinfo.name ~ "@" ~ file ~ "(" ~ int2string(line) ~ "): " ~ message);
+	}
 }
 
 /*******************************************************************************
@@ -464,37 +515,66 @@ class LuaCodeException : Exception
 
     ***************************************************************************/
 
-    public this (char[] message)
+    public this (cstring message)
     {
-    	super (message);
+    	super (cast(istring) message);
     }
+
+	/// ditto
+	this (cstring message, cstring file, size_t line)
+	{
+		version(D_Version2)
+			super(cast(istring) message, cast(istring) file, line);
+		else
+			super(this.classinfo.name ~ "@" ~ file ~ "(" ~ int2string(line) ~ "): " ~ message);
+	}
 }
 
 
 
 
-
+// D1 phobos Exceptions are missing an "Exception next;" attribute
 version (Tango)
-{
     alias Exception ExtendedException;
-}
+else version (D_Version2)
+	alias Exception ExtendedException;
 else
 {
     class ExtendedException : Exception
     {
-	private Exception next_;
-	
-	this (char[] message, Exception next)
-	{
-	    this.next_ = next;
-	    super (message);
-	}
-	
-	this (char[] message, char[] file, int line, Exception next)
-	{
-	    this.next_ = next;
-	    super (message);
-	}
+		Exception next;
+		istring file;
+		size_t line;
+		
+		this (cstring message, Exception next=null)
+		{
+			this.next = next;
+			super (message);
+		}
+		
+		this (cstring message, cstring file, size_t line, Exception next=null)
+		{
+			this.next = next;
+			super (message);
+			this.file = file;
+			this.line = line;
+		}
+
+		override istring toString()
+		{
+			mstring buf;
+
+			if (this.file)
+			{
+			   buf ~= this.classinfo.name ~ "@" ~ this.file ~ "(" ~ int2string(this.line) ~ "): " ~ this.msg;
+			}
+			else
+			{
+			   buf ~= this.classinfo.name ~ ": " ~ this.msg;
+			}
+			buf ~= this.next.classinfo.name ~ this.next.toString();
+			return cast(istring) buf;
+		}
     }
 }
 
@@ -540,9 +620,9 @@ class LuaForwardException : ExtendedException
 
     ***************************************************************************/
 
-    public this (LuaState state, Exception exception, char[] catcher_name)
+    public this (LuaState state, Exception exception, cstring catcher_name)
     {
-    	super (catcher_name ~ " caught:\n\n" ~ this.call_trace_.toString ~ "\n\n" ~ this.stack_trace_.toString, exception);
+    	super (cast(istring) (catcher_name ~ " caught:\n\n" ~ this.call_trace_.toString ~ "\n\n" ~ this.stack_trace_.toString), exception);
 
     	this.call_trace_ = new LuaCallTrace (state);
     	this.stack_trace_ = new LuaStackTrace (state);
@@ -562,12 +642,12 @@ class LuaForwardException : ExtendedException
 
     ***************************************************************************/
 
-    public this (LuaState state, Exception exception, char[] catcher_name, char[] file, long line)
+    public this (LuaState state, Exception exception, cstring catcher_name, cstring file, size_t line)
     {
     	this.call_trace_ = new LuaCallTrace (state);
     	this.stack_trace_ = new LuaStackTrace (state);
 
-        super (catcher_name ~ " caught:\n\n" ~ this.call_trace_.toString ~ "\n\n" ~ this.stack_trace_.toString, file, line, exception);
+        super (cast(istring) (catcher_name ~ " caught:\n\n" ~ this.call_trace_.toString ~ "\n\n" ~ this.stack_trace_.toString), cast(istring) file, line, exception);
     }
 
     /***************************************************************************
@@ -579,9 +659,9 @@ class LuaForwardException : ExtendedException
 
     ***************************************************************************/
 
-    public void forward (char[] forwarder_name)
+    public void forward (cstring forwarder_name)
     {
-    	this.msg = forwarder_name ~ " forwarded, " ~ this.msg;
+    	this.msg = cast(istring) (forwarder_name ~ " forwarded, " ~ this.msg);
     }
 
     /// Returns the attached Call Trace.

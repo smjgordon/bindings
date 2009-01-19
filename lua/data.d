@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 
 	copyright:      Copyright (c) 2008 Matthias Walter. All rights reserved
 
@@ -8,14 +8,14 @@
 
 module lua.data;
 
+private import lua.common;
 private import lua.lua;
 private import lua.buffer, lua.mixins, lua.error, lua.state;
 
 
 version (Tango)
 {
-    private import TangoFloat = tango.text.convert.Float;
-    alias TangoFloat.toString float2string;
+    private import tango.text.convert.Float : float2string = toString;
 }
 else
 {
@@ -40,7 +40,7 @@ abstract class LuaObject
 	public abstract void push (LuaState state);
 
 	/// Returns a user-friendly string representation of the Object.
-	public abstract char[] toString ();
+	public abstract istring toString ();
 
 	/// Size of the header (currently only the LuaType in binary form.)
 	protected const byte HEADER_SIZE = LuaType.sizeof;
@@ -82,7 +82,7 @@ abstract class LuaObject
 	public static LuaObject load (byte[] data, ref uint bytes_read)
 	{
 		if (data.length < HEADER_SIZE)
-			throw new LuaFatalException ("Invalid stream: Could not read header.");
+			throw new LuaFatalException ("Invalid stream: Could not read header.", __FILE__, __LINE__);
 
 		LuaObject result;
 
@@ -96,7 +96,7 @@ abstract class LuaObject
 			case LuaType.BOOL: result = new LuaBoolObject (false); break;
 			case LuaType.TABLE: result = new LuaTableObject (); break;
 			default:
-				throw new LuaFatalException ("Invalid stream: Wrong type code " ~ int2string (cast (int) * (cast (LuaType*) &data[0])));
+				throw new LuaFatalException ("Invalid stream: Wrong type code " ~ int2string (cast (int) * (cast (LuaType*) &data[0])), __FILE__, __LINE__);
 		}
 		bytes_read = HEADER_SIZE;
 		bytes_read += result.load (data[HEADER_SIZE .. length]);
@@ -123,14 +123,14 @@ class LuaNilObject : LuaObject
 	
 	/// Pushes Nil onto the stack.
 
-	public void push (LuaState state)
+	public override void push (LuaState state)
 	{
 		state.pushNil ();
 	}
 	
 	/// Returns the string representation.
 
-	public override char[] toString ()
+	public override istring toString ()
 	{
 		return "nil";
 	}
@@ -168,14 +168,14 @@ class LuaThreadObject : LuaObject
 	
 	/// You cannot push a saved Thread into a LuaState!
 
-	public void push (LuaState state)
+	public override void push (LuaState state)
 	{
-		throw new LuaFatalException ("Error in LuaThreadObject: Cannot push threads.");
+		throw new LuaFatalException ("Error in LuaThreadObject: Cannot push threads.", __FILE__, __LINE__);
 	}
 	
 	/// Returns the string representation.
 
-	public override char[] toString ()
+	public override istring toString ()
 	{
 		return "thread";
 	}
@@ -216,7 +216,7 @@ class LuaNumberObject : LuaObject
 	
 	/// Pushes the value onto the stack.
 
-	public void push (LuaState state)
+	public override void push (LuaState state)
 	{
 		state.pushNumber (this.value_);
 	}
@@ -237,9 +237,9 @@ class LuaNumberObject : LuaObject
 	
 	/// Returns the string representation.
 
-	public override char[] toString ()
+	public override istring toString ()
 	{
-            return float2string (this.value_);
+		return float2string (this.value_);
 	}
 	
 	/// Saves it as binary array.
@@ -256,7 +256,7 @@ class LuaNumberObject : LuaObject
 	public override uint load (byte[] data)
 	{
 		if (data.length < double.sizeof)
-			throw new LuaFatalException ("Invalid stream: Could not read Number.");
+			throw new LuaFatalException ("Invalid stream: Could not read Number.", __FILE__, __LINE__);
 
 		this.value_ = *(cast (double*) data.ptr);
 
@@ -285,7 +285,7 @@ class LuaBoolObject : LuaObject
 	
 	/// Pushes the bool value onto the Lua stack.
 
-	public void push (LuaState state)
+	public override void push (LuaState state)
 	{
 		state.pushBool (this.value_);
 	}
@@ -306,7 +306,7 @@ class LuaBoolObject : LuaObject
 	
 	/// Returns the string representation.
 
-	public override char[] toString ()
+	public override istring toString ()
 	{
 		return this.value_ ? "true" : "false";
 	}
@@ -325,7 +325,7 @@ class LuaBoolObject : LuaObject
 	public override uint load (byte[] data)
 	{
 		if (data.length < bool.sizeof)
-			throw new LuaFatalException ("Invalid stream: Could not read Boolean.");
+			throw new LuaFatalException ("Invalid stream: Could not read Boolean.", __FILE__, __LINE__);
 
 		this.value_ = *(cast (bool*) data.ptr);
 
@@ -343,41 +343,41 @@ class LuaBoolObject : LuaObject
 class LuaStringObject : LuaObject
 {
 	/// String value
-	private char[] value_;
+	private mstring value_;
 
 	/// Constructs a LuaStringObject.
 	
-	public this (char[] value = "")
+	public this (cstring value = "")
 	{
-		this.value_ = value;
+		this.value_ = value.dup;
 	}
 	
 	/// Pushes the string onto the Lua stack.
 
-	public void push (LuaState state)
+	public override void push (LuaState state)
 	{
 		state.pushString (this.value_);
 	}
 	
 	/// Sets the value.
-	
-	public char[] value (char[] v)
+	 
+	public istring value (cstring v)
 	{
-		return (this.value_ = v);
+		return cast(istring) (this.value_ = v.dup);
 	}
 	
 	/// Returns the value.
 
-	public char[] value ()
+	public istring value ()
 	{
-		return this.value_;
+		return cast(istring) this.value_;
 	}
 	
 	/// Returns the string representation.
 
-	public override char[] toString ()
+	public override istring toString ()
 	{
-		return "\"" ~ this.value_ ~ "\"";
+		return cast(istring) ("\"" ~ this.value_ ~ "\"");
 	}
 	
 	/// Saves it as binary array.
@@ -397,11 +397,11 @@ class LuaStringObject : LuaObject
 	public override uint load (byte[] data)
 	{
 		if (data.length < size_t.sizeof)
-			throw new LuaFatalException ("Invalid stream: Could not read String length.");
+			throw new LuaFatalException ("Invalid stream: Could not read String length.", __FILE__, __LINE__);
 
 		this.value_ = new char[ *(cast (size_t*) data.ptr) ];
 		if (data.length < size_t.sizeof + this.value_.length)
-			throw new LuaFatalException ("Invalid stream: Could not read String.");
+			throw new LuaFatalException ("Invalid stream: Could not read String.", __FILE__, __LINE__);
 
 		auto p = cast (char*) &data[size_t.sizeof];
 		this.value_[0 .. length] = p[0 .. this.value_.length];
@@ -442,12 +442,12 @@ class LuaUserdataObject : LuaObject
 	
 	/// Pushes the LightUserdata onto the stack. Throws an error if it is a plain Userdata.
 
-	public void push (LuaState state)
+	public override void push (LuaState state)
 	{
 		if (this.is_lightuserdata_)
 			state.pushLightUserdata (this.value_);
 		else
-			throw new LuaFatalException ("Error in LuaUserdataObject: Cannot push userdata.");
+			throw new LuaFatalException ("Error in LuaUserdataObject: Cannot push userdata.", __FILE__, __LINE__);
 	}
 	
 	/// Returns the value.
@@ -466,7 +466,7 @@ class LuaUserdataObject : LuaObject
 	
 	/// Returns the string representation.
 
-	public override char[] toString ()
+	public override istring toString ()
 	{
 		return (this.is_lightuserdata_ ? "LightUserdata: " : "Userdata: ") ~ int2string (cast (int) this.value_);
 	}
@@ -485,7 +485,7 @@ class LuaUserdataObject : LuaObject
 	public override uint load (byte[] data)
 	{
 		if (data.length < (void*).sizeof)
-			throw new LuaFatalException ("Invalid stream: Could not read Userdata.");
+			throw new LuaFatalException ("Invalid stream: Could not read Userdata.", __FILE__, __LINE__);
 
 		this.value_ = *(cast (void**) data.ptr);
 
@@ -528,14 +528,14 @@ class LuaFunctionObject : LuaObject
 	
 	/// Pushes the C function onto the stack.
 
-	public void push (LuaState state)
+	public override void push (LuaState state)
 	{
 		state.pushCFunction (this.value_);
 	}
 	
 	/// Returns the string representation.
 
-	public override char[] toString ()
+	public override istring toString ()
 	{
 		if (this.value_ is null)
 			return "Lua function";
@@ -557,7 +557,7 @@ class LuaFunctionObject : LuaObject
 	public override uint load (byte[] data)
 	{
 		if (data.length < LuaCFunction.sizeof)
-			throw new LuaFatalException ("Invalid stream: Could not read Function.");
+			throw new LuaFatalException ("Invalid stream: Could not read Function.", __FILE__, __LINE__);
 
 		this.value_ = *(cast (LuaCFunction*) data.ptr);
 
@@ -608,7 +608,7 @@ class LuaTableObject : LuaObject
 
 	/// Pushes onto the stack the complete table.
 
-	public void push (LuaState state)
+	public override void push (LuaState state)
 	{
 		state.createTable ();
 
@@ -622,11 +622,11 @@ class LuaTableObject : LuaObject
 
 	/// Returns the string representation.
 
-	public override char[] toString ()
+	public override istring toString ()
 	{
 		if (this.data_ !is null)
 		{
-			char[] result = "{ ";
+			istring result = "{ ";
 			foreach (pair; this.data_)
 			{
 				result ~= pair.key.toString () ~ "=" ~ pair.value.toString () ~ ", ";
@@ -675,7 +675,7 @@ class LuaTableObject : LuaObject
 	public override uint load (byte[] data)
 	{
 		if (data.length < uint.sizeof)
-			throw new LuaFatalException ("Invalid stream: Could not read Table.");
+			throw new LuaFatalException ("Invalid stream: Could not read Table.", __FILE__, __LINE__);
 
 		this.data_ = new KeyValuePair [ *(cast (uint*) data.ptr) ];
 		uint read = uint.sizeof;

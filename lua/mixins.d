@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 
 	copyright:      Copyright (c) 2008 Matthias Walter. All rights reserved
 
@@ -8,11 +8,12 @@
 
 module lua.mixins;
 
-public import lua.error : LuaForwardException;
-private import lua.utils : rfind, ltrim, removeFirst, join;
-public import lua.utils : int2string;
-public import lua.lauxlib : luaL_error;
-public import lua.lua : lua_State;
+private import lua.common;
+public import lua.error;
+private import lua.utils;
+public import lua.utils;
+public import lua.lauxlib;
+private import lua.lua;
 
 /*******************************************************************************
 
@@ -20,9 +21,9 @@ public import lua.lua : lua_State;
 
 *******************************************************************************/
 
-public static char[] mangleClass (char[] class_name)
+public static mstring mangleClass (cstring class_name)
 {
-    char[] result = "d_class_" ~ class_name;
+    mstring result = "d_class_" ~ class_name;
     foreach (i, c; result)
     {
         if (c == '.')
@@ -37,9 +38,9 @@ public static char[] mangleClass (char[] class_name)
 
 *******************************************************************************/
 
-public static char[] mangleFunction (char[] function_name)
+public static mstring mangleFunction (cstring function_name)
 {
-    char[] result = "d_function_" ~ function_name;
+    mstring result = "d_function_" ~ function_name;
     foreach (i, c; result)
     {
         if (c == '.')
@@ -62,33 +63,32 @@ public static char[] mangleFunction (char[] function_name)
 
 *******************************************************************************/
 
-public static char[] mixinLuaRegisterMethodAtLine (char[] lua_state, char[] class_name, char[] method_name, char[] lua_name, int line_number)
+public static istring mixinLuaRegisterMethodAtLine (cstring lua_state, cstring class_name, cstring method_name, cstring lua_name, int line_number)
 {
-    char[] wrapper = `lua_wrapper_` ~ mangleClass (class_name) ~ "_" ~ method_name ~ "_" ~ int2string (line_number);
+    istring wrapper = cast(istring) (`lua_wrapper_` ~ mangleClass (class_name) ~ "_" ~ method_name ~ "_" ~ int2string (line_number));
 
-    return ``
-        ~ `{`
+    return cast(istring) (`{`
         ~ `  extern (C) static int ` ~ wrapper ~ ` (lua_State *L)`
         ~ `  {`
         ~ `    auto state = LuaState.states[L];`
         ~ `    try`
         ~ `    {`
         ~ `      void* userdata = luaL_checkudata (L, 1, "` ~ mangleClass (class_name) ~ `");` // Check, whether it's the correct userdata
-        ~ `      luaL_argcheck (L, userdata != null, 1, "class pointer expected");`
+        ~ `      luaL_argcheck (L, userdata !is null, 1, "class pointer expected");`
         ~ `      lua_remove (L, 1);` // Remove the userdata
-        ~ `      return (cast (` ~class_name ~ ` *) userdata).` ~ method_name ~ ` (LuaState.states[L]);` // Call the wrapped
+        ~ `      return (cast (` ~class_name ~ ` *) userdata).` ~ method_name ~ ` (state);` // Call the wrapped
         ~ `    }`
         ~ `    catch (Exception e)`
         ~ `    {`
         ~ `      auto f = new LuaForwardException (state, e, "` ~ class_name ~ `.` ~ method_name ~ `", __FILE__, __LINE__);`
         ~ `      LuaForwardException.exceptions[cast (void*) f] = f;`
-        ~ `      return luaL_error (L, lua.utils.toStringz ("LFE=" ~ lua.mixins.int2string (cast (ulong) cast(void*)  f) ~ ";"));`
+        ~ `      return luaL_error (L, lua.utils.toStringz ("LFE=" ~ lua.mixins.int2string (cast (size_t) cast(void*)  f) ~ ";"));`
         ~ `    }`
         ~ `  }`
         ~ `  ` ~ lua_state ~ `.loadClassMetatable ("` ~ class_name ~ `");`
         ~ `  ` ~ lua_state ~ `.registerMethod ("` ~ lua_name ~ `", cast (LuaCFunction) &` ~ wrapper ~ `);`
         ~ `  ` ~ lua_state ~ `.pop ();`
-        ~ `}`;
+        ~ `}`);
 }
 
 /*******************************************************************************
@@ -125,13 +125,12 @@ public static char[] mixinLuaRegisterMethodAtLine (char[] lua_state, char[] clas
 
 *******************************************************************************/
 
-public static char[] mixinLuaRegisterMethod (char[] lua_state, char[] class_dot_method, char[] lua_name)
+public static istring mixinLuaRegisterMethod (cstring lua_state, cstring class_dot_method, cstring lua_name)
 {
     int pos = rfind (class_dot_method, '.');
-    char[] class_name = class_dot_method [0 .. pos];
-    char[] method_name = class_dot_method [pos+1 .. $];
-
-    return `mixin (mixinLuaRegisterMethodAtLine ("` ~ lua_state ~ `", "` ~ class_name ~ `", "` ~ method_name ~ `", "` ~ lua_name ~ `", __LINE__));`;
+    cstring class_name = class_dot_method [0 .. pos];
+    cstring method_name = class_dot_method [pos+1 .. $];
+    return cast(istring) (`mixin (mixinLuaRegisterMethodAtLine ("` ~ lua_state ~ `", "` ~ class_name ~ `", "` ~ method_name ~ `", "` ~ lua_name ~ `", __LINE__));`);
 }
 
 /*******************************************************************************
@@ -147,11 +146,11 @@ public static char[] mixinLuaRegisterMethod (char[] lua_state, char[] class_dot_
 
 *******************************************************************************/
 
-public static char[] mixinLuaPushFunctionAtLine (char[] lua_state, char[] name, int line_number)
+public static istring mixinLuaPushFunctionAtLine (cstring lua_state, cstring name, int line_number)
 {
-    char[] wrapper = "lua_wrapper_" ~ mangleFunction (name) ~ "_" ~ int2string (line_number);
+    istring wrapper = cast(istring) ("lua_wrapper_" ~ mangleFunction (name) ~ "_" ~ int2string (line_number));
 
-    return ``
+    return cast(istring) (``
         ~ `{`
         ~ `  extern (C) static int `  ~ wrapper ~ ` (lua_State *L)`
         ~ `  {`
@@ -164,11 +163,11 @@ public static char[] mixinLuaPushFunctionAtLine (char[] lua_state, char[] name, 
         ~ `    {`
         ~ `      auto f = new LuaForwardException (state, e, "` ~ name ~ `", __FILE__, __LINE__);`
         ~ `      LuaForwardException.exceptions[cast (void*) f] = f;`
-        ~ `      return luaL_error (L, lua.utils.toStringz ("LFE=" ~ lua.mixins.int2string (cast (ulong) cast(void*)  f) ~ ";"));`
+        ~ `      return luaL_error (L, lua.utils.toStringz ("LFE=" ~ lua.mixins.int2string (cast (size_t) cast(void*)  f) ~ ";"));`
         ~ `    }`
         ~ `  }`
         ~ `  ` ~ lua_state ~ `.pushCFunction (cast (int function (lua_State *L)) &` ~ wrapper ~ `);`
-        ~ `}`;
+        ~ `}`);
 }
 
 /*******************************************************************************
@@ -197,9 +196,9 @@ public static char[] mixinLuaPushFunctionAtLine (char[] lua_state, char[] name, 
 
 *******************************************************************************/
 
-public static char[] mixinLuaPushFunction (char[] lua_state, char[] name)
+public static istring mixinLuaPushFunction (cstring lua_state, cstring name)
 {
-    return `mixin (mixinLuaPushFunctionAtLine ("` ~ lua_state ~ `", "` ~ name ~ `", __LINE__));` ;
+    return cast(istring) (`mixin (mixinLuaPushFunctionAtLine ("` ~ lua_state ~ `", "` ~ name ~ `", __LINE__));`);
 }
 
 /*******************************************************************************
@@ -216,14 +215,14 @@ public static char[] mixinLuaPushFunction (char[] lua_state, char[] name)
 
 *******************************************************************************/
 
-public static char[] mixinLuaRegisterFunctionAtLine (char[] lua_state, char[] name, char[] lua_library_dot_name, int line_number)
+public static istring mixinLuaRegisterFunctionAtLine (cstring lua_state, cstring name, cstring lua_library_dot_name, int line_number)
 {
     int pos = rfind (lua_library_dot_name, '.');
-    char[] lua_library = pos < 0 ? "null" : "\"" ~ lua_library_dot_name[0 .. pos] ~ "\"";
-    char[] lua_function = lua_library_dot_name[pos+1 .. $];
-    char[] wrapper = "lua_wrapper_" ~ mangleFunction (name) ~ "_" ~ int2string (line_number);
+    cstring lua_library = pos < 0 ? "null" : "\"" ~ lua_library_dot_name[0 .. pos] ~ "\"";
+    cstring lua_function = lua_library_dot_name[pos+1 .. $];
+    cstring wrapper = "lua_wrapper_" ~ mangleFunction (name) ~ "_" ~ int2string (line_number);
 
-    return ``
+    return cast(istring) (``
 		~ `{`
 		~ `  extern (C) static int `  ~ wrapper ~ ` (lua_State* L)`
 		~ `  {`
@@ -236,11 +235,11 @@ public static char[] mixinLuaRegisterFunctionAtLine (char[] lua_state, char[] na
 		~ `    {`
 		~ `      auto f = new LuaForwardException (state, e, "` ~ name ~ `", __FILE__, __LINE__);`
 		~ `      LuaForwardException.exceptions[cast (void*) f] = f;`
-		~ `      return luaL_error (L, lua.utils.toStringz ("LFE=" ~ lua.mixins.int2string (cast (ulong) cast(void*)  f) ~ ";"));`
+		~ `      return luaL_error (L, lua.utils.toStringz ("LFE=" ~ lua.mixins.int2string (cast (size_t) cast(void*)  f) ~ ";"));`
 		~ `    }`
 		~ `  }`
 		~ `  ` ~ lua_state ~ `.registerFunction ("` ~ lua_function ~ `", cast (int function (lua_State* L)) &` ~ wrapper ~ `, ` ~ lua_library ~ `);`
-		~ `}`;
+		~ `}`);
 }
 
 /*******************************************************************************
@@ -270,9 +269,9 @@ public static char[] mixinLuaRegisterFunctionAtLine (char[] lua_state, char[] na
 
 *******************************************************************************/
 
-public static char[] mixinLuaRegisterFunction (char[] lua_state, char[] name, char[] lua_library_dot_name)
+public static istring mixinLuaRegisterFunction (cstring lua_state, cstring name, cstring lua_library_dot_name)
 {
-    return `mixin (mixinLuaRegisterFunctionAtLine ("` ~ lua_state ~ `", "` ~ name ~ `", "` ~ lua_library_dot_name ~ `", __LINE__));` ;
+    return cast(istring) (`mixin (mixinLuaRegisterFunctionAtLine ("` ~ lua_state ~ `", "` ~ name ~ `", "` ~ lua_library_dot_name ~ `", __LINE__));`);
 }
 
 /*******************************************************************************
@@ -289,14 +288,14 @@ public static char[] mixinLuaRegisterFunction (char[] lua_state, char[] name, ch
 
 *******************************************************************************/
 
-public static char[] mixinLuaRegisterConstructorAtLine (char[] lua_state, char[] class_name, char[] lua_library_dot_name, int line_number)
+public static istring mixinLuaRegisterConstructorAtLine (cstring lua_state, cstring class_name, cstring lua_library_dot_name, int line_number)
 {
     int pos = rfind (lua_library_dot_name, '.');
-    char[] lua_library = pos < 0 ? "" : "\"" ~ lua_library_dot_name[0 .. pos] ~ "\"";
-    char[] lua_function = lua_library_dot_name[pos+1 .. $];
-    char[] wrapper = "lua_wrapper_" ~ mangleClass (class_name) ~ "_ctor_" ~ int2string (line_number);
+    cstring lua_library = pos < 0 ? "" : "\"" ~ lua_library_dot_name[0 .. pos] ~ "\"";
+    cstring lua_function = lua_library_dot_name[pos+1 .. $];
+    cstring wrapper = "lua_wrapper_" ~ mangleClass (class_name) ~ "_ctor_" ~ int2string (line_number);
 
-    return ``
+    return cast(istring) (``
         ~ `{`
         ~ `  extern (C) static int ` ~ wrapper ~ ` (lua_State *L)`
         ~ `  {`
@@ -311,11 +310,11 @@ public static char[] mixinLuaRegisterConstructorAtLine (char[] lua_state, char[]
         ~ `    {`
         ~ `      auto f = new LuaForwardException (state, e, "` ~ class_name ~ `.this", __FILE__, __LINE__);`
         ~ `      LuaForwardException.exceptions[cast (void*) f] = f;`
-        ~ `      return luaL_error (L, lua.utils.toStringz ("LFE=" ~ lua.mixins.int2string (cast (ulong) cast(void*)  f) ~ ";"));`
+        ~ `      return luaL_error (L, lua.utils.toStringz ("LFE=" ~ lua.mixins.int2string (cast (size_t) cast(void*)  f) ~ ";"));`
         ~ `    }`
         ~ `  }`
         ~ `  ` ~ lua_state ~ `.registerFunction ("` ~ lua_function ~ `", cast (int function (lua_State *L)) &` ~ wrapper ~ `, ` ~ lua_library ~ `);`
-        ~ `}`;
+        ~ `}`);
 }
 
 /*******************************************************************************
@@ -350,7 +349,7 @@ public static char[] mixinLuaRegisterConstructorAtLine (char[] lua_state, char[]
 
 *******************************************************************************/
 
-public static char[] mixinLuaRegisterConstructor (char[] lua_state, char[] class_name, char[] lua_library_dot_name)
+public static istring mixinLuaRegisterConstructor (cstring lua_state, cstring class_name, cstring lua_library_dot_name)
 {
-    return `mixin (mixinLuaRegisterConstructorAtLine ("` ~ lua_state ~ `", "` ~ class_name ~ `", "` ~ lua_library_dot_name ~ `", __LINE__));` ;
+    return cast(istring) (`mixin (mixinLuaRegisterConstructorAtLine ("` ~ lua_state ~ `", "` ~ class_name ~ `", "` ~ lua_library_dot_name ~ `", __LINE__));`);
 }
