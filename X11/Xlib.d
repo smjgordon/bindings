@@ -11,7 +11,6 @@
  $Xorg: Xlib.h,v 1.6 2001/02/09 02:03:38 xorgcvs Exp $
 */
 
-
 module std.c.linux.X11.Xlib;
 public import std.c.linux.X11.X;
 
@@ -35,7 +34,7 @@ Visual*	DefaultVisual(Display *dpy,int scr) {return ScreenOfDisplay(dpy,scr).roo
 GC		DefaultGC(Display *dpy,int scr) 	{return ScreenOfDisplay(dpy,scr).default_gc;}
 uint	BlackPixel(Display *dpy,int scr) 	{return ScreenOfDisplay(dpy,scr).black_pixel;}
 uint	WhitePixel(Display *dpy,int scr) 	{return ScreenOfDisplay(dpy,scr).white_pixel;}
-uint	AllPlanes()							{return 0xFFFFFFFF;}
+ulong	AllPlanes()							{return 0xFFFFFFFF;}
 int		QLength(Display *dpy) 				{return dpy.qlen;}
 int		DisplayWidth(Display *dpy,int scr) 	{return ScreenOfDisplay(dpy,scr).width;}
 int		DisplayHeight(Display *dpy,int scr) {return ScreenOfDisplay(dpy,scr).height;}
@@ -120,9 +119,9 @@ struct XPixmapFormatValues
 struct XGCValues
 {
 	GraphicFunction function_;		/* logical operation*/
-	uint plane_mask;				/* plane mask */
-	uint foreground;				/* foreground pixel */
-	uint background;				/* background pixel */
+	ulong plane_mask;				/* plane mask */
+	ulong foreground;				/* foreground pixel */
+	ulong background;				/* background pixel */
 	int line_width;					/* line width */
 	LineStyle line_style;	 		/* LineSolid, LineOnOffDash, LineDoubleDash */
 	CapStyle cap_style;	  			/* CapNotLast, CapButt, CapRound, CapProjecting */
@@ -154,7 +153,7 @@ struct Visual
 	XExtData *ext_data;	/* hook for extension to hang data */
 	VisualID visualid;	/* visual id of this visual */
 	int class_;			/* class of screen (monochrome, etc.) */
-	uint red_mask, green_mask, blue_mask;	/* mask values */
+	ulong red_mask, green_mask, blue_mask;	/* mask values */
 	int bits_per_rgb;	/* log base 2 of distinct color values */
 	int map_entries;	/* color map entries */
 } ;
@@ -183,12 +182,12 @@ struct Screen{
 	Visual *root_visual;	/* root visual */
 	GC default_gc;			/* GC for the root root visual */
 	Colormap cmap;			/* default color map */
-	uint white_pixel;
-	uint black_pixel;		/* White and Black pixel values */
+	ulong white_pixel;
+	ulong black_pixel;		/* White and Black pixel values */
 	int max_maps, min_maps;	/* max and min color maps */
 	int backing_store;		/* Never, WhenMapped, Always */
 	Bool save_unders;	
-	int root_input_mask;	/* initial root input mask */
+	long root_input_mask;	/* initial root input mask */
 };
 
 /*
@@ -208,14 +207,14 @@ struct ScreenFormat
 struct  XSetWindowAttributes
 {
     Pixmap background_pixmap;	/* background or None or ParentRelative */
-    uint background_pixel;		/* background pixel */
+    ulong background_pixel;		/* background pixel */
     Pixmap border_pixmap;		/* border of the window */
-    uint border_pixel;			/* border pixel value */
+    ulong border_pixel;			/* border pixel value */
     BitGravity bit_gravity;		/* one of bit gravity values */
     BitGravity win_gravity;		/* one of the window gravity values */
     BackingStoreHint backing_store;		/* NotUseful, WhenMapped, Always */
-    uint backing_planes;		/* planes to be preseved if possible */
-    uint backing_pixel;			/* value to use in restoring planes */
+    ulong backing_planes;		/* planes to be preseved if possible */
+    ulong backing_pixel;			/* value to use in restoring planes */
     Bool save_under;			/* should bits under be saved? (popups) */
     long event_mask;			/* set of events that should be saved */
     long do_not_propagate_mask;/* set of events that should not propagate */
@@ -236,8 +235,8 @@ struct XWindowAttributes
     BitGravity bit_gravity;		/* one of bit gravity values */
     BitGravity win_gravity;		/* one of the window gravity values */
     BackingStoreHint backing_store;	/* NotUseful, WhenMapped, Always */
-    uint backing_planes;		/* planes to be preserved if possible */
-    uint backing_pixel;	/* value to be used when restoring planes */
+    ulong backing_planes;		/* planes to be preserved if possible */
+    ulong backing_pixel;	/* value to be used when restoring planes */
     Bool save_under;			/* Boolean, should bits under be saved? */
     Colormap colormap;			/* color map to be associated with window */
     Bool map_installed;		/* Boolean, is color map currently installed*/
@@ -288,9 +287,9 @@ struct XImage
     int depth;					/* depth of image */
     int bytes_per_line;			/* accelarator to next line */
     int bits_per_pixel;			/* bits per pixel (ZPixmap) */
-    uint red_mask;	/* bits in z arrangment */
-    uint green_mask;
-    uint blue_mask;
+    ulong red_mask;	/* bits in z arrangment */
+    ulong green_mask;
+    ulong blue_mask;
     XPointer obdata;			/* hook for the object routines to hang on */
     struct f {				/* image manipulation routines */
 		XImage* function(
@@ -305,10 +304,10 @@ struct XImage
 			int					/* bitmap_pad */,
 			int					/* bytes_per_line */) create_image;
 		int  function(XImage *)destroy_image;
-		uint function(XImage *, int, int)get_pixel;
-		int  function(XImage *, int, int, uint)put_pixel;
+		ulong function(XImage *, int, int)get_pixel;
+		int  function(XImage *, int, int, ulong)put_pixel;
 		XImage function(XImage *, int, int, uint, uint)sub_image;
-		int function(XImage *, int)add_pixel;
+		int function(XImage *, long)add_pixel;
 	};
 };
 
@@ -328,7 +327,7 @@ struct XWindowChanges{
  */
 struct XColor
 {
-	uint pixel;
+	ulong pixel;
 	ushort red, green, blue;
 	StoreColor flags;  /* do_red, do_green, do_blue */
 	byte pad;
@@ -384,7 +383,7 @@ struct XKeyboardState
 	int key_click_percent;
 	int bell_percent;
 	uint bell_pitch, bell_duration;
-	uint led_mask;
+	ulong led_mask;
 	int global_auto_repeat;
 	byte auto_repeats[32];
 };
@@ -439,8 +438,8 @@ struct Display
 	_XPrivate *private9;
 	_XPrivate *private10;
 	int qlen;		/* Length of input event queue */
-	uint last_request_read; /* seq number of last event read */
-	uint request;	/* sequence number of last request. */
+	ulong last_request_read; /* seq number of last event read */
+	ulong request;	/* sequence number of last request. */
 	XPointer private11;
 	XPointer private12;
 	XPointer private13;
@@ -452,8 +451,8 @@ struct Display
 	int default_screen;	/* default screen for operations */
 	int nscreens;		/* number of screens on this server*/
 	Screen *screens;	/* pointer to list of screens */
-	uint motion_buffer;	/* size of motion buffer */
-	uint private16;
+	ulong motion_buffer;	/* size of motion buffer */
+	ulong private16;
 	int min_keycode;	/* minimum defined keycode */
 	int max_keycode;	/* maximum defined keycode */
 	XPointer private17;
@@ -473,7 +472,7 @@ struct XrmHashBucketRec{};
 struct XKeyEvent
 {
 	int type;			/* of event */
-	uint serial;		/* # of last request processed by server */
+	ulong serial;		/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;	        /* "event" window it is reported relative to */
@@ -492,7 +491,7 @@ typedef XKeyEvent XKeyReleasedEvent;
 struct XButtonEvent
 {
 	int type;		/* of event */
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;	        /* "event" window it is reported relative to */
@@ -510,7 +509,7 @@ typedef XButtonEvent XButtonReleasedEvent;
 
 struct XMotionEvent{
 	int type;		/* of event */
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;	        /* "event" window reported relative to */
@@ -527,7 +526,7 @@ typedef XMotionEvent XPointerMovedEvent;
 
 struct XCrossingEvent{
 	int type;		/* of event */
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;	        /* "event" window reported relative to */
@@ -551,7 +550,7 @@ typedef XCrossingEvent XLeaveWindowEvent;
 
 struct XFocusChangeEvent{
 	int type;		/* FocusIn or FocusOut */
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;		/* window of event */
@@ -571,7 +570,7 @@ typedef XFocusChangeEvent XFocusOutEvent;
 struct XKeymapEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;
@@ -581,7 +580,7 @@ struct XKeymapEvent
 struct XExposeEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;
@@ -592,7 +591,7 @@ struct XExposeEvent
 
 struct XGraphicsExposeEvent{
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Drawable drawable;
@@ -605,7 +604,7 @@ struct XGraphicsExposeEvent{
 
 struct XNoExposeEvent{
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Drawable drawable;
@@ -615,7 +614,7 @@ struct XNoExposeEvent{
 
 struct XVisibilityEvent{
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;
@@ -624,7 +623,7 @@ struct XVisibilityEvent{
 
 struct XCreateWindowEvent{
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window parent;		/* parent of the window */
@@ -638,7 +637,7 @@ struct XCreateWindowEvent{
 struct XDestroyWindowEvent 
 {
 	int type;
-	uint serial;		/* # of last request processed by server */
+	ulong serial;		/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window event;
@@ -648,7 +647,7 @@ struct XDestroyWindowEvent
 struct XUnmapEvent
 {
 	int type;
-	uint serial;		/* # of last request processed by server */
+	ulong serial;		/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window event;
@@ -659,7 +658,7 @@ struct XUnmapEvent
 struct XMapEvent
 {
 	int type;
-	uint serial;		/* # of last request processed by server */
+	ulong serial;		/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window event;
@@ -670,7 +669,7 @@ struct XMapEvent
 struct XMapRequestEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window parent;
@@ -680,7 +679,7 @@ struct XMapRequestEvent
 struct XReparentEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window event;
@@ -693,7 +692,7 @@ struct XReparentEvent
 struct XConfigureEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window event;
@@ -708,7 +707,7 @@ struct XConfigureEvent
 struct XGravityEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window event;
@@ -719,7 +718,7 @@ struct XGravityEvent
 struct XResizeRequestEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;
@@ -729,7 +728,7 @@ struct XResizeRequestEvent
 struct  XConfigureRequestEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window parent;
@@ -745,7 +744,7 @@ struct  XConfigureRequestEvent
 struct XCirculateEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window event;
@@ -756,7 +755,7 @@ struct XCirculateEvent
 struct XCirculateRequestEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window parent;
@@ -767,7 +766,7 @@ struct XCirculateRequestEvent
 struct XPropertyEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;
@@ -779,7 +778,7 @@ struct XPropertyEvent
 struct XSelectionClearEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;
@@ -790,7 +789,7 @@ struct XSelectionClearEvent
 struct XSelectionRequestEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window owner;
@@ -804,7 +803,7 @@ struct XSelectionRequestEvent
 struct XSelectionEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window requestor;
@@ -817,7 +816,7 @@ struct XSelectionEvent
 struct XColormapEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;
@@ -829,7 +828,7 @@ struct XColormapEvent
 struct XClientMessageEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;
@@ -845,7 +844,7 @@ struct XClientMessageEvent
 struct XMappingEvent
 {
 	int type;
-	uint serial;	/* # of last request processed by server */
+	ulong serial;	/* # of last request processed by server */
 	Bool send_event;	/* true if this came from a SendEvent request */
 	Display *display;	/* Display the event was read from */
 	Window window;		/* unused */
@@ -860,7 +859,7 @@ struct XErrorEvent
 	int type;
 	Display *display;	/* Display the event was read from */
 	XID resourceid;		/* resource id */
-	uint serial;	/* serial number of failed request */
+	ulong serial;	/* serial number of failed request */
 	uint error_code;	/* error code of failed request */
 	ubyte request_code;	/* Major op-code of failed request */
 	ubyte minor_code;	/* Minor op-code of failed request */
@@ -939,7 +938,7 @@ struct XCharStruct
 struct XFontProp 
 {
     Atom name;
-    uint card32;
+    ulong card32;
 };
 
 struct XFontStruct{
@@ -1089,7 +1088,7 @@ typedef void function(
     XPointer
 )XIDProc;
 
-enum  XIMStyle:uint
+enum  XIMStyle:ulong
 {
 	XIMPreeditArea			=0x0001L,
 	XIMPreeditCallbacks		=0x0002L,
@@ -1170,7 +1169,7 @@ struct XICCallback{
     XICProc callback;
 };
 
-enum XIMFeedback:uint
+enum XIMFeedback:ulong
 {
 	XIMReverse			=1,
 	XIMUnderline		=1<<1,
@@ -1194,7 +1193,7 @@ struct XIMText {
     }; 
 };
 
-enum XIMPreeditState:uint
+enum XIMPreeditState:ulong
 {
 	XIMPreeditUnKnown	=0L,
 	XIMPreeditEnable	=1L,
@@ -1206,13 +1205,13 @@ struct	XIMPreeditStateNotifyCallbackStruct
     XIMPreeditState state;
 }
 
-enum XIMResetState:uint
+enum XIMResetState:ulong
 {
 	XIMInitialState		=1L,
 	XIMPreserveState	=1L<<1
 }
 
-enum XIMStringConversionFeedback:uint
+enum XIMStringConversionFeedback:ulong
 {
 	XIMStringConversionLeftEdge		=0x00000001,
 	XIMStringConversionRightEdge	=0x00000002,
@@ -1310,7 +1309,7 @@ struct XIMHotKeyTriggers {
     XIMHotKeyTrigger	*key;
 };
 
-enum XIMHotKeyState:uint
+enum XIMHotKeyState:ulong
 {
 	XIMHotKeyStateON	=0x0001L,
 	XIMHotKeyStateOFF	=0x0002L
@@ -1388,7 +1387,7 @@ extern XImage *XGetImage(
     int			/* y */,
     uint	/* width */,
     uint	/* height */,
-    uint	/* plane_mask */,
+    ulong	/* plane_mask */,
     ImageFormat	/* format */
 );
 extern XImage *XGetSubImage(
@@ -1398,7 +1397,7 @@ extern XImage *XGetSubImage(
     int			/* y */,
     uint	/* width */,
     uint	/* height */,
-    uint	/* plane_mask */,
+    ulong	/* plane_mask */,
     int			/* format */,
     XImage*		/* dest_image */,
     int			/* dest_x */,
@@ -1409,7 +1408,7 @@ extern XImage *XGetSubImage(
  * X function declarations.
  */
 extern Display *XOpenDisplay(
-    byte*	/* display_name */
+    char*	/* display_name */
 );
 
 extern void XrmInitialize();
@@ -1511,7 +1510,7 @@ extern Font XLoadFont(
 extern GC XCreateGC(
     Display*		/* display */,
     Drawable		/* d */,
-    uint			/* valuemask */,
+    ulong			/* valuemask */,
     XGCValues*		/* values */
 );
 extern GContext XGContextFromGC(
@@ -1541,8 +1540,8 @@ extern Pixmap XCreatePixmapFromBitmapData(
     byte*		/* data */,
     uint		/* width */,
     uint		/* height */,
-    uint		/* fg */,
-    uint		/* bg */,
+    ulong		/* fg */,
+    ulong		/* bg */,
     uint		/* depth */
 );
 extern Window XCreateSimpleWindow(
@@ -1553,8 +1552,8 @@ extern Window XCreateSimpleWindow(
     uint		/* width */,
     uint		/* height */,
     uint		/* border_width */,
-    uint		/* border */,
-    uint		/* background */
+    ulong		/* border */,
+    ulong		/* background */
 );
 extern Window XGetSelectionOwner(
     Display*	/* display */,
@@ -1640,7 +1639,7 @@ extern char *XResourceManagerString(
 extern char *XScreenResourceString(
 	Screen*		/* screen */
 );
-extern uint XDisplayMotionBufferSize(
+extern ulong XDisplayMotionBufferSize(
     Display*		/* display */
 );
 extern VisualID XVisualIDFromVisual(
@@ -1702,25 +1701,25 @@ extern GC XDefaultGC(
 extern GC XDefaultGCOfScreen(
     Screen*			/* screen */
 );
-extern uint XBlackPixel(
+extern ulong XBlackPixel(
     Display*		/* display */,
     int				/* screen_number */
 );
-extern uint XWhitePixel(
+extern ulong XWhitePixel(
     Display*		/* display */,
     int				/* screen_number */
 );
-extern uint XAllPlanes();
-extern uint XBlackPixelOfScreen(
+extern ulong XAllPlanes();
+extern ulong XBlackPixelOfScreen(
     Screen*			/* screen */
 );
-extern uint XWhitePixelOfScreen(
+extern ulong XWhitePixelOfScreen(
     Screen*		/* screen */
 );
-extern uint XNextRequest(
+extern ulong XNextRequest(
     Display*		/* display */
 );
-extern uint XLastKnownRequestProcessed(
+extern ulong XLastKnownRequestProcessed(
     Display*		/* display */
 );
 extern char *XServerVendor(
@@ -1879,7 +1878,7 @@ extern Status XAllocColorCells(
     Display*		/* display */,
     Colormap		/* colormap */,
     Bool	        /* contig */,
-    uint*	/* plane_masks_return */,
+    ulong*	/* plane_masks_return */,
     uint	/* nplanes */,
     ulong*	/* pixels_return */,
     uint 	/* npixels */
@@ -2130,7 +2129,7 @@ extern int XCopyPlane(
     uint			/* height */,
     int				/* dest_x */,
     int				/* dest_y */,
-    uint			/* plane */
+    ulong			/* plane */
 );
 
 extern int XDefaultDepth(
@@ -2443,9 +2442,9 @@ extern int XFreeColormap(
 extern int XFreeColors(
     Display*	/* display */,
     Colormap	/* colormap */,
-    uint*		/* pixels */,
+    ulong*		/* pixels */,
     int			/* npixels */,
-    uint		/* planes */
+    ulong		/* planes */
 );
 
 extern int XFreeCursor(
@@ -2525,7 +2524,7 @@ extern int XGetErrorText(
 extern Bool XGetFontProperty(
     XFontStruct*/* font_struct */,
     Atom		/* atom */,
-    uint*		/* value_return */
+    ulong*		/* value_return */
 );
 
 extern Status XGetGCValues(
@@ -2601,8 +2600,8 @@ extern int XGetWindowProperty(
     Atom		/* req_type */,
     Atom*		/* actual_type_return */,
     int*		/* actual_format_return */,
-    uint*		/* nitems_return */,
-    uint*		/* bytes_after_return */,
+    ulong*		/* nitems_return */,
+    ulong*		/* bytes_after_return */,
     ubyte**		/* prop_return */
 );
 
@@ -3072,7 +3071,7 @@ extern int XSetArcMode(
 extern int XSetBackground(
     Display*	/* display */,
     GC			/* gc */,
-    uint		/* background */
+    ulong		/* background */
 );
 
 extern int XSetClipMask(
@@ -3145,7 +3144,7 @@ extern int XSetFontPath(
 extern int XSetForeground(
     Display*	/* display */,
     GC			/* gc */,
-    uint		/* foreground */
+    ulong		/* foreground */
 );
 
 extern int XSetFunction(
@@ -3190,7 +3189,7 @@ extern int XSetModifierMapping(
 extern int XSetPlaneMask(
     Display*	/* display */,
     GC			/* gc */,
-    uint		/* plane_mask */
+    ulong		/* plane_mask */
 );
 
 extern int XSetPointerMapping(
@@ -3217,10 +3216,10 @@ extern int XSetSelectionOwner(
 extern int XSetState(
     Display*		/* display */,
     GC			/* gc */,
-    uint	/* foreground */,
-    uint	/* background */,
+    ulong	/* foreground */,
+    ulong	/* background */,
     GraphicFunction			/* function */,
-    uint	/* plane_mask */
+    ulong	/* plane_mask */
 );
 
 extern int XSetStipple(
@@ -3251,7 +3250,7 @@ extern int XSetTile(
 extern int XSetWindowBackground(
     Display*		/* display */,
     Window		/* w */,
-    uint	/* background_pixel */
+    ulong	/* background_pixel */
 );
 
 extern int XSetWindowBackgroundPixmap(
@@ -3263,7 +3262,7 @@ extern int XSetWindowBackgroundPixmap(
 extern int XSetWindowBorder(
     Display*		/* display */,
     Window		/* w */,
-    uint	/* border_pixel */
+    ulong	/* border_pixel */
 );
 
 extern int XSetWindowBorderPixmap(
@@ -3320,7 +3319,7 @@ extern int XStoreNamedColor(
     Display*		/* display */,
     Colormap		/* colormap */,
     char*			/* color */,
-    uint			/* pixel */,
+    ulong			/* pixel */,
     StoreColor		/* flags */
 );
 

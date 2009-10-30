@@ -12,10 +12,10 @@ const uint X_PROTOCOL=11;		/* current protocol version */
 const uint X_PROTOCOL_REVISION=0;		/* current minor version */
 
 /* Resources */
-typedef uint XID;
-typedef uint Mask;
-typedef uint VisualID;
-typedef uint Time;
+alias ulong XID;
+alias ulong Mask;
+alias ulong VisualID;
+alias ulong Time;
 alias XID Atom; //alias needed because of None invariant shared for Atom and XID
 alias XID Window;
 alias XID Drawable;
@@ -25,7 +25,7 @@ alias XID Cursor;
 alias XID Colormap;
 alias XID GContext;
 alias XID KeySym;
-typedef uint KeyCode;
+alias uint KeyCode;
 
 /*****************************************************************
  * RESERVED RESOURCE AND CONSTANT DEFINITIONS
@@ -50,7 +50,7 @@ const KeySym NoSymbol=0;		/* special KeySym */
  /* Input Event Masks. Used as event-mask window attribute and as arguments
    to Grab requests.  Not to be confused with event names.  */
  
-enum EventMask:int
+enum EventMask:long
 { 
 	NoEventMask				=0,
 	KeyPressMask			=1<<0,
@@ -348,7 +348,7 @@ enum WindowClass:int
 
 /* Window attributes for CreateWindow and ChangeWindowAttributes */
 
-enum WindowAttribute:uint
+enum WindowAttribute:ulong
 {
 	CWBackPixmap		=1<<0,
 	CWBackPixel			=1<<1,
@@ -548,7 +548,7 @@ enum ArcMode:int
 };
 /* GC components: masks used in CreateGC, CopyGC, ChangeGC, OR'ed into
    GC.stateChanges */
-enum GCMask:int
+enum GCMask:ulong
 {
 	GCFunction			=1<<0,
 	GCPlaneMask			=1<<1,
@@ -647,7 +647,7 @@ enum LedMode:int
 };
 /* masks for ChangeKeyboardControl */
 
-enum KBMask:uint
+enum KBMask:ulong
 {
 	KBKeyClickPercent	=1<<0,
 	KBBellPercent		=1<<1,

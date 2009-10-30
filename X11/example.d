@@ -4,7 +4,15 @@
 /* compile with: dmd example.d Xlib.d X.d  -L-lX11*/
 
 import std.c.linux.X11.Xlib;
-import std.c.stdio;
+
+version(Tango)
+{
+    import tango.stdc.stdio;
+}
+else
+{
+    import std.c.stdio;
+}
 
 int main(char[][] args)
 {
