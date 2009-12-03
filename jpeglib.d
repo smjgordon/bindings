@@ -754,7 +754,7 @@ struct jpeg_destination_mgr {
 /* Data source object for decompression */
 
 struct jpeg_source_mgr {
-  const JOCTET * next_input_byte; /* => next byte to read from buffer */
+  /*const*/ JOCTET * next_input_byte; /* => next byte to read from buffer */
   size_t bytes_in_buffer;	/* # of bytes remaining in buffer */
 
   void function(j_decompress_ptr cinfo) init_source;
