@@ -58,7 +58,7 @@
  *              Hans Verkuil <hverkuil@xs4all.nl>
  *  et al.
  */
- module videodev2; //videodev2.h
+ module videodev2;
  
  /*
 #include <sys/time.h>
@@ -77,7 +77,6 @@ alias char __u8;
 alias long __s64;
 alias ulong __u64;
 alias ushort __u16;
-alias ulong c_ulong; //unsigned long
 alias uint __le32; //TODO!! defined in /usr/include/linux/types.h
 
 /*
@@ -525,7 +524,7 @@ struct v4l2_requestbuffers {
 
  union M {
   __u32           offset;
- c_ulong   userptr;
+ size_t   userptr;
  }
 
 struct v4l2_buffer {
@@ -542,7 +541,7 @@ struct v4l2_buffer {
  /*enum*/ v4l2_memory        memory;
  /*union*/ M /*{
   __u32           offset;
- c_ulong   userptr;
+ size_t   userptr;
  }*/ m;
  __u32   length;
  __u32   input;

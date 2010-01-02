@@ -704,7 +704,7 @@ struct jpeg_error_mgr {
    * can check for bad data by seeing if num_warnings is nonzero at the
    * end of processing.
    */
-  long num_warnings;		/* number of corrupt-data warnings */
+  size_t num_warnings;		/* number of corrupt-data warnings */
 
   /* These fields point to the table(s) of error message strings.
    * An application can change the table pointer to switch to a different
@@ -732,8 +732,8 @@ struct jpeg_error_mgr {
 struct jpeg_progress_mgr {
   void function(j_common_ptr cinfo) progress_monitor;
 
-  long pass_counter;		/* work units completed in this pass */
-  long pass_limit;		/* total number of work units in this pass */
+  size_t pass_counter;		/* work units completed in this pass */
+  size_t pass_limit;		/* total number of work units in this pass */
   int completed_passes;		/* passes completed so far */
   int total_passes;		/* total number of passes expected */
 }
@@ -759,7 +759,7 @@ struct jpeg_source_mgr {
 
   void function(j_decompress_ptr cinfo) init_source;
   boolean function(j_decompress_ptr cinfo) fill_input_buffer;
-  void function(j_decompress_ptr cinfo, long num_bytes) skip_input_data;
+  void function(j_decompress_ptr cinfo, size_t num_bytes) skip_input_data;
   boolean function(j_decompress_ptr cinfo, int desired) resync_to_restart;
   void function(j_decompress_ptr cinfo) term_source;
 }
@@ -786,7 +786,7 @@ typedef /*struct*/ jvirt_barray_control * jvirt_barray_ptr;
 
 struct jpeg_memory_mgr {
   /* Method pointers */
-  void * function(j_common_ptr cinfo, int pool_id,
+  void* function(j_common_ptr cinfo, int pool_id,
 				size_t sizeofobject) alloc_small;
   void /*FAR*/ * function (j_common_ptr cinfo, int pool_id,
 				     size_t sizeofobject) alloc_large;
@@ -827,10 +827,10 @@ struct jpeg_memory_mgr {
    * used for virtual-array buffers.)  May be changed by outer application
    * after creating the JPEG object.
    */
-  long max_memory_to_use;
+  size_t max_memory_to_use;
 
   /* Maximum allocation request accepted by alloc_large. */
-  long max_alloc_chunk;
+  size_t max_alloc_chunk;
 }
 
 
@@ -1101,28 +1101,28 @@ const JPEG_COM = 0xFE;	/* COM marker code */
 
 //#ifdef INCOMPLETE_TYPES_BROKEN
 //#ifndef JPEG_INTERNALS		/* will be defined in jpegint.h */
-struct jvirt_sarray_control { long dummy; };
-struct jvirt_barray_control { long dummy; };
-struct jpeg_comp_master { long dummy; };
-struct jpeg_c_main_controller { long dummy; };
-struct jpeg_c_prep_controller { long dummy; };
-struct jpeg_c_coef_controller { long dummy; };
-struct jpeg_marker_writer { long dummy; };
-struct jpeg_color_converter { long dummy; };
-struct jpeg_downsampler { long dummy; };
-struct jpeg_forward_dct { long dummy; };
-struct jpeg_entropy_encoder { long dummy; };
-struct jpeg_decomp_master { long dummy; };
-struct jpeg_d_main_controller { long dummy; };
-struct jpeg_d_coef_controller { long dummy; };
-struct jpeg_d_post_controller { long dummy; };
-struct jpeg_input_controller { long dummy; };
-struct jpeg_marker_reader { long dummy; };
-struct jpeg_entropy_decoder { long dummy; };
-struct jpeg_inverse_dct { long dummy; };
-struct jpeg_upsampler { long dummy; };
-struct jpeg_color_deconverter { long dummy; };
-struct jpeg_color_quantizer { long dummy; };
+struct jvirt_sarray_control { size_t dummy; };
+struct jvirt_barray_control { size_t dummy; };
+struct jpeg_comp_master { size_t dummy; };
+struct jpeg_c_main_controller { size_t dummy; };
+struct jpeg_c_prep_controller { size_t dummy; };
+struct jpeg_c_coef_controller { size_t dummy; };
+struct jpeg_marker_writer { size_t dummy; };
+struct jpeg_color_converter { size_t dummy; };
+struct jpeg_downsampler { size_t dummy; };
+struct jpeg_forward_dct { size_t dummy; };
+struct jpeg_entropy_encoder { size_t dummy; };
+struct jpeg_decomp_master { size_t dummy; };
+struct jpeg_d_main_controller { size_t dummy; };
+struct jpeg_d_coef_controller { size_t dummy; };
+struct jpeg_d_post_controller { size_t dummy; };
+struct jpeg_input_controller { size_t dummy; };
+struct jpeg_marker_reader { size_t dummy; };
+struct jpeg_entropy_decoder { size_t dummy; };
+struct jpeg_inverse_dct { size_t dummy; };
+struct jpeg_upsampler { size_t dummy; };
+struct jpeg_color_deconverter { size_t dummy; };
+struct jpeg_color_quantizer { size_t dummy; };
 //#endif /* JPEG_INTERNALS */
 //#endif /* INCOMPLETE_TYPES_BROKEN */
 
