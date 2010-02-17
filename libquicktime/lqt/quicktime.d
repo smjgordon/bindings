@@ -873,11 +873,11 @@ void  quicktime_set_row_span(quicktime_t *file, int row_span);
 //C     int quicktime_close(quicktime_t *file);
 int  quicktime_close(quicktime_t *file);
 
-/* get length information */
+/* get.size information */
 /* channel numbers start on 1 for audio and video */
 
 /** \ingroup audio_decode
- *  \brief Get the audio length
+ *  \brief Get the audio.size
  *  \param file A quicktime handle
  *  \param track index (starting with 0)
  *  \returns The total number of uncompressed audio samples in the track
@@ -888,7 +888,7 @@ int  quicktime_close(quicktime_t *file);
 int  quicktime_audio_length(quicktime_t *file, int track);
 
 /** \ingroup video_decode
- *  \brief Get the video length
+ *  \brief Get the video.size
  *  \param file A quicktime handle
  *  \param track index (starting with 0)
  *  \returns The total number of video frames in the track

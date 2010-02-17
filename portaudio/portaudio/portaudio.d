@@ -219,6 +219,7 @@ alias int PaDeviceIndex;
  @see PaDeviceIndex
 */
 //C     #define paNoDevice ((PaDeviceIndex)-1)
+const PaDeviceIndex paNoDevice = -1;
 
 
 /** A special PaDeviceIndex value indicating that the device(s) to be used
@@ -423,7 +424,7 @@ PaDeviceIndex  Pa_HostApiDeviceIndexToDeviceIndex(PaHostApiIndex hostApi, int ho
 //C     typedef struct PaHostErrorInfo{
 //C         PaHostApiTypeId hostApiType;    /**< the host API which returned the error code */
 //C         long errorCode;                 /**< the error code returned */
-//C         const char *errorText;          /**< a textual description of the error if available, otherwise a zero-length string */
+//C         const char *errorText;          /**< a textual description of the error if available, otherwise a zero.size string */
 //C     }PaHostErrorInfo;
 align(1)
 struct PaHostErrorInfo

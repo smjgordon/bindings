@@ -48,6 +48,14 @@ public import lqt.lqt_qtvr;
 //void *lqt_bufalloc(size_t size);
 
 
+//Dtype : lqttype : //C type (guess)
+public alias long int64_t; //long long
+public alias ubyte uint8_t; //unsigned char
+public alias short int16_t; //short
+public alias ushort uint16_t; //unsigned short
+public alias int int32_t; //long
+public alias uint uint32_t; //unsigned long
+
   
 /** \ingroup log
  *  \brief Set callback for global logging

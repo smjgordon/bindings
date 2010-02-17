@@ -1,5 +1,5 @@
 /* Converted to D from colormodels.h by htod */
-module colormodels;
+module lqt.colormodels;
 /*******************************************************************************
  colormodels.h
 
