@@ -29,6 +29,8 @@ void LLVMMoveBasicBlockAfter(LLVMBasicBlockRef src, LLVMBasicBlockRef tgt);
 
 LLVMValueRef LLVMGetNamedAlias(LLVMModuleRef M, /*const*/ char *Name);
 
+void LLVMAddRetAttr(LLVMValueRef Fn, LLVMAttribute PA);
+
 // target triple binding
 
 // returns the running host triple
@@ -132,6 +134,7 @@ int LLVMWriteNativeAsmToFile(LLVMTargetMachineRef TM, LLVMModuleRef M, char* pat
 
 void LLVMAddInternalizePass(LLVMPassManagerRef PM, char** exp, uint nexps);
 void LLVMAddTailDuplicationPass(LLVMPassManagerRef PM);
+void LLVMAddIPSCCPPass(LLVMPassManagerRef PM);
 
 // system utils
 

@@ -19,7 +19,7 @@ extern "C" {
 
 // load/store alignment
 
-void LLVMSetLoadAlign(LLVMValueRef store, uint align)
+void LLVMSetLoadAlign(LLVMValueRef store, unsigned align)
 {
     cast<LoadInst>(unwrap(store))->setAlignment(align);
 }
@@ -28,7 +28,7 @@ unsigned LLVMGetLoadAlign(LLVMValueRef store)
     return cast<LoadInst>(unwrap(store))->getAlignment();
 }
 
-void LLVMSetStoreAlign(LLVMValueRef store, uint align)
+void LLVMSetStoreAlign(LLVMValueRef store, unsigned align)
 {
     cast<StoreInst>(unwrap(store))->setAlignment(align);
 }
@@ -37,7 +37,7 @@ unsigned LLVMGetStoreAlign(LLVMValueRef store)
     return cast<StoreInst>(unwrap(store))->getAlignment();
 }
 
-void LLVMSetAllocaAlign(LLVMValueRef alloc, uint align)
+void LLVMSetAllocaAlign(LLVMValueRef alloc, unsigned align)
 {
     cast<AllocaInst>(unwrap(alloc))->setAlignment(align);
 }
@@ -70,7 +70,7 @@ void LLVMEraseInstructionFromParent(LLVMValueRef V)
     cast<Instruction>(unwrap(V))->eraseFromParent();
 }
 
-LLVMTypeRef LLVMGetStructElementType(LLVMTypeRef ST, uint elem_index)
+LLVMTypeRef LLVMGetStructElementType(LLVMTypeRef ST, unsigned elem_index)
 {
     return wrap(
         cast<StructType>(unwrap(ST))->getElementType(elem_index)
@@ -136,6 +136,11 @@ void LLVMAddTailDuplicationPass(LLVMPassManagerRef PM)
     unwrap(PM)->add(createTailDuplicationPass());
 }
 
+void LLVMAddIPSCCPPass(LLVMPassManagerRef PM)
+{
+    unwrap(PM)->add(createIPSCCPPass());
+}
+
 // system stuff
 
 void LLVMPrintStackTraceOnErrorSignal()
@@ -145,7 +150,7 @@ void LLVMPrintStackTraceOnErrorSignal()
 
 // const long double
 
-LLVMValueRef LLVMConstRealFromBits(LLVMTypeRef T, uint bits, uint64_t* data, unsigned nbitwords)
+LLVMValueRef LLVMConstRealFromBits(LLVMTypeRef T, unsigned bits, uint64_t* data, unsigned nbitwords)
 {
     return wrap(ConstantFP::get(getGlobalContext(), APFloat(APInt(bits, nbitwords, data))));
 }
@@ -162,6 +167,15 @@ void LLVMMoveBasicBlockAfter(LLVMBasicBlockRef src, LLVMBasicBlockRef tgt)
 LLVMValueRef LLVMGetNamedAlias(LLVMModuleRef M, const char *Name)
 {
     return wrap(unwrap(M)->getNamedAlias(Name));
+}
+
+// add attribute to return value
+
+void LLVMAddRetAttr(LLVMValueRef Fn, LLVMAttribute PA) {
+  Function *Func = unwrap<Function>(Fn);
+  const AttrListPtr PAL = Func->getAttributes();
+  const AttrListPtr PALnew = PAL.addAttr(0, PA);
+  Func->setAttributes(PALnew);
 }
 
 }
