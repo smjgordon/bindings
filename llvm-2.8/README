@@ -1,0 +1,38 @@
+This file describes the installation and usage of the llvm bindings.
+
+Initial setup:
+==============
+
+svn co http://svn.dsource.org/projects/bindings/trunk/llvm-2.8
+cd llvm-2.8
+./prebuild.sh
+
+prebuild.sh builds Target.o and Ext.o which have to be passed
+to the linker. For convenience, these *.o files are also merged
+into a single library libllvm-c-ext.a.
+
+Target.o and Ext.o are usually not needed for the regular
+llvm c interface. But the D bindings add some extra bindings,
+because the official c interface just doesn't expose all
+functionality from the c++ interface. These are implemented as a
+"c++ to c to d" bridge (c++ to c is Target.cpp and Ext.cpp, c to
+d is Target.d and Ext.d).
+
+Building your application:
+==========================
+
+To compile and link a file main.d, run
+
+LLVMD=/path/to/llvm-dbindings
+LLVM_LIBS=`llvm-config --libs | sed 's/-l/-L-l/g'`
+ldc -I=$LLVMD \
+	$LLVM_LIBS \
+	-L=$LLVMD/libllvm-c-ext.a \
+	-L-ldl -L-lstdc++ -relocation-model=pic \
+	main.d
+
+Parameters:
+LLVM_LIBS                 a list of all llvm libraries, formatted for ldc
+-L=$LLVMD/libllvm-c-ext.a only needed when you use Target.d or Ext.d
+-L-lstdc++                links in the c++ standard library (llvm at it's core is c++)
+-relocation-model=pic     necessary for calling code in your app from inside of the llvm vm
