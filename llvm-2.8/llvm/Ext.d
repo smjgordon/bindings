@@ -130,7 +130,7 @@ int LLVMWriteNativeAsmToFile(LLVMTargetMachineRef TM, LLVMModuleRef M, char* pat
 
 // More IPO
 
-//void LLVMAddInternalizePass(LLVMPassManagerRef PM, char** exp, uint nexps);
+void LLVMAddInternalizePassExportList(LLVMPassManagerRef PM, char** exp, uint nexps);
 void LLVMAddTailDuplicationPass(LLVMPassManagerRef PM);
 //void LLVMAddIPSCCPPass(LLVMPassManagerRef PM);
 

@@ -123,13 +123,13 @@ const char* LLVMGetHostTriple()
 // internalize
 
 //ModulePass *createInternalizePass(const std::vector<const char *> &exportList);
-/*
-void LLVMAddInternalizePass(LLVMPassManagerRef PM, const char* exp[], unsigned nexps) {
+
+void LLVMAddInternalizePassExportList(LLVMPassManagerRef PM, const char* exp[], unsigned nexps) {
   std::vector<const char *> exportList(nexps, NULL);
   for (unsigned i = 0; i < nexps; ++i)
     exportList[i] = exp[i];
   unwrap(PM)->add(createInternalizePass(exportList));
-}*/
+}
 
 void LLVMAddTailDuplicationPass(LLVMPassManagerRef PM)
 {
