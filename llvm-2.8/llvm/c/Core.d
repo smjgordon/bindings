@@ -195,7 +195,7 @@ enum LLVMTypeKind {
   Float,       /**< 32 bit floating point type */
   Double,      /**< 64 bit floating point type */
   X86_FP80,    /**< 80 bit floating point type (X87) */
-  FP128,       /**< 128 bit floating point type (112-bit mantissa)*/
+  FP128,       /**< 128 bit floating point type (112-bit mantissa) */
   PPC_FP128,   /**< 128 bit floating point type (two 64-bits) */
   Label,       /**< Labels */
   Integer,     /**< Arbitrary bit width integers */
@@ -205,7 +205,7 @@ enum LLVMTypeKind {
   Pointer,     /**< Pointers */
   Opaque,      /**< Opaque: type with unknown structure */
   Vector,      /**< SIMD 'packed' format, or other vector type */
-  Metadata,    /**< Metadata */
+  Metadata    /**< Metadata */
 }
 
 enum LLVMLinkage {

@@ -5,6 +5,9 @@ import llvm.c.Target;
 
 extern(C):
 
+LLVMTypeRef LLVMMetadataType();
+LLVMValueRef LLVMMetadataOperand(LLVMValueRef, uint);
+
 void LLVMSetStoreAlign(LLVMValueRef store, uint alignment);
 uint LLVMGetStoreAlign(LLVMValueRef store);
 
@@ -128,11 +131,11 @@ void LLVMInitializeSparcAsmPrinter();
 int LLVMWriteAsmToFile(LLVMModuleRef M, char* path, char** errstr);
 int LLVMWriteNativeAsmToFile(LLVMTargetMachineRef TM, LLVMModuleRef M, char* path, int opt, int pic);
 
-// More IPO
+// More optimization
 
-void LLVMAddInternalizePassExportList(LLVMPassManagerRef PM, char** exp, uint nexps);
+void LLVMAddInternalizePassWithExportList(LLVMPassManagerRef PM, char** exp, uint nexps);
 void LLVMAddTailDuplicationPass(LLVMPassManagerRef PM);
-//void LLVMAddIPSCCPPass(LLVMPassManagerRef PM);
+void LLVMAddCorrelatedValuePropagationPass(LLVMPassManagerRef PM);
 
 // system utils
 
