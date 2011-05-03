@@ -32,8 +32,8 @@ int		DefaultScreen(Display *dpy) 		{return dpy.default_screen;}
 Window	DefaultRootWindow(Display *dpy) 	{return ScreenOfDisplay(dpy,DefaultScreen(dpy)).root;}
 Visual*	DefaultVisual(Display *dpy,int scr) {return ScreenOfDisplay(dpy,scr).root_visual;}
 GC		DefaultGC(Display *dpy,int scr) 	{return ScreenOfDisplay(dpy,scr).default_gc;}
-uint	BlackPixel(Display *dpy,int scr) 	{return ScreenOfDisplay(dpy,scr).black_pixel;}
-uint	WhitePixel(Display *dpy,int scr) 	{return ScreenOfDisplay(dpy,scr).white_pixel;}
+uint	BlackPixel(Display *dpy,int scr) 	{return cast(uint) ScreenOfDisplay(dpy,scr).black_pixel;}
+uint	WhitePixel(Display *dpy,int scr) 	{return cast(uint) ScreenOfDisplay(dpy,scr).white_pixel;}
 ulong	AllPlanes()							{return 0xFFFFFFFF;}
 int		QLength(Display *dpy) 				{return dpy.qlen;}
 int		DisplayWidth(Display *dpy,int scr) 	{return ScreenOfDisplay(dpy,scr).width;}
@@ -54,17 +54,17 @@ int		BitmapUnit(Display *dpy) 			{return dpy.bitmap_unit;}
 int		BitmapBitOrder(Display *dpy) 		{return dpy.bitmap_bit_order;}
 int		BitmapPad(Display *dpy) 			{return dpy.bitmap_pad;}
 int		ImageByteOrder(Display *dpy) 		{return dpy.byte_order;} 
-uint	NextRequest(Display *dpy)			{return dpy.request + 1;}
+uint	NextRequest(Display *dpy)			{return cast(uint) dpy.request + 1;}
 
-uint	LastKnownRequestProcessed(Display *dpy)	{return dpy.last_request_read;}
+uint	LastKnownRequestProcessed(Display *dpy)	{return cast(uint) dpy.last_request_read;}
 
 /* macros for screen oriented applications (toolkit) */
 Screen*	ScreenOfDisplay(Display *dpy,int scr)	{return &dpy.screens[scr];}
 Screen*	DefaultScreenOfDisplay(Display *dpy) {return ScreenOfDisplay(dpy,DefaultScreen(dpy));}
 Display* DisplayOfScreen(Screen s)			{return s.display;}
 Window	RootWindowOfScreen(Screen s)		{return s.root;}
-uint 	BlackPixelOfScreen(Screen s)		{return s.black_pixel;}
-uint 	WhitePixelOfScreen(Screen s)		{return s.white_pixel;}
+uint 	BlackPixelOfScreen(Screen s)		{return cast(uint) s.black_pixel;}
+uint 	WhitePixelOfScreen(Screen s)		{return cast(uint) s.white_pixel;}
 Colormap DefaultColormapOfScreen(Screen s)	{return s.cmap;}
 int 	DefaultDepthOfScreen(Screen s)		{return s.root_depth;}
 GC		DefaultGCOfScreen(Screen s)		{return s.default_gc;}
@@ -79,7 +79,7 @@ int		MinCmapsOfScreen(Screen s)		{return s.min_maps;}
 int		MaxCmapsOfScreen(Screen s)		{return s.max_maps;}
 Bool	DoesSaveUnders(Screen s)		{return s.save_unders;}
 int 	DoesBackingStore(Screen s)		{return s.backing_store;}
-int		EventMaskOfScreen(Screen s)		{return s.root_input_mask;}
+int		EventMaskOfScreen(Screen s)		{return cast(int) s.root_input_mask;}
 
 
 
@@ -915,7 +915,7 @@ union XEvent{
 };
 
 
-int XAllocID(Display* dpy) {return dpy.resource_alloc(dpy);}
+int XAllocID(Display* dpy) {return cast(int) dpy.resource_alloc(dpy);}
 
 
 /*
@@ -1026,16 +1026,16 @@ struct XwcTextItem{
 } ;
 
 
-char[] XNRequiredCharSet ="requiredCharSet";
-char[] XNQueryOrientation ="queryOrientation";
-char[] XNBaseFontName ="baseFontName";
-char[] XNOMAutomatic ="omAutomatic";
-char[] XNMissingCharSet ="missingCharSet";
-char[] XNDefaultString ="defaultString";
-char[] XNOrientation ="orientation";
-char[] XNDirectionalDependentDrawing ="directionalDependentDrawing";
-char[] XNContextualDrawing ="contextualDrawing";
-char[] XNFontInfo ="fontInfo";
+char[] XNRequiredCharSet ="requiredCharSet".dup;
+char[] XNQueryOrientation ="queryOrientation".dup;
+char[] XNBaseFontName ="baseFontName".dup;
+char[] XNOMAutomatic ="omAutomatic".dup;
+char[] XNMissingCharSet ="missingCharSet".dup;
+char[] XNDefaultString ="defaultString".dup;
+char[] XNOrientation ="orientation".dup;
+char[] XNDirectionalDependentDrawing ="directionalDependentDrawing".dup;
+char[] XNContextualDrawing ="contextualDrawing".dup;
+char[] XNFontInfo ="fontInfo".dup;
 
 
 struct XOMCharSetList
@@ -1753,19 +1753,19 @@ extern int XScreenNumberOfScreen(
     Screen*		/* screen */
 );
 
-typedef int (*XErrorHandler) (	    /* WARNING, this type not in Xlib spec */
+typedef int function (	    /* WARNING, this type not in Xlib spec */
     Display*		/* display */,
     XErrorEvent*	/* error_event */
-);
+) XErrorHandler;
 
 extern XErrorHandler XSetErrorHandler (
     XErrorHandler	/* handler */
 );
 
 
-typedef int (*XIOErrorHandler) (    /* WARNING, this type not in Xlib spec */
+typedef int function (    /* WARNING, this type not in Xlib spec */
     Display*		/* display */
-);
+) XIOErrorHandler;
 
 extern XIOErrorHandler XSetIOErrorHandler (
     XIOErrorHandler	/* handler */
