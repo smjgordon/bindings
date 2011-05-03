@@ -1,3 +1,5 @@
+module std.c.linux.X11.example;
+
 /* this an example for this binding*/
 /* please read README file before */
 

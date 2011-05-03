@@ -1,3 +1,5 @@
+module std.c.linux.X11.xcb.examle;
+
 /* build with: dmd  xcb.d xproto.d example.d -L-lxcb */
 
 import std.stdio;
