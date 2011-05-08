@@ -26,6 +26,7 @@ module c.gl.gl;
 
 import c.gl.glext;
 private import std.loader;
+public import c.gl._types;
 
 /*
  * Constants
@@ -324,7 +325,7 @@ const GLuint GL_DECR				= 0x1E03;
 
 // Buffers, Pixel Drawing/Reading
 const GLuint GL_NONE				= 0x0;
-const GLuint GL_LEFT				= 0x0406; 
+const GLuint GL_LEFT				= 0x0406;
 const GLuint GL_RIGHT				= 0x0407;
 //const GLuint GL_FRONT				= 0x0404;
 //const GLuint GL_BACK				= 0x0405;
@@ -1025,27 +1026,6 @@ const GLuint GL_CONSTANT_BORDER			= 0x8151;
 const GLuint GL_REPLICATE_BORDER		= 0x8153;
 const GLuint GL_CONVOLUTION_BORDER_COLOR	= 0x8154;
 
-/*
- * Types
- */
-alias uint	GLenum;
-alias ubyte	GLboolean;
-alias uint	GLbitfield;
-alias void	GLvoid;
-alias byte	GLbyte;
-alias short	GLshort;
-alias int	GLint;
-alias ubyte	GLubyte;
-alias ushort	GLushort;
-alias uint	GLuint;
-alias int	GLsizei;
-alias float	GLfloat;
-alias float	GLclampf;
-alias double	GLdouble;
-alias double	GLclampd;
-alias char	GLchar;
-alias ptrdiff_t	GLintptr;
-alias ptrdiff_t	GLsizeiptr;
 
 /*
  * Functions
