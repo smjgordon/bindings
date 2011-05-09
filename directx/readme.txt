@@ -160,3 +160,4 @@ Modifications
     Nearly all data types were converted to native D data types.  The only
 real survivors are BOOL and HRESULT.
 
+.
