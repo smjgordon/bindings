@@ -374,7 +374,7 @@ struct XAUDIO2_BUFFER
 {
     uint Flags;
     uint AudioBytes;
-    const byte* pAudioData;
+    const ubyte* pAudioData;
     uint PlayBegin;
     uint PlayLength;
     uint LoopBegin;

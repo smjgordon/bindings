@@ -19,6 +19,7 @@ alias std.c.windows.com.IID IID;
 
 version(DXSDK_JUNE_2010)
 {
+    pragma(lib, "x3daudio.lib");
 }
 else
 {
@@ -71,7 +72,7 @@ enum X3DAUDIO_CALCULATE_ZEROCENTER      = 0x00010000;
 enum X3DAUDIO_CALCULATE_REDIRECT_TO_LFE = 0x00020000;
 
 
-X3DAUDIO_DISTANCE_CURVE_POINT[2] X3DAudioDefault_LinearCurvePoints = [{0.0f, 1.0f}, {1.0f, 0.0f}];
+X3DAUDIO_DISTANCE_CURVE_POINT[2] X3DAudioDefault_LinearCurvePoints;
 X3DAUDIO_DISTANCE_CURVE X3DAudioDefault_LinearCurve;
 
 
@@ -85,7 +86,7 @@ static this()
 
 alias D3DVECTOR X3DAUDIO_VECTOR;
 
-alias byte[X3DAUDIO_HANDLE_BYTESIZE] X3DAUDIO_HANDLE;
+alias ubyte[X3DAUDIO_HANDLE_BYTESIZE] X3DAUDIO_HANDLE;
 
 
 struct X3DAUDIO_DISTANCE_CURVE_POINT
@@ -172,10 +173,10 @@ extern(Windows)
 void X3DAudioInitialize(
     uint SpeakerChannelMask,
     float SpeedOfSound,
-    byte* Instance);
+    ubyte* Instance);
 
 void X3DAudioCalculate(
-    in byte* Instance,
+    in ubyte* Instance,
     in X3DAUDIO_LISTENER* pListener,
     in X3DAUDIO_EMITTER* pEmitter,
     uint Flags,

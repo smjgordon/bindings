@@ -439,7 +439,7 @@ struct DXGI_FRAME_STATISTICS
 struct DXGI_MAPPED_RECT
 {
     int Pitch;
-    byte* pBits;
+    ubyte* pBits;
 }
 
 

@@ -118,7 +118,7 @@ enum DWRITE_ERR_BASE = 0x5000;
 
 template DWRITE_MAKE_OPENTYPE_TAG()
 {
-    uint DWRITE_MAKE_OPENTYPE_TAG(byte a, byte b, byte c, byte d)
+    uint DWRITE_MAKE_OPENTYPE_TAG(ubyte a, ubyte b, ubyte c, ubyte d)
     {
         return (
             ((cast(uint)d) << 24) |
@@ -559,11 +559,11 @@ struct DWRITE_TRIMMING
 struct DWRITE_LINE_BREAKPOINT
 {
     mixin(bitfields!(
-                     byte, "breakConditionBefore", 2,
-                     byte, "breakConditionAfter", 2,
-                     byte, "isWhitespace", 1,
-                     byte, "isSoftHyphen", 1,
-                     byte, "padding", 2));
+                     ubyte, "breakConditionBefore", 2,
+                     ubyte, "breakConditionAfter", 2,
+                     ubyte, "isWhitespace", 1,
+                     ubyte, "isSoftHyphen", 1,
+                     ubyte, "padding", 2));
 }
 static assert(DWRITE_LINE_BREAKPOINT.sizeof == 1);
 
@@ -1187,8 +1187,8 @@ extern(Windows):
     HRESULT SetBidiLevel(
         uint textPosition,
         uint textLength,
-        byte explicitLevel,
-        byte resolvedLevel
+        ubyte explicitLevel,
+        ubyte resolvedLevel
         );
     HRESULT SetNumberSubstitution(
         uint textPosition,
@@ -1637,7 +1637,7 @@ extern(Windows):
     HRESULT CreateAlphaTexture(
         DWRITE_TEXTURE_TYPE textureType,
         in RECT* textureBounds,
-        byte* alphaValues,
+        ubyte* alphaValues,
         uint bufferSize
         );
     HRESULT GetAlphaBlendParams(

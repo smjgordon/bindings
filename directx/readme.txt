@@ -11,7 +11,15 @@ some of function bindings might not work due not having actually run them
 to prove they work.  This also goes for the structs, but in the case of structs
 there is also a compile time static assert that checks their size with respect
 to sizes pulled from a test applet which was compiled against MSVC++ 2010, for
-32 and 64 bit.
+32 and 64 bit.   The simple case of creating a vertex and pixel shader, vertex
+buffer, index buffer, and drawing some triangles 'Works on My Machine'.
+
+    This project depends on the 'WindowsApi' win32 bindings project at
+    (svn) http://www.dsource.org/projects/bindings/trunk/win32
+    (website) http://www.dsource.org/projects/bindings
+    
+    All around you need this win32 module to do serious work on Windows.
+
 
 ===============
 What's Included

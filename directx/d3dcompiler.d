@@ -167,7 +167,7 @@ HRESULT D3DDisassemble(
     );
 
 /*
-TODO: If implementing d3d10effect.h, move this into that file
+TODOZ: If implementing d3d10effect.h, move this into that file
 HRESULT D3DDisassemble10Effect(
     ID3D10Effect pEffect, 
     uint Flags,

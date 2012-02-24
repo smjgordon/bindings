@@ -11,6 +11,7 @@ import win32.directx.d3d11shader;
 import win32.windows;
 import std.c.windows.com;
 import std.string;
+import std.utf;
 
 
 alias std.c.windows.com.IUnknown IUnknown;
@@ -1225,7 +1226,7 @@ alias D3DCOLORVALUE D3D11COLORVALUE;
 
 struct D3D11_INPUT_ELEMENT_DESC
 {
-    immutable char* SemanticName;
+    char* SemanticName;
     uint SemanticIndex;
     DXGI_FORMAT Format;
     uint InputSlot;
@@ -1235,7 +1236,7 @@ struct D3D11_INPUT_ELEMENT_DESC
     
     this(string InSemanticName)
     {
-        SemanticName = toStringz(InSemanticName);
+        SemanticName = toUTFz!(char*)(InSemanticName);
     }
 }
 
@@ -1243,15 +1244,15 @@ struct D3D11_INPUT_ELEMENT_DESC
 struct D3D11_SO_DECLARATION_ENTRY
 {
     uint Stream;
-    immutable char* SemanticName;
+    char* SemanticName;
     uint SemanticIndex;
-    byte StartComponent;
-    byte ComponentCount;
-    byte OutputSlot;
+    ubyte StartComponent;
+    ubyte ComponentCount;
+    ubyte OutputSlot;
     
     this (string InSemanticName)
     {
-        SemanticName = toStringz(InSemanticName);
+        SemanticName = toUTFz!(char*)(InSemanticName);
     }
 }
 
@@ -1296,8 +1297,8 @@ struct D3D11_DEPTH_STENCIL_DESC
     D3D11_DEPTH_WRITE_MASK DepthWriteMask;
     D3D11_COMPARISON_FUNC DepthFunc;
     BOOL StencilEnable;
-    byte StencilReadMask;
-    byte StencilWriteMask;
+    ubyte StencilReadMask;
+    ubyte StencilWriteMask;
     D3D11_DEPTH_STENCILOP_DESC FrontFace;
     D3D11_DEPTH_STENCILOP_DESC BackFace;
 }
@@ -1312,7 +1313,7 @@ struct D3D11_RENDER_TARGET_BLEND_DESC
     D3D11_BLEND SrcBlendAlpha;
     D3D11_BLEND DestBlendAlpha;
     D3D11_BLEND_OP BlendOpAlpha;
-    byte RenderTargetWriteMask;
+    ubyte RenderTargetWriteMask;
 }
 
 
@@ -1783,7 +1784,7 @@ struct D3D11_COUNTER_INFO
 {
     D3D11_COUNTER LastDeviceDependentCounter;
     uint NumSimultaneousCounters;
-    byte NumDetectableParallelUnits;
+    ubyte NumDetectableParallelUnits;
 }
 
 
@@ -2374,7 +2375,7 @@ extern(Windows):
         ID3D11DepthStencilView pDepthStencilView,
         uint ClearFlags,
         float Depth,
-        byte Stencil
+        ubyte Stencil
         );
     void GenerateMips(
         ID3D11ShaderResourceView pShaderResourceView

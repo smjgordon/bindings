@@ -444,8 +444,8 @@ struct D3D11_SIGNATURE_PARAMETER_DESC
     uint Register;
     D3D11_NAME SystemValueType;
     D3D11_REGISTER_COMPONENT_TYPE ComponentType;
-    byte Mask;
-    byte ReadWriteMask;
+    ubyte Mask;
+    ubyte ReadWriteMask;
     uint Stream;
 }
 

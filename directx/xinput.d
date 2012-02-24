@@ -145,8 +145,8 @@ enum XINPUT_KEYSTROKE_REPEAT = 0x0004;
 struct XINPUT_GAMEPAD
 {
     ushort wButtons;
-    byte bLeftTrigger;
-    byte bRightTrigger;
+    ubyte bLeftTrigger;
+    ubyte bRightTrigger;
     short sThumbLX;
     short sThumbLY;
     short sThumbRX;
@@ -170,8 +170,8 @@ struct XINPUT_VIBRATION
 
 struct XINPUT_CAPABILITIES
 {
-    byte Type;
-    byte SubType;
+    ubyte Type;
+    ubyte SubType;
     ushort Flags;
     XINPUT_GAMEPAD Gamepad;
     XINPUT_VIBRATION Vibration;
@@ -180,8 +180,8 @@ struct XINPUT_CAPABILITIES
 
 struct XINPUT_BATTERY_INFORMATION
 {
-    byte BatteryType;
-    byte BatteryLevel;
+    ubyte BatteryType;
+    ubyte BatteryLevel;
 }
 
 
@@ -190,8 +190,8 @@ struct XINPUT_KEYSTROKE
     ushort VirtualKey;
     wchar Unicode;
     ushort Flags;
-    byte UserIndex;
-    byte HidCode;
+    ubyte UserIndex;
+    ubyte HidCode;
 }
 
 
@@ -230,7 +230,7 @@ uint XInputGetDSoundAudioDeviceGuids(
 
 uint XInputGetBatteryInformation(
     uint dwUserIndex,
-    byte devType,
+    ubyte devType,
     out XINPUT_BATTERY_INFORMATION pBatteryInformation
     );
 
