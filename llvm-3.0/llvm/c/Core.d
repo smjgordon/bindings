@@ -304,34 +304,34 @@ LLVMContextRef LLVMContextCreate();
 LLVMContextRef LLVMGetGlobalContext();
 void LLVMContextDispose(LLVMContextRef C);
 
-uint LLVMGetMDKindIDInContext(LLVMContextRef C, /*const*/ char* Name,
+uint LLVMGetMDKindIDInContext(LLVMContextRef C, /*const*/ const(char)* Name,
                                   uint SLen);
-uint LLVMGetMDKindID(/*const*/ char* Name, uint SLen);
+uint LLVMGetMDKindID(/*const*/ const(char)* Name, uint SLen);
 
 /*===-- Modules -----------------------------------------------------------===*/
 
 /* Create and destroy modules. */
 /** See llvm::Module::Module. */
-LLVMModuleRef LLVMModuleCreateWithName(/*const*/ char* ModuleID);
-LLVMModuleRef LLVMModuleCreateWithNameInContext(/*const*/ char* ModuleID,
+LLVMModuleRef LLVMModuleCreateWithName(/*const*/ const(char)* ModuleID);
+LLVMModuleRef LLVMModuleCreateWithNameInContext(/*const*/ const(char)* ModuleID,
                                                 LLVMContextRef C);
 
 /** See llvm::Module::~Module. */
 void LLVMDisposeModule(LLVMModuleRef M);
 
 /** Data layout. See Module::getDataLayout. */
-/*const*/ char* LLVMGetDataLayout(LLVMModuleRef M);
-void LLVMSetDataLayout(LLVMModuleRef M, /*const*/ char* Triple);
+/*const*/ const(char)* LLVMGetDataLayout(LLVMModuleRef M);
+void LLVMSetDataLayout(LLVMModuleRef M, /*const*/ const(char)* Triple);
 
 /** Target triple. See Module::getTargetTriple. */
-/*const*/ char* LLVMGetTarget(LLVMModuleRef M);
-void LLVMSetTarget(LLVMModuleRef M, /*const*/ char* Triple);
+/*const*/ const(char)* LLVMGetTarget(LLVMModuleRef M);
+void LLVMSetTarget(LLVMModuleRef M, /*const*/ const(char)* Triple);
 
 /** See Module::dump. */
 void LLVMDumpModule(LLVMModuleRef M);
 
 /** See Module::setModuleInlineAsm. */
-void LLVMSetModuleInlineAsm(LLVMModuleRef M, /*const*/ char* Asm);
+void LLVMSetModuleInlineAsm(LLVMModuleRef M, /*const*/ const(char)* Asm);
 
 /** See Module::getContext. */
 LLVMContextRef LLVMGetModuleContext(LLVMModuleRef M);
@@ -444,8 +444,8 @@ LLVMTypeRef LLVMX86MMXType();
 
 /* Operations on all values */
 LLVMTypeRef LLVMTypeOf(LLVMValueRef Val);
-/*const*/ char* LLVMGetValueName(LLVMValueRef Val);
-void LLVMSetValueName(LLVMValueRef Val, /*const*/ char* Name);
+/*const*/ const(char)* LLVMGetValueName(LLVMValueRef Val);
+void LLVMSetValueName(LLVMValueRef Val, /*const*/ const(char)* Name);
 void LLVMDumpValue(LLVMValueRef Val);
 void LLVMReplaceAllUsesWith(LLVMValueRef OldVal, LLVMValueRef NewVal);
 int LLVMHasMetadata(LLVMValueRef Val);
@@ -481,9 +481,9 @@ LLVMBool LLVMIsUndef(LLVMValueRef Val);
 LLVMValueRef LLVMConstPointerNull(LLVMTypeRef Ty);
 
 /* Operations on metadata */
-LLVMValueRef LLVMMDStringInContext(LLVMContextRef C, /*const*/ char* Str,
+LLVMValueRef LLVMMDStringInContext(LLVMContextRef C, /*const*/ const(char)* Str,
                                    uint SLen);
-LLVMValueRef LLVMMDString(/*const*/ char* Str, uint SLen);
+LLVMValueRef LLVMMDString(/*const*/ const(char)* Str, uint SLen);
 LLVMValueRef LLVMMDNodeInContext(LLVMContextRef C, LLVMValueRef* Vals,
                                  uint Count);
 LLVMValueRef LLVMMDNode(LLVMValueRef* Vals, uint Count);
@@ -499,26 +499,26 @@ LLVMValueRef LLVMConstInt(LLVMTypeRef IntTy, ulong N,
 LLVMValueRef LLVMConstIntOfArbitraryPrecision(LLVMTypeRef IntTy,
                                               uint NumWords,
                                               /*const*/ ulong* Words);
-LLVMValueRef LLVMConstIntOfString(LLVMTypeRef IntTy, /*const*/ char* Text,
+LLVMValueRef LLVMConstIntOfString(LLVMTypeRef IntTy, /*const*/ const(char)* Text,
                                   ubyte Radix);
-LLVMValueRef LLVMConstIntOfStringAndSize(LLVMTypeRef IntTy, /*const*/ char* Text,
+LLVMValueRef LLVMConstIntOfStringAndSize(LLVMTypeRef IntTy, /*const*/ const(char)* Text,
                                          uint SLen, ubyte Radix);
 LLVMValueRef LLVMConstReal(LLVMTypeRef RealTy, double N);
-LLVMValueRef LLVMConstRealOfString(LLVMTypeRef RealTy, /*const*/ char* Text);
-LLVMValueRef LLVMConstRealOfStringAndSize(LLVMTypeRef RealTy, /*const*/ char* Text,
+LLVMValueRef LLVMConstRealOfString(LLVMTypeRef RealTy, /*const*/ const(char)* Text);
+LLVMValueRef LLVMConstRealOfStringAndSize(LLVMTypeRef RealTy, /*const*/ const(char)* Text,
                                           uint SLen);
 ulong LLVMConstIntGetZExtValue(LLVMValueRef ConstantVal);
 long LLVMConstIntGetSExtValue(LLVMValueRef ConstantVal);
 
 
 /* Operations on composite constants */
-LLVMValueRef LLVMConstStringInContext(LLVMContextRef C, /*const*/ char* Str,
+LLVMValueRef LLVMConstStringInContext(LLVMContextRef C, /*const*/ const(char)* Str,
                                       uint Length, LLVMBool DontNullTerminate);
 LLVMValueRef LLVMConstStructInContext(LLVMContextRef C,
                                       LLVMValueRef* ConstantVals,
                                       uint Count, LLVMBool Packed);
 
-LLVMValueRef LLVMConstString(/*const*/ char* Str, uint Length,
+LLVMValueRef LLVMConstString(/*const*/ const(char)* Str, uint Length,
                              LLVMBool DontNullTerminate);
 LLVMValueRef LLVMConstArray(LLVMTypeRef ElementTy,
                             LLVMValueRef* ConstantVals, uint Length);
@@ -612,7 +612,7 @@ LLVMValueRef LLVMConstInsertValue(LLVMValueRef AggConstant,
                                   LLVMValueRef ElementValueConstant,
                                   uint *IdxList, uint NumIdx);
 LLVMValueRef LLVMConstInlineAsm(LLVMTypeRef Ty,
-                                /*const*/ char* AsmString, /*const*/ char* Constraints,
+                                /*const*/ const(char)* AsmString, /*const*/ const(char)* Constraints,
                                 LLVMBool HasSideEffects, LLVMBool IsAlignStack);
 LLVMValueRef LLVMBlockAddress(LLVMValueRef F, LLVMBasicBlockRef BB);
 
@@ -621,19 +621,19 @@ LLVMModuleRef LLVMGetGlobalParent(LLVMValueRef Global);
 LLVMBool LLVMIsDeclaration(LLVMValueRef Global);
 LLVMLinkage LLVMGetLinkage(LLVMValueRef Global);
 void LLVMSetLinkage(LLVMValueRef Global, LLVMLinkage Linkage);
-/*const*/ char* LLVMGetSection(LLVMValueRef Global);
-void LLVMSetSection(LLVMValueRef Global, /*const*/ char* Section);
+/*const*/ const(char)* LLVMGetSection(LLVMValueRef Global);
+void LLVMSetSection(LLVMValueRef Global, /*const*/ const(char)* Section);
 LLVMVisibility LLVMGetVisibility(LLVMValueRef Global);
 void LLVMSetVisibility(LLVMValueRef Global, LLVMVisibility Viz);
 uint LLVMGetAlignment(LLVMValueRef Global);
 void LLVMSetAlignment(LLVMValueRef Global, uint Bytes);
 
 /* Operations on global variables */
-LLVMValueRef LLVMAddGlobal(LLVMModuleRef M, LLVMTypeRef Ty, /*const*/ char* Name);
+LLVMValueRef LLVMAddGlobal(LLVMModuleRef M, LLVMTypeRef Ty, /*const*/ const(char)* Name);
 LLVMValueRef LLVMAddGlobalInAddressSpace(LLVMModuleRef M, LLVMTypeRef Ty,
-                                         /*const*/ char* Name,
+                                         /*const*/ const(char)* Name,
                                          uint AddressSpace);
-LLVMValueRef LLVMGetNamedGlobal(LLVMModuleRef M, /*const*/ char* Name);
+LLVMValueRef LLVMGetNamedGlobal(LLVMModuleRef M, /*const*/ const(char)* Name);
 LLVMValueRef LLVMGetFirstGlobal(LLVMModuleRef M);
 LLVMValueRef LLVMGetLastGlobal(LLVMModuleRef M);
 LLVMValueRef LLVMGetNextGlobal(LLVMValueRef GlobalVar);
@@ -648,12 +648,12 @@ void LLVMSetGlobalConstant(LLVMValueRef GlobalVar, LLVMBool IsConstant);
 
 /* Operations on aliases */
 LLVMValueRef LLVMAddAlias(LLVMModuleRef M, LLVMTypeRef Ty, LLVMValueRef Aliasee,
-                          /*const*/ char* Name);
+                          /*const*/ const(char)* Name);
 
 /* Operations on functions */
-LLVMValueRef LLVMAddFunction(LLVMModuleRef M, /*const*/ char* Name,
+LLVMValueRef LLVMAddFunction(LLVMModuleRef M, /*const*/ const(char)* Name,
                              LLVMTypeRef FunctionTy);
-LLVMValueRef LLVMGetNamedFunction(LLVMModuleRef M, /*const*/ char* Name);
+LLVMValueRef LLVMGetNamedFunction(LLVMModuleRef M, /*const*/ const(char)* Name);
 LLVMValueRef LLVMGetFirstFunction(LLVMModuleRef M);
 LLVMValueRef LLVMGetLastFunction(LLVMModuleRef M);
 LLVMValueRef LLVMGetNextFunction(LLVMValueRef Fn);
@@ -662,8 +662,8 @@ void LLVMDeleteFunction(LLVMValueRef Fn);
 uint LLVMGetIntrinsicID(LLVMValueRef Fn);
 uint LLVMGetFunctionCallConv(LLVMValueRef Fn);
 void LLVMSetFunctionCallConv(LLVMValueRef Fn, uint CC);
-/*const*/ char* LLVMGetGC(LLVMValueRef Fn);
-void LLVMSetGC(LLVMValueRef Fn, /*const*/ char* Name);
+/*const*/ const(char)* LLVMGetGC(LLVMValueRef Fn);
+void LLVMSetGC(LLVMValueRef Fn, /*const*/ const(char)* Name);
 void LLVMAddFunctionAttr(LLVMValueRef Fn, LLVMAttribute PA);
 LLVMAttribute LLVMGetFunctionAttr(LLVMValueRef Fn);
 void LLVMRemoveFunctionAttr(LLVMValueRef Fn, LLVMAttribute PA);
@@ -698,14 +698,14 @@ LLVMBasicBlockRef LLVMGetEntryBasicBlock(LLVMValueRef Fn);
 
 LLVMBasicBlockRef LLVMAppendBasicBlockInContext(LLVMContextRef C,
                                                 LLVMValueRef Fn,
-                                                /*const*/ char* Name);
+                                                /*const*/ const(char)* Name);
 LLVMBasicBlockRef LLVMInsertBasicBlockInContext(LLVMContextRef C,
                                                 LLVMBasicBlockRef BB,
-                                                /*const*/ char* Name);
+                                                /*const*/ const(char)* Name);
 
-LLVMBasicBlockRef LLVMAppendBasicBlock(LLVMValueRef Fn, /*const*/ char* Name);
+LLVMBasicBlockRef LLVMAppendBasicBlock(LLVMValueRef Fn, /*const*/ const(char)* Name);
 LLVMBasicBlockRef LLVMInsertBasicBlock(LLVMBasicBlockRef InsertBeforeBB,
-                                       /*const*/ char* Name);
+                                       /*const*/ const(char)* Name);
 void LLVMDeleteBasicBlock(LLVMBasicBlockRef BB);
 void LLVMRemoveBasicBlockFromParent(LLVMBasicBlockRef BB);
 
@@ -762,7 +762,7 @@ LLVMBasicBlockRef LLVMGetInsertBlock(LLVMBuilderRef Builder);
 void LLVMClearInsertionPosition(LLVMBuilderRef Builder);
 void LLVMInsertIntoBuilder(LLVMBuilderRef Builder, LLVMValueRef Instr);
 void LLVMInsertIntoBuilderWithName(LLVMBuilderRef Builder, LLVMValueRef Instr,
-                                   /*const*/ char* Name);
+                                   /*const*/ const(char)* Name);
 void LLVMDisposeBuilder(LLVMBuilderRef Builder);
 
 /* Metadata */
@@ -785,7 +785,7 @@ LLVMValueRef LLVMBuildIndirectBr(LLVMBuilderRef B, LLVMValueRef Addr,
 LLVMValueRef LLVMBuildInvoke(LLVMBuilderRef, LLVMValueRef Fn,
                              LLVMValueRef* Args, uint NumArgs,
                              LLVMBasicBlockRef Then, LLVMBasicBlockRef Catch,
-                             /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildLandingPad(LLVMBuilderRef B, LLVMTypeRef Ty,
                                  LLVMValueRef PersFn, uint NumClauses,
                                  /*const*/ char *Name);
@@ -807,156 +807,156 @@ void LLVMSetCleanup(LLVMValueRef LandingPad, LLVMBool Val);
 
 /* Arithmetic */
 LLVMValueRef LLVMBuildAdd(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                          /*const*/ char* Name);
+                          /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildNSWAdd(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                             /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildNUWAdd(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                             /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFAdd(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildSub(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                          /*const*/ char* Name);
+                          /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildNSWSub(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                             /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildNUWSub(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                             /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFSub(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildMul(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                          /*const*/ char* Name);
+                          /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildNSWMul(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                             /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildNUWMul(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                             /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFMul(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildUDiv(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildSDiv(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildExactSDiv(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                                /*const*/ char* Name);
+                                /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFDiv(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildURem(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildSRem(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFRem(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildShl(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildLShr(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildAShr(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildAnd(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                          /*const*/ char* Name);
+                          /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildOr(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                          /*const*/ char* Name);
+                          /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildXor(LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS,
-                          /*const*/ char* Name);
+                          /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildBinOp(LLVMBuilderRef B, LLVMOpcode Op,
                             LLVMValueRef LHS, LLVMValueRef RHS,
-                            /*const*/ char* Name);
-LLVMValueRef LLVMBuildNeg(LLVMBuilderRef, LLVMValueRef V, /*const*/ char* Name);
+                            /*const*/ const(char)* Name);
+LLVMValueRef LLVMBuildNeg(LLVMBuilderRef, LLVMValueRef V, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildNSWNeg(LLVMBuilderRef B, LLVMValueRef V,
-                             /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildNUWNeg(LLVMBuilderRef B, LLVMValueRef V,
-                             /*const*/ char* Name);
-LLVMValueRef LLVMBuildFNeg(LLVMBuilderRef, LLVMValueRef V, /*const*/ char* Name);
-LLVMValueRef LLVMBuildNot(LLVMBuilderRef, LLVMValueRef V, /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
+LLVMValueRef LLVMBuildFNeg(LLVMBuilderRef, LLVMValueRef V, /*const*/ const(char)* Name);
+LLVMValueRef LLVMBuildNot(LLVMBuilderRef, LLVMValueRef V, /*const*/ const(char)* Name);
 
 /* Memory */
-LLVMValueRef LLVMBuildMalloc(LLVMBuilderRef, LLVMTypeRef Ty, /*const*/ char* Name);
+LLVMValueRef LLVMBuildMalloc(LLVMBuilderRef, LLVMTypeRef Ty, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildArrayMalloc(LLVMBuilderRef, LLVMTypeRef Ty,
-                                  LLVMValueRef Val, /*const*/ char* Name);
-LLVMValueRef LLVMBuildAlloca(LLVMBuilderRef, LLVMTypeRef Ty, /*const*/ char* Name);
+                                  LLVMValueRef Val, /*const*/ const(char)* Name);
+LLVMValueRef LLVMBuildAlloca(LLVMBuilderRef, LLVMTypeRef Ty, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildArrayAlloca(LLVMBuilderRef, LLVMTypeRef Ty,
-                                  LLVMValueRef Val, /*const*/ char* Name);
+                                  LLVMValueRef Val, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFree(LLVMBuilderRef, LLVMValueRef PointerVal);
 LLVMValueRef LLVMBuildLoad(LLVMBuilderRef, LLVMValueRef PointerVal,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildStore(LLVMBuilderRef, LLVMValueRef Val, LLVMValueRef Ptr);
 LLVMValueRef LLVMBuildGEP(LLVMBuilderRef B, LLVMValueRef Pointer,
                           LLVMValueRef* Indices, uint NumIndices,
-                          /*const*/ char* Name);
+                          /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildInBoundsGEP(LLVMBuilderRef B, LLVMValueRef Pointer,
                                   LLVMValueRef* Indices, uint NumIndices,
-                                  /*const*/ char* Name);
+                                  /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildStructGEP(LLVMBuilderRef B, LLVMValueRef Pointer,
-                                uint Idx, /*const*/ char* Name);
-LLVMValueRef LLVMBuildGlobalString(LLVMBuilderRef B, /*const*/ char* Str,
-                                   /*const*/ char* Name);
-LLVMValueRef LLVMBuildGlobalStringPtr(LLVMBuilderRef B, /*const*/ char* Str,
-                                      /*const*/ char* Name);
+                                uint Idx, /*const*/ const(char)* Name);
+LLVMValueRef LLVMBuildGlobalString(LLVMBuilderRef B, /*const*/ const(char)* Str,
+                                   /*const*/ const(char)* Name);
+LLVMValueRef LLVMBuildGlobalStringPtr(LLVMBuilderRef B, /*const*/ const(char)* Str,
+                                      /*const*/ const(char)* Name);
 
 /* Casts */
 LLVMValueRef LLVMBuildTrunc(LLVMBuilderRef, LLVMValueRef Val,
-                            LLVMTypeRef DestTy, /*const*/ char* Name);
+                            LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildZExt(LLVMBuilderRef, LLVMValueRef Val,
-                           LLVMTypeRef DestTy, /*const*/ char* Name);
+                           LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildSExt(LLVMBuilderRef, LLVMValueRef Val,
-                           LLVMTypeRef DestTy, /*const*/ char* Name);
+                           LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFPToUI(LLVMBuilderRef, LLVMValueRef Val,
-                             LLVMTypeRef DestTy, /*const*/ char* Name);
+                             LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFPToSI(LLVMBuilderRef, LLVMValueRef Val,
-                             LLVMTypeRef DestTy, /*const*/ char* Name);
+                             LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildUIToFP(LLVMBuilderRef, LLVMValueRef Val,
-                             LLVMTypeRef DestTy, /*const*/ char* Name);
+                             LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildSIToFP(LLVMBuilderRef, LLVMValueRef Val,
-                             LLVMTypeRef DestTy, /*const*/ char* Name);
+                             LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFPTrunc(LLVMBuilderRef, LLVMValueRef Val,
-                              LLVMTypeRef DestTy, /*const*/ char* Name);
+                              LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFPExt(LLVMBuilderRef, LLVMValueRef Val,
-                            LLVMTypeRef DestTy, /*const*/ char* Name);
+                            LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildPtrToInt(LLVMBuilderRef, LLVMValueRef Val,
-                               LLVMTypeRef DestTy, /*const*/ char* Name);
+                               LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildIntToPtr(LLVMBuilderRef, LLVMValueRef Val,
-                               LLVMTypeRef DestTy, /*const*/ char* Name);
+                               LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildBitCast(LLVMBuilderRef, LLVMValueRef Val,
-                              LLVMTypeRef DestTy, /*const*/ char* Name);
+                              LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildZExtOrBitCast(LLVMBuilderRef, LLVMValueRef Val,
-                                    LLVMTypeRef DestTy, /*const*/ char* Name);
+                                    LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildSExtOrBitCast(LLVMBuilderRef, LLVMValueRef Val,
-                                    LLVMTypeRef DestTy, /*const*/ char* Name);
+                                    LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildTruncOrBitCast(LLVMBuilderRef, LLVMValueRef Val,
-                                     LLVMTypeRef DestTy, /*const*/ char* Name);
+                                     LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildCast(LLVMBuilderRef B, LLVMOpcode Op, LLVMValueRef Val,
-                           LLVMTypeRef DestTy, /*const*/ char* Name);
+                           LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildPointerCast(LLVMBuilderRef, LLVMValueRef Val,
-                                  LLVMTypeRef DestTy, /*const*/ char* Name);
+                                  LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildIntCast(LLVMBuilderRef, LLVMValueRef Val, /*Signed cast!*/
-                              LLVMTypeRef DestTy, /*const*/ char* Name);
+                              LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFPCast(LLVMBuilderRef, LLVMValueRef Val,
-                             LLVMTypeRef DestTy, /*const*/ char* Name);
+                             LLVMTypeRef DestTy, /*const*/ const(char)* Name);
 
 /* Comparisons */
 LLVMValueRef LLVMBuildICmp(LLVMBuilderRef, LLVMIntPredicate Op,
                            LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildFCmp(LLVMBuilderRef, LLVMRealPredicate Op,
                            LLVMValueRef LHS, LLVMValueRef RHS,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 
 /* Miscellaneous instructions */
-LLVMValueRef LLVMBuildPhi(LLVMBuilderRef, LLVMTypeRef Ty, /*const*/ char* Name);
+LLVMValueRef LLVMBuildPhi(LLVMBuilderRef, LLVMTypeRef Ty, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildCall(LLVMBuilderRef, LLVMValueRef Fn,
                            LLVMValueRef* Args, uint NumArgs,
-                           /*const*/ char* Name);
+                           /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildSelect(LLVMBuilderRef, LLVMValueRef If,
                              LLVMValueRef Then, LLVMValueRef Else,
-                             /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildVAArg(LLVMBuilderRef, LLVMValueRef List, LLVMTypeRef Ty,
-                            /*const*/ char* Name);
+                            /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildExtractElement(LLVMBuilderRef, LLVMValueRef VecVal,
-                                     LLVMValueRef Index, /*const*/ char* Name);
+                                     LLVMValueRef Index, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildInsertElement(LLVMBuilderRef, LLVMValueRef VecVal,
                                     LLVMValueRef EltVal, LLVMValueRef Index,
-                                    /*const*/ char* Name);
+                                    /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildShuffleVector(LLVMBuilderRef, LLVMValueRef V1,
                                     LLVMValueRef V2, LLVMValueRef Mask,
-                                    /*const*/ char* Name);
+                                    /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildExtractValue(LLVMBuilderRef, LLVMValueRef AggVal,
                                    uint Index, /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildInsertValue(LLVMBuilderRef, LLVMValueRef AggVal,
@@ -964,11 +964,11 @@ LLVMValueRef LLVMBuildInsertValue(LLVMBuilderRef, LLVMValueRef AggVal,
                                   /*const*/ const(char)* Name);
 
 LLVMValueRef LLVMBuildIsNull(LLVMBuilderRef, LLVMValueRef Val,
-                             /*const*/ char* Name);
+                             /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildIsNotNull(LLVMBuilderRef, LLVMValueRef Val,
-                                /*const*/ char* Name);
+                                /*const*/ const(char)* Name);
 LLVMValueRef LLVMBuildPtrDiff(LLVMBuilderRef, LLVMValueRef LHS,
-                              LLVMValueRef RHS, /*const*/ char* Name);
+                              LLVMValueRef RHS, /*const*/ const(char)* Name);
 
 
 /*===-- Module providers --------------------------------------------------===*/
@@ -986,7 +986,7 @@ void LLVMDisposeModuleProvider(LLVMModuleProviderRef M);
 
 /*===-- Memory buffers ----------------------------------------------------===*/
 
-LLVMBool LLVMCreateMemoryBufferWithContentsOfFile(/*const*/ char* Path,
+LLVMBool LLVMCreateMemoryBufferWithContentsOfFile(/*const*/ const(char)* Path,
                                                   LLVMMemoryBufferRef* OutMemBuf,
                                                   char** OutMessage);
 LLVMBool LLVMCreateMemoryBufferWithSTDIN(LLVMMemoryBufferRef* OutMemBuf,
