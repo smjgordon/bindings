@@ -1,11 +1,11 @@
+/*
+Example for using the llvm-d bindings.
+*/
 
 import llvm.c.Core;
 
-/*
-Example for using the llvm-d bindings. - TODO
-*/
-
 void main()
 {
-    
-}
+    auto theModule = LLVMModuleCreateWithName("The main module"); 
+    LLVMDumpModule(theModule); 
+} 

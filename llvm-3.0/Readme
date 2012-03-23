@@ -1,0 +1,40 @@
+This file describes the installation and usage of the llvm bindings.
+	
+
+Initial setup:
+==============
+	
+svn co http://svn.dsource.org/projects/bindings/trunk/llvm-3.0
+cd llvm-3.0
+
+
+Building your application:
+==========================
+
+LLVM c interface doesn't expose all required functionality, that's 
+why some extra bindings have been implemented as a "c++ to c to d" 
+bridge (c++ to c is Target.cpp and Ext.cpp, c to d is Target.d and Ext.d).
+	
+make
+
+This command will build object files llvmExt.o 
+and llvmTarget.o which should be linked with your D code. 
+It will also compile and link sample program main.d.
+
+Execute resulting application to check whether everything has been built 
+successfully. Program creates an emply LLVM module and dumps it to console.
+
+
+Known issues:
+=============
+
+1. On some systems, incluning Ubuntu 11.10, linking may fail with message 
+that libLLVMSupport.a in function PrintStackTrace(void*) has undefined 
+reference to dladdr. 
+
+Workaround is to compile LLVM with cmake specifying the following variable:
+
+-DCMAKE_EXE_LINKER_FLAGS=-ldl
+
+2. dmd2 is assumed to be the name of DMD compiler. If it is not the case,
+please update Makefile accordingly.
