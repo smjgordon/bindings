@@ -17,12 +17,12 @@ bridge (c++ to c is Target.cpp and Ext.cpp, c to d is Target.d and Ext.d).
 	
 make
 
-This command will build object files llvmExt.o 
+This command will compile object files llvmExt.o 
 and llvmTarget.o which should be linked with your D code. 
 It will also compile and link sample program main.d.
 
 Execute resulting application to check whether everything has been built 
-successfully. Program creates an emply LLVM module and dumps it to console.
+successfully. It creates an emply LLVM module and dumps it to console.
 
 
 Known issues:
