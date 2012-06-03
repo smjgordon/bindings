@@ -109,21 +109,65 @@ LLVMTargetDataRef LLVMTargetMachineData(LLVMTargetMachineRef TM);
 
 // Targets
 
+void LLVMInitializeX86TargetMC();
 void LLVMInitializeX86TargetInfo();
 void LLVMInitializeX86Target();
 void LLVMInitializeX86AsmPrinter();
+void LLVMInitializeX86AsmParser();
 
+void LLVMInitializePPCTargetMC();
 void LLVMInitializePPCTargetInfo();
 void LLVMInitializePPCTarget();
 void LLVMInitializePPCAsmPrinter();
+void LLVMInitializePPCAsmParser();
 
+void LLVMInitializeARMTargetMC();
 void LLVMInitializeARMTargetInfo();
 void LLVMInitializeARMTarget();
 void LLVMInitializeARMAsmPrinter();
+void LLVMInitializeARMAsmParser();
 
+void LLVMInitializeSparcTargetMC();
 void LLVMInitializeSparcTargetInfo();
 void LLVMInitializeSparcTarget();
 void LLVMInitializeSparcAsmPrinter();
+void LLVMInitializeSparcAsmParser();
+
+LLVMBool LLVMInitializeNativeTarget() {
+  // If we have a native target, initialize it to ensure it is linked in.
+    version(X86) {
+        LLVMInitializeX86TargetMC();
+        LLVMInitializeX86TargetInfo();
+        LLVMInitializeX86Target();
+    } else version(X86_64) {
+        LLVMInitializeX86TargetMC();
+        LLVMInitializeX86TargetInfo();
+        LLVMInitializeX86Target();
+    } else version(PPC) {
+        LLVMInitializePPCTargetMC();
+        LLVMInitializePPCTargetInfo();
+        LLVMInitializePPCTarget();
+    } else version(PPC64) {
+        LLVMInitializePPCTargetMC();
+        LLVMInitializePPCTargetInfo();
+        LLVMInitializePPCTarget();
+    } else version(ARM) {
+        LLVMInitializeARMTargetMC();
+        LLVMInitializeARMTargetInfo();
+        LLVMInitializeARMTarget();
+    } else version(SPARC) {
+        LLVMInitializeSparcTargetMC();
+        LLVMInitializeSparcTargetInfo();
+        LLVMInitializeSparcTarget();
+    } else version(SPARC64) {
+        LLVMInitializeSparcTargetMC();
+        LLVMInitializeSparcTargetInfo();
+        LLVMInitializeSparcTarget();
+    } else {
+        return 1;
+    }
+    return 0;
+}
 
 // TODO add the rest
 
