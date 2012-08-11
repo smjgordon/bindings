@@ -20,7 +20,6 @@ alias std.c.windows.com.IID IID;
 version(DXSDK_JUNE_2010)
 {
     pragma(lib, "d3dcompiler.lib");
-	pragma(lib, "d3dreflect.lib");
 }
 else
 {
