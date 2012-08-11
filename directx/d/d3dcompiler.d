@@ -152,7 +152,7 @@ HRESULT D3DGetDebugInfo(
     out ID3DBlob ppDebugInfo
     );
 
-HRESULT D3DReflectCOM(
+HRESULT D3DReflect(
     in void* pSrcData,
     size_t SrcDataSize,
     IID* pInterface,
@@ -233,20 +233,13 @@ HRESULT D3DCreateBlob(
 }
 
 
-HRESULT D3DReflect(
-				   in ubyte[] shaderData,
-				   out ID3D11ShaderReflection reflector)
+HRESULT D3DReflect(in ubyte[] shaderData, out ID3D11ShaderReflection reflector)
 {
 	return D3DReflect(shaderData.ptr, shaderData.length, &IID_ID3D11ShaderReflection, cast(void**)&reflector);
 }
 
-HRESULT D3DReflect(
-				   in void* pSrcData,
-				   size_t SrcDataSize,
-				   IID* pInterface,
-				   void** ppReflector
-					   )
-{
-	return D3DReflectCOM(pSrcData, SrcDataSize, pInterface, ppReflector);
-}
 
+HRESULT D3DReflect(in ubyte[] shaderData, ID3D11ShaderReflection* reflector)
+{
+	return D3DReflect(shaderData.ptr, shaderData.length, &IID_ID3D11ShaderReflection, cast(void**)reflector);
+}
