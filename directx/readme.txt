@@ -1,7 +1,45 @@
 D Bindings for DirectX
   by Sean Cavanaugh - WorksOnMyMachine@gmail.com
-    (Apr 25 2011)
-  
+    (Aug 10 2012)
+    
+=====
+Changes - Aug 10 2010
+
+Fixed D3DReflect API:
+
+     After trying to use the D3DReflect APIs in D I discovered 3 of the
+interfaces are not true COM interfaces, as they do not inherit from IUnknown.
+In order to fix this, there is now a helper DLL called d3dreflect.dll.
+This DLL wraps these interfaces and provides a real COM interface for them
+so D can interop correctly.
+
+
+The broken interfaces are:
+    ID3D11ShaderReflectionType (not COM)
+    ID3D11ShaderReflectionVariable (not COM)
+    ID3D11ShaderReflectionConstantBuffer (not COM)
+    ID3D11ShaderReflection (creates above interfaces)
+
+
+ (o) D applications need this DLL to be in their dll search path, typically 
+     in the same directory as the executable.
+ (o) A D compatible version of the import library for this DLL is now in this
+     bindings project.
+ (o) The import library needs to be placed in a path that optlink will search.
+ (o) D3DReflect and its overloads will now call D3DReflectCOM from this dll
+ (o) The wrapper uses brand new GUIDs for these interfaces, and the directx 
+     project is setup to use these wrapped GUIDs instead of the real ones.  This
+     should not affect any code, if it is already using the friendly names for
+     the GUIDs (i.e. IID_ID3D11ShaderReflectionConstantBuffer)
+ (o) PORTED CODE MUST CALL .Release() ON THE THREE INTERFACES THAT WERE NOT
+     PROPERLY INHERITED FROM IUnknown :
+     
+         ID3D11ShaderReflectionType
+         ID3D11ShaderReflectionVariable
+         ID3D11ShaderReflectionConstantBuffer
+ 
+===============================================================================
+
 =====
 Notes
 =====
