@@ -454,7 +454,10 @@ struct D3D11_SIGNATURE_PARAMETER_DESC
 // D3D11Shader Interfaces
 
 
-mixin(DX_DECLARE_IID("ID3D11ShaderReflectionType", "6E6FFA6A-9BAE-4613-A51E-91652D508C21"));
+// Guid for D wrapper
+mixin(DX_DECLARE_IID("ID3D11ShaderReflectionType", "7D5C8890-074B-4F1C-A2B1-64428A0CC048"));
+// The actual ID3D11ShaderReflectionType does not inherit from IUnknown, so is unusable in D without the wrapper
+// mixin(DX_DECLARE_IID("ID3D11ShaderReflectionType", "6E6FFA6A-9BAE-4613-A51E-91652D508C21"));
 interface ID3D11ShaderReflectionType : IUnknown
 {
 extern(Windows):
@@ -490,8 +493,10 @@ extern(Windows):
         );
 }
 
-
-mixin(DX_DECLARE_IID("ID3D11ShaderReflectionVariable", "51F23923-F3E5-4BD1-91CB-606177D8DB4C"));
+                                                       
+mixin(DX_DECLARE_IID("ID3D11ShaderReflectionVariable", "A73ED428-BF7C-4319-97ED-E104FBACE5A3"));
+// The actual ID3D11ShaderReflectionVariable does not inherit from IUnknown, so is unusable in D without the wrapper
+// mixin(DX_DECLARE_IID("ID3D11ShaderReflectionVariable", "51F23923-F3E5-4BD1-91CB-606177D8DB4C"));
 interface ID3D11ShaderReflectionVariable : IUnknown
 {
 extern(Windows):
@@ -507,8 +512,10 @@ extern(Windows):
         );
 }
 
-
-mixin(DX_DECLARE_IID("ID3D11ShaderReflectionConstantBuffer", "EB62D63D-93DD-4318-8AE8-C6F83AD371B8"));
+                                                             
+mixin(DX_DECLARE_IID("ID3D11ShaderReflectionConstantBuffer", "B5DCE711-9802-4BC9-86FF-631FDA611D17"));
+// The actual ID3D11ShaderReflectionConstantBuffer does not inherit from IUnknown, so is unusable in D without the wrapper
+// mixin(DX_DECLARE_IID("ID3D11ShaderReflectionConstantBuffer", "EB62D63D-93DD-4318-8AE8-C6F83AD371B8"));
 interface ID3D11ShaderReflectionConstantBuffer : IUnknown
 {
 extern(Windows):
@@ -523,8 +530,11 @@ extern(Windows):
         );
 }
 
-
-mixin(DX_DECLARE_IID("ID3D11ShaderReflection", "0A233719-3960-4578-9D7C-203B8B1D9CC1"));
+                                               
+mixin(DX_DECLARE_IID("ID3D11ShaderReflection", "02DC06CB-EFDC-4FFE-AB9F-3D50A481ABFC"));
+// Because ID3D11ShaderReflectionConstantBuffer, ID3D11ShaderReflectionVariable, and ID3D11ShaderReflectionType do not inherit
+// from IUnknown, the ID3D11ShaderReflection must be wrapped in a C++ DLL
+// mixin(DX_DECLARE_IID("ID3D11ShaderReflection", "0A233719-3960-4578-9D7C-203B8B1D9CC1"));
 interface ID3D11ShaderReflection : IUnknown
 {
 extern(Windows):

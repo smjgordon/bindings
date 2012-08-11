@@ -20,6 +20,7 @@ alias std.c.windows.com.IID IID;
 version(DXSDK_JUNE_2010)
 {
     pragma(lib, "d3dcompiler.lib");
+	pragma(lib, "d3dreflect.lib");
 }
 else
 {
@@ -151,12 +152,11 @@ HRESULT D3DGetDebugInfo(
     out ID3DBlob ppDebugInfo
     );
 
-HRESULT D3DReflect(
+HRESULT D3DReflectCOM(
     in void* pSrcData,
     size_t SrcDataSize,
     IID* pInterface,
-    void** ppReflector
-    );
+    void** ppReflector);
 
 HRESULT D3DDisassemble(
     in void* pSrcData,
@@ -231,3 +231,22 @@ HRESULT D3DCreateBlob(
     out ID3DBlob ppBlob
     );
 }
+
+
+HRESULT D3DReflect(
+				   in ubyte[] shaderData,
+				   out ID3D11ShaderReflection reflector)
+{
+	return D3DReflect(shaderData.ptr, shaderData.length, &IID_ID3D11ShaderReflection, cast(void**)&reflector);
+}
+
+HRESULT D3DReflect(
+				   in void* pSrcData,
+				   size_t SrcDataSize,
+				   IID* pInterface,
+				   void** ppReflector
+					   )
+{
+	return D3DReflectCOM(pSrcData, SrcDataSize, pInterface, ppReflector);
+}
+
