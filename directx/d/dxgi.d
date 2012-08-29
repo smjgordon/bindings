@@ -826,3 +826,10 @@ extern(Windows):
         );
 }
 
+
+
+extern(Windows)
+{
+    HRESULT CreateDXGIFactory(in IID* riid, void** ppFactory);
+    HRESULT CreateDXGIFactory1(in IID* riid, void** ppFactory);
+}
