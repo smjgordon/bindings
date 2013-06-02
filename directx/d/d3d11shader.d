@@ -17,9 +17,13 @@ alias std.c.windows.com.GUID GUID;
 alias std.c.windows.com.IID IID;
 
 
-version(DXSDK_JUNE_2010)
+version(DXSDK_11_0)
 {
     pragma(lib, "d3dx11.lib");
+}
+else version(DXSDK_11_1)
+{
+	pragma(lib, "d3dcompiler.lib");
 }
 else
 {
@@ -537,7 +541,17 @@ extern(Windows):
 }
                                                
 
-mixin(DX_DECLARE_IID("ID3D11ShaderReflection", "0A233719-3960-4578-9D7C-203B8B1D9CC1"));
+version(DXSDK_11_0)
+{
+	mixin(DX_DECLARE_IID("ID3D11ShaderReflection", "0A233719-3960-4578-9D7C-203B8B1D9CC1"));
+}
+else version(DXSDK_11_1)
+{
+	mixin(DX_DECLARE_IID("ID3D11ShaderReflection", "8D536CA1-0CCA-4956-A837-786963755584"));
+}
+else
+{
+}
 interface ID3D11ShaderReflection : IUnknown
 {
 extern(Windows):
@@ -595,6 +609,10 @@ extern(Windows):
         uint* pSizeY,
         uint* pSizeZ
         );
+    version(DXSDK_11_1)
+    {
+		 ulong GetRequiresFlags();
+    }
 }
 
 
@@ -603,6 +621,8 @@ alias IUnknown ID3DX11ThreadPump;   // This defined from D3DX11core, which is un
 
 
 extern(Windows)
+{
+version(DXSDK_11_0)
 {
 HRESULT D3DX11CompileFromFileA(
     in char* pSrcFile,
@@ -630,8 +650,6 @@ HRESULT D3DX11CompileFromFileW(
     out ID3D11Blob ppShader,
     /*optional*/ ID3D11Blob* ppErrorMsgs = null,
     /*optional*/ HRESULT* pHResult = null);
-}
-
 
 version(Unicode)
 {
@@ -639,7 +657,23 @@ version(Unicode)
 }
 else
 {
-    alias D3DX11CompileFromFileA D3DX11CompileFromFile;
+	alias D3DX11CompileFromFileA D3DX11CompileFromFile;
+}
 }
 
+
+version(DXSDK_11_1)
+{
+HRESULT D3DCompileFromFile(
+    in wchar* pSrcFile,
+    in D3D11_SHADER_MACRO* pDefines,
+    /*optional*/ ID3DInclude pInclude,
+    in char* pFunctionName,
+    in char* pProfile,
+    UINT Flags1,
+    UINT Flags2,
+	out ID3D11Blob ppShader,
+	/*optional*/ ID3D11Blob* ppErrorMsgs = null);
+}
+}
 

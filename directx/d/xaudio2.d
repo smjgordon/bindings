@@ -16,7 +16,10 @@ alias std.c.windows.com.GUID GUID;
 alias std.c.windows.com.IID IID;
 
 
-version(DXSDK_JUNE_2010)
+version(DXSDK_11_0)
+{
+}
+else version(DXSDK_11_1)
 {
 }
 else
@@ -42,7 +45,14 @@ static assert(PCMWAVEFORMAT.sizeof == 16);
 static assert(ADPCMCOEFSET.sizeof == 4);
 static assert(ADPCMWAVEFORMAT.sizeof == 22);
 static assert(XAUDIO2_DEVICE_DETAILS.sizeof == 1068);
+version(DXSDK_11_0)
+{
 static assert(XAUDIO2_VOICE_DETAILS.sizeof == 12);
+}
+version(DXSDK_11_1)
+{
+static assert(XAUDIO2_VOICE_DETAILS.sizeof == 16);
+}
 static assert(XAUDIO2_SEND_DESCRIPTOR.sizeof == 8);
 static assert(XAUDIO2_VOICE_SENDS.sizeof == 8);
 static assert(XAUDIO2_EFFECT_DESCRIPTOR.sizeof == 12);
@@ -63,7 +73,14 @@ static assert(PCMWAVEFORMAT.sizeof == 16);
 static assert(ADPCMCOEFSET.sizeof == 4);
 static assert(ADPCMWAVEFORMAT.sizeof == 22);
 static assert(XAUDIO2_DEVICE_DETAILS.sizeof == 1068);
+version(DXSDK_11_0)
+{
 static assert(XAUDIO2_VOICE_DETAILS.sizeof == 12);
+}
+version(DXSDK_11_1)
+{
+static assert(XAUDIO2_VOICE_DETAILS.sizeof == 16);
+}
 static assert(XAUDIO2_SEND_DESCRIPTOR.sizeof == 12);
 static assert(XAUDIO2_VOICE_SENDS.sizeof == 12);
 static assert(XAUDIO2_EFFECT_DESCRIPTOR.sizeof == 16);
@@ -106,14 +123,21 @@ enum XAUDIO2_LOOP_INFINITE = 255;
 enum XAUDIO2_DEFAULT_CHANNELS = 0;
 enum XAUDIO2_DEFAULT_SAMPLERATE = 0;
 
+version(DXSDK_11_0)
+{
 enum XAUDIO2_DEBUG_ENGINE = 0x0001;
+enum XAUDIO2_VOICE_MUSIC = 0x0010;
+}
 enum XAUDIO2_VOICE_NOPITCH = 0x0002;
 enum XAUDIO2_VOICE_NOSRC = 0x0004;
 enum XAUDIO2_VOICE_USEFILTER = 0x0008;
-enum XAUDIO2_VOICE_MUSIC = 0x0010;
 enum XAUDIO2_PLAY_TAILS = 0x0020;
 enum XAUDIO2_END_OF_STREAM = 0x0040;
 enum XAUDIO2_SEND_USEFILTER = 0x0080;
+version(DXSDK_11_1)
+{
+enum XAUDIO2_VOICE_NOSAMPLEPLAYED = 0x0100;
+}
 
 enum XAUDIO2_DEFAULT_FILTER_TYPE = XAUDIO2_FILTER_TYPE.LowPassFilter;
 enum XAUDIO2_DEFAULT_FILTER_FREQUENCY = XAUDIO2_MAX_FILTER_FREQUENCY;
@@ -315,13 +339,28 @@ align(1):
 }
 
 
-align(1):
-struct XAUDIO2_VOICE_DETAILS
+version(DXSDK_11_0)
 {
-align(1):
-    uint CreationFlags;
-    uint InputChannels;
-    uint InputSampleRate;
+	align(1):
+	struct XAUDIO2_VOICE_DETAILS
+	{
+	align(1):
+		uint CreationFlags;
+		uint InputChannels;
+		uint InputSampleRate;
+	}
+}
+version(DXSDK_11_1)
+{
+	align(1):
+	struct XAUDIO2_VOICE_DETAILS
+	{
+		align(1):
+		uint CreationFlags;
+		uint ActiveFlags;
+		uint InputChannels;
+		uint InputSampleRate;
+	}
 }
 
 
@@ -362,12 +401,27 @@ align(1):
 }
 
 
-enum XAUDIO2_FILTER_TYPE
+version(DXSDK_11_0)
 {
-    LowPassFilter,
-    BandPassFilter,
-    HighPassFilter,
-    NotchFilter,
+	enum XAUDIO2_FILTER_TYPE
+	{
+		LowPassFilter,
+		BandPassFilter,
+		HighPassFilter,
+		NotchFilter,
+	}
+}
+version(DXSDK_11_1)
+{
+	enum XAUDIO2_FILTER_TYPE
+	{
+		LowPassFilter,
+		BandPassFilter,
+		HighPassFilter,
+		NotchFilter,
+		LowPassOnePoleFilter,
+		HighPassOnePoleFilter,
+	}
 }
 
 
@@ -463,6 +517,9 @@ enum XAUDIO2_LOG_MEMORY     = 0x0100;
 enum XAUDIO2_LOG_STREAMING  = 0x1000;
 
 
+version(DXSDK_11_0)
+{
+mixin(DX_DECLARE_IID("IXAudio2", "8BCF1F58-9FE7-4583-8AC6-E2ADC465C8BB"));
 interface IXAudio2 : IUnknown
 {
 extern(Windows):
@@ -523,6 +580,75 @@ extern(Windows):
         in XAUDIO2_DEBUG_CONFIGURATION* pDebugConfiguration,
         void* pReserved = null
         );
+}
+}
+else version(DXSDK_11_1)
+{
+enum AudioCategory
+{
+	Other = 0,
+	ForegroundOnlyMedia,
+	BackgroundCapableMedia,
+	Communications,
+	Alerts,
+	SoundEffects,
+	GameEffects,
+	GameMedia,
+};
+alias AudioCategory AUDIO_STREAM_CATEGORY;
+
+mixin(DX_DECLARE_IID("IXAudio2", "60D8DAC8-5AA1-4E8E-B597-2F5E2883D484"));
+interface IXAudio2 : IUnknown
+{
+extern(Windows):
+    HRESULT RegisterForCallbacks(
+        IXAudio2EngineCallback pCallback
+        );
+    void UnregisterForCallbacks(
+        IXAudio2EngineCallback pCallback
+        );
+    HRESULT CreateSourceVoice(
+        out IXAudio2SourceVoice ppSourceVoice,
+        in WAVEFORMATEX* pSourceFormat,
+        uint Flags = 0,
+        float MaxFrequencyRatio = XAUDIO2_DEFAULT_FREQ_RATIO,
+        IXAudio2VoiceCallback pCallback = null,
+        in XAUDIO2_VOICE_SENDS* pSendList = null,
+        in XAUDIO2_EFFECT_CHAIN* pEffectChain = null
+        );
+    HRESULT CreateSubmixVoice(
+        out IXAudio2SubmixVoice ppSubmixVoice,
+        uint InputChannels,
+        uint InputSampleRate,
+        uint Flags = 0,
+        uint ProcessingStage = 0,
+        in XAUDIO2_VOICE_SENDS* pSendList = null,
+        in XAUDIO2_EFFECT_CHAIN* pEffectChain = null
+        );
+    HRESULT CreateMasteringVoice(
+        out IXAudio2MasteringVoice ppMasteringVoice,
+        uint InputChannels = XAUDIO2_DEFAULT_CHANNELS,
+        uint InputSampleRate = XAUDIO2_DEFAULT_SAMPLERATE,
+        uint Flags = 0,
+        uint DeviceIndex = 0,
+        in XAUDIO2_EFFECT_CHAIN* pEffectChain = null,
+		AUDIO_STREAM_CATEGORY StreamCategory = AudioCategory.GameEffects
+        );
+    HRESULT StartEngine(
+        );
+    void StopEngine(
+        );
+    HRESULT CommitChanges(
+        uint OperationSet
+        );
+    void GetPerformanceData(
+        out XAUDIO2_PERFORMANCE_DATA pPerfData
+        );
+    void SetDebugConfiguration(
+        in XAUDIO2_DEBUG_CONFIGURATION* pDebugConfiguration,
+        void* pReserved = null
+        );
+}
 }
 
 
@@ -632,9 +758,23 @@ extern(Windows):
     HRESULT ExitLoop(
         uint OperationSet = XAUDIO2_COMMIT_NOW
         );
+version(DXSDK_11_0)
+{
     void GetState(
         out XAUDIO2_VOICE_STATE pVoiceState
         );
+}
+else version(DXSDK_11_1)
+{
+    void GetState(
+				  out XAUDIO2_VOICE_STATE pVoiceState,
+				  uint Flags
+				  );
+}
+else
+{
+    static assert(false, "DirectX SDK version either unsupported or undefined");
+}
     HRESULT SetFrequencyRatio(
         float Ratio,
         uint OperationSet = XAUDIO2_COMMIT_NOW
@@ -657,6 +797,10 @@ extern(Windows):
 interface IXAudio2MasteringVoice : IXAudio2Voice
 {
 extern(Windows):
+version(DXSDK_11_1)
+{
+	HRESULT GetChannelMask(out uint ChannelMask);
+}
 }
 
 
@@ -743,43 +887,61 @@ float XAudio2RadiansToCutoffFrequency(float Radians, float SampleRate)
 }
 
 
-version(DXSDK_JUNE_2010)
+float XAudio2CutoffFrequencyToOnePoleCoefficient(float CutoffFrequency, uint SampleRate)
 {
-    mixin(DX_DECLARE_IID("XAudio2", "5A508685-A254-4FBA-9B82-9A24B00306AF"));
-    mixin(DX_DECLARE_IID("XAudio2_Debug", "DB05EA35-0329-4D4B-A53A-6DEAD03D3852"));
-    mixin(DX_DECLARE_IID("IXAudio2", "8BCF1F58-9FE7-4583-8AC6-E2ADC465C8BB"));
+    if (cast(uint)CutoffFrequency >= SampleRate)
+    {
+        return XAUDIO2_MAX_FILTER_FREQUENCY;
+    }
+    return ( 1.0f - powf(1.0f - 2.0f * CutoffFrequency / SampleRate, 2.0f) );
 }
 
 
-HRESULT XAudio2Create(
-    out IXAudio2 ppXAudio2,
-    uint Flags = 0,
-    XAUDIO2_PROCESSOR XAudio2Processor = XAUDIO2_WINDOWS_PROCESSOR_SPECIFIER.XAUDIO2_DEFAULT_PROCESSOR
-    )
+version(DXSDK_11_0)
 {
-    IXAudio2 pXAudio2;
+    mixin(DX_DECLARE_IID("XAudio2", "5A508685-A254-4FBA-9B82-9A24B00306AF"));
+    mixin(DX_DECLARE_IID("XAudio2_Debug", "DB05EA35-0329-4D4B-A53A-6DEAD03D3852"));
 
-    HRESULT hr = CoCreateInstance(
-        (Flags & XAUDIO2_DEBUG_ENGINE) ? &IID_XAudio2_Debug : &IID_XAudio2,
-        null,
-        CLSCTX_INPROC_SERVER,
-        &IID_IXAudio2,
-        cast(void**)&pXAudio2
-        );
-    
-    if (SUCCEEDED(hr))
-    {
-        hr = pXAudio2.Initialize(Flags, XAudio2Processor);
 
-        if (SUCCEEDED(hr))
-        {
-            ppXAudio2 = pXAudio2;
-        }
-        else
-        {
-            pXAudio2.Release();
-        }
-    }
+	HRESULT XAudio2Create(
+						  out IXAudio2 ppXAudio2,
+						  uint Flags = 0,
+						  XAUDIO2_PROCESSOR XAudio2Processor = XAUDIO2_WINDOWS_PROCESSOR_SPECIFIER.XAUDIO2_DEFAULT_PROCESSOR
+							  )
+	{
+		IXAudio2 pXAudio2;
 
-    return hr;
+		HRESULT hr = CoCreateInstance((Flags & XAUDIO2_DEBUG_ENGINE) ? &IID_XAudio2_Debug : &IID_XAudio2,
+									  null,
+									  CLSCTX_INPROC_SERVER,
+									  &IID_IXAudio2,
+									  cast(void**)&pXAudio2);
+
+		if (SUCCEEDED(hr))
+		{
+			hr = pXAudio2.Initialize(Flags, XAudio2Processor);
+
+			if (SUCCEEDED(hr))
+			{
+				ppXAudio2 = pXAudio2;
+			}
+			else
+			{
+				pXAudio2.Release();
+			}
+		}
+
+		return hr;
+	}
+}
+
+
+version(DXSDK_11_1)
+{
+
+	HRESULT XAudio2Create(
+						  out IXAudio2 ppXAudio2,
+						  uint Flags = 0,
+						  XAUDIO2_PROCESSOR XAudio2Processor = XAUDIO2_WINDOWS_PROCESSOR_SPECIFIER.XAUDIO2_DEFAULT_PROCESSOR
+							  );
 }

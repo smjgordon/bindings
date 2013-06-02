@@ -21,7 +21,10 @@ alias std.c.windows.com.GUID GUID;
 alias std.c.windows.com.IID IID;
 
 
-version(DXSDK_JUNE_2010)
+version(DXSDK_11_0)
+{
+}
+else version(DXSDK_11_1)
 {
 }
 else

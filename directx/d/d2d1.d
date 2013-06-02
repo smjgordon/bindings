@@ -18,7 +18,10 @@ alias std.c.windows.com.IID IID;
 
 
 // d2d has indirect dependencies on the d3d and dxgi base types and values
-version(DXSDK_JUNE_2010)
+version(DXSDK_11_0)
+{
+}
+else version(DXSDK_11_1)
 {
 }
 else

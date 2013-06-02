@@ -17,9 +17,15 @@ alias std.c.windows.com.GUID GUID;
 alias std.c.windows.com.IID IID;
 
 
-version(DXSDK_JUNE_2010)
+version(DXSDK_11_0)
 {
-    pragma(lib, "d3dcompiler.lib");
+    //pragma(lib, "d3dcompiler_43.lib");
+    pragma(lib, "d3dcompiler.lib");	// links d3dcompiler_43.dll
+}
+else version(DXSDK_11_1)
+{
+    //pragma(lib, "d3dcompiler_46.lib");
+    pragma(lib, "d3dcompiler.lib");	// links d3dcompiler_46.dll
 }
 else
 {

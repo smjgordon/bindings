@@ -19,7 +19,11 @@ alias std.c.windows.com.GUID GUID;
 alias std.c.windows.com.IID IID;
 
 
-version(DXSDK_JUNE_2010)
+version(DXSDK_11_0)
+{
+    pragma(lib, "d3d11.lib");
+}
+else version(DXSDK_11_1)
 {
     pragma(lib, "d3d11.lib");
 }
@@ -232,7 +236,7 @@ enum D3D11_RLDO_FLAGS
 alias D3D11_RLDO_FLAGS D3D11_RLDO;
 
 
-version(DXSDK_JUNE_2010)
+version(DXSDK_11_0)
 {
 enum D3D11_SDK_VERSION = 7;   // Based on D3D June 2010 SDK
 enum D3D11_MAJOR_VERSION = 11;
@@ -240,6 +244,15 @@ enum D3D11_MINOR_VERSION = 0;
 enum D3D11_SHADER_MAJOR_VERSION = 5;
 enum D3D11_SHADER_MINOR_VERSION = 0;
 enum D3D11_SPEC_VERSION = 1.0;
+}
+version(DXSDK_11_1)
+{
+enum D3D11_SDK_VERSION = 7;
+enum D3D11_MAJOR_VERSION = 11;
+enum D3D11_MINOR_VERSION = 0;	// MS didn't rev the minor ver . . .
+enum D3D11_SHADER_MAJOR_VERSION = 5;
+enum D3D11_SHADER_MINOR_VERSION = 0;
+enum D3D11_SPEC_VERSION = 1.07;
 }
 
 enum D3D11_16BIT_INDEX_STRIP_CUT_VALUE = 0xffff;
