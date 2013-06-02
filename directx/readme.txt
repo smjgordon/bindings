@@ -1,7 +1,8 @@
 D Bindings for DirectX
   by Sean Cavanaugh - WorksOnMyMachine@gmail.com
     (Aug 11 2012)
-    
+
+        
 ===============================================================================
 
 Changes - Aug 11 2010
