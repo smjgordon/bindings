@@ -186,6 +186,7 @@ enum XAUDIO2_DEVICE_ROLE
 align(1):
 struct tWAVEFORMATEX
 {
+align(1):
     WORD wFormatTag;
     WORD nChannels;
     DWORD nSamplesPerSec;
@@ -214,6 +215,7 @@ struct WAVEFORMATEXTENSIBLE
 align(1):
 struct WAVEFORMAT
 {
+align(1):
     WORD wFormatTag;
     WORD nChannels;
     DWORD nSamplesPerSec;
@@ -225,6 +227,7 @@ struct WAVEFORMAT
 align(1):
 struct PCMWAVEFORMAT
 {
+align(1):
     WAVEFORMAT wf;
     WORD wBitsPerSample;
 }
@@ -233,6 +236,7 @@ struct PCMWAVEFORMAT
 align(1):
 struct ADPCMCOEFSET
 {
+align(1):
     short iCoef1;
     short iCoef2;
 }
@@ -241,6 +245,7 @@ struct ADPCMCOEFSET
 align(1):
 struct ADPCMWAVEFORMAT
 {
+align(1):
     WAVEFORMATEX wfx;
     WORD wSamplesPerBlock;
     WORD wNumCoef;
@@ -302,6 +307,7 @@ enum SPEAKER_7POINT1_SURROUND = (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEA
 align(1):
 struct XAUDIO2_DEVICE_DETAILS
 {
+align(1):
     wchar[256] DeviceID;
     wchar[256] DisplayName;
     XAUDIO2_DEVICE_ROLE Role;
@@ -312,6 +318,7 @@ struct XAUDIO2_DEVICE_DETAILS
 align(1):
 struct XAUDIO2_VOICE_DETAILS
 {
+align(1):
     uint CreationFlags;
     uint InputChannels;
     uint InputSampleRate;
@@ -321,6 +328,7 @@ struct XAUDIO2_VOICE_DETAILS
 align(1):
 struct XAUDIO2_SEND_DESCRIPTOR
 {
+align(1):
     uint Flags;
     IXAudio2Voice pOutputVoice;
 }
@@ -329,6 +337,7 @@ struct XAUDIO2_SEND_DESCRIPTOR
 align(1):
 struct XAUDIO2_VOICE_SENDS
 {
+align(1):
     uint SendCount;
     XAUDIO2_SEND_DESCRIPTOR* pSends;
 }
@@ -337,6 +346,7 @@ struct XAUDIO2_VOICE_SENDS
 align(1):
 struct XAUDIO2_EFFECT_DESCRIPTOR
 {
+align(1):
     IUnknown pEffect;
     BOOL InitialState;
     uint OutputChannels;
@@ -346,6 +356,7 @@ struct XAUDIO2_EFFECT_DESCRIPTOR
 align(1):
 struct XAUDIO2_EFFECT_CHAIN
 {
+align(1):
     uint EffectCount;
     XAUDIO2_EFFECT_DESCRIPTOR* pEffectDescriptors;
 }
@@ -363,6 +374,7 @@ enum XAUDIO2_FILTER_TYPE
 align(1):
 struct XAUDIO2_FILTER_PARAMETERS
 {
+align(1):
     XAUDIO2_FILTER_TYPE Type;
     float Frequency;
     float OneOverQ;
@@ -372,6 +384,7 @@ struct XAUDIO2_FILTER_PARAMETERS
 align(1):
 struct XAUDIO2_BUFFER
 {
+align(1):
     uint Flags;
     uint AudioBytes;
     const ubyte* pAudioData;
@@ -387,6 +400,7 @@ struct XAUDIO2_BUFFER
 align(1):
 struct XAUDIO2_BUFFER_WMA
 {
+align(1):
     const uint* pDecodedPacketCumulativeBytes;
     uint PacketCount;
 }
@@ -395,6 +409,7 @@ struct XAUDIO2_BUFFER_WMA
 align(1):
 struct XAUDIO2_VOICE_STATE
 {
+align(1):
     void* pCurrentBufferContext;
     uint BuffersQueued;
     ulong SamplesPlayed;
@@ -404,6 +419,7 @@ struct XAUDIO2_VOICE_STATE
 align(1):
 struct XAUDIO2_PERFORMANCE_DATA
 {
+align(1):
     ulong AudioCyclesSinceLastQuery;
     ulong TotalCyclesSinceLastQuery;
     uint MinimumCyclesPerQuantum;
@@ -424,6 +440,7 @@ struct XAUDIO2_PERFORMANCE_DATA
 align(1):
 struct XAUDIO2_DEBUG_CONFIGURATION
 {
+align(1):
     uint TraceMask;
     uint BreakMask;
     BOOL LogThreadID;
