@@ -3,7 +3,7 @@ module win32.directx.dsound8;
 //import tango.sys.win32.Types;
 import win32.windows;
 
-alias GUID* LPCGUID;
+// definition of LPCGUID moved to basetyps.d
 
 interface IUnknown
 {
