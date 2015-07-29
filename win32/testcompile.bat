@@ -19,5 +19,5 @@
 
 :testone
 dmd -I.. -c %* testall.d
-@if errorlevel 1 exit 1
+@if errorlevel 1 exit /b 1
 @goto :eof
